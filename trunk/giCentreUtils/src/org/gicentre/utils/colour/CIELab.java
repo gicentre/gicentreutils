@@ -204,35 +204,5 @@ public class CIELab
         
         // Colour was within gamut, so just create a color object out of the given r,g,b values.
         return new Color((float)rgb[0],(float)rgb[1],(float)rgb[2]);
-    }
-    
-    
-    /* * Tests the conversion to and from CIELab colour space.
-     *  @param args Command line arguments (ignored).
-     * /
-    public static void main(String[] args)
-    {
-        CIELab converter = new CIELab(WhitePoint.D50);
-        System.err.println(converter.getColour(50, -100, 0,true));
-        
-        // Try round trip conversion to check both forward and inverse conversions are consistent.
-        
-        for (int i=0; i<100; i++)
-        {
-            Color colour1 = new Color((int)(Math.random()*255), (int)(Math.random()*255), (int)(Math.random()*255));
-            PVector colour1Lab = converter.getLab(colour1);
-            Color colour2 = converter.getColour(colour1Lab.z, colour1Lab.x, colour1Lab.y,false);
-        
-            if (colour1.equals(colour2))
-            {
-                System.err.println(colour1.getRed()+","+colour1.getGreen()+","+colour1.getBlue()+" converted without problems");
-            }
-            else
-            {
-                System.err.println(colour1+ " goes to "+colour1Lab+" which comes back as "+colour2);
-            }
-        }
-    }
-    */
-    
+    }    
 }

@@ -26,12 +26,12 @@ import java.awt.Color;
  * http://www.gnu.org/licenses/.
  */
 
-class ColourConverter 
+public class ColourConverter 
 {
     // ---------------------------- Class Variables ----------------------------
         
     /** Whitepoint colour calibration settings. */     
-    enum WhitePoint
+    public enum WhitePoint
     {
         // Tristimulus values taken from Schanda, J. (19xx) Colorimetry, p.74
         
