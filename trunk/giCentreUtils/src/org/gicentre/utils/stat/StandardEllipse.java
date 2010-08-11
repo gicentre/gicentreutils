@@ -1,4 +1,4 @@
-package org.gicentre.utils.geom;
+package org.gicentre.utils.stat;
 
 import java.util.Collection;
 

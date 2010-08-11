@@ -1,4 +1,4 @@
-package org.gicentre.utils.zoom;
+package org.gicentre.utils.move;
 
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
