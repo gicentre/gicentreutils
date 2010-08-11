@@ -1,4 +1,4 @@
-package org.gicentre.utils.zoom;
+package org.gicentre.utils.move;
 
 //******************************************************************************************
 /** Interface for object that need to respond to the end of a zoom or pan event.
