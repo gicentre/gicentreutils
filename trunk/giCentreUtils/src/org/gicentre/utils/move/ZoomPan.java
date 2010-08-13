@@ -22,7 +22,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 13th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -52,15 +52,15 @@ public class ZoomPan
     private PApplet aContext;
     private PGraphics graphics;
     private Vector<ZoomPanListener> listeners;
-    private int zoomMouseButton=PConstants.LEFT;//implies pan is the other button
+    private int zoomMouseButton=PConstants.LEFT; // Implies pan is the other button
   
     // ------------------------------- Constructor ------------------------------- 
   
     /** Initialises the zooming and panning transformations for the given applet context. 
-      * Can be used to have independent zooming in multiple windows by creating multiple
-      * objects each with a different PApplet object.
-      * @param aContext Applet context in which zooming and panning are to take place. 
-      */
+     *  Can be used to have independent zooming in multiple windows by creating multiple
+     *  objects each with a different PApplet object.
+     *  @param aContext Applet context in which zooming and panning are to take place. 
+     */
     public ZoomPan(PApplet aContext)
     {
         this.aContext = aContext;
@@ -78,11 +78,11 @@ public class ZoomPan
     }
     
     /** Initialises the zooming and panning transformations for the given applet and graphics contexts. 
-      * This version of the constructor allows a graphics context separate from the applet to be applied
-      * so that buffered off-screen drawing can be applied. 
-      * @param aContext Applet context in which zooming and panning are to take place. 
-      * @param graphics Graphics context in which to draw.
-      */
+     *  This version of the constructor allows a graphics context separate from the applet to be applied
+     *  so that buffered off-screen drawing can be applied. 
+     *  @param aContext Applet context in which zooming and panning are to take place. 
+     *  @param graphics Graphics context in which to draw.
+     */
      public ZoomPan(PApplet aContext, PGraphics graphics)
      {
          this.aContext = aContext;
@@ -108,8 +108,8 @@ public class ZoomPan
     // ------------------------------ Public methods -----------------------------
     
     /** Performs the zooming/panning transformation. This method must be called at
-      *  the start of the draw() method. 
-      */
+     *  the start of the draw() method. 
+     */
     public void transform()
     {    
         graphics.translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
@@ -117,7 +117,7 @@ public class ZoomPan
     }
   
     /** Resets the display to unzoomed and unpanned position.
-      */
+     */
     public void reset()
     {
         trans           = new AffineTransform();
@@ -131,30 +131,30 @@ public class ZoomPan
     }
   
     /** Adds a listener to be informed when some zooming or panning has finished.
-      * @param zoomPanListener Listener to be informed when some zooming or panning has finished.
-      */
+     *  @param zoomPanListener Listener to be informed when some zooming or panning has finished.
+     */
     public void addZoomPanListener(ZoomPanListener zoomPanListener)
     {
         listeners.add(zoomPanListener); 
     }
   
     /** Removes the given listener from those to be informed when zooming/panning has finished.
-      * @param zoomPanListener Listener to remove.
-      * @return True if listener found and removed.
-      */
+     *  @param zoomPanListener Listener to remove.
+     *  @return True if listener found and removed.
+     */
     public boolean removeZoomPanListener(ZoomPanListener zoomPanListener)
     {
         return listeners.remove(zoomPanListener); 
     }
   
     /** Sets the key that must be pressed before mouse actions are active. By default, no key
-      * is needed for the mouse to be active. Specifying a value allows normal mouse actions to
-      * be intercepted without zooming or panning. To set the mouse mask to no key, specify a 
-      * mouseMask value of 0. Mouse actions can be disabled entirely by setting the mouseMask
-      * to a negative value.
-      * @param mouseMask Keyboard modifier required to activate mouse actions. Valid values are
-      * <code>CONTROL</code>, <code>SHIFT</code>, <code>ALT</code>, <code>0</code> and <code>-1</code>. 
-      */
+     *  is needed for the mouse to be active. Specifying a value allows normal mouse actions to
+     *  be intercepted without zooming or panning. To set the mouse mask to no key, specify a 
+     *  mouseMask value of 0. Mouse actions can be disabled entirely by setting the mouseMask
+     *  to a negative value.
+     *  @param mouseMask Keyboard modifier required to activate mouse actions. Valid values are
+     *  <code>CONTROL</code>, <code>SHIFT</code>, <code>ALT</code>, <code>0</code> and <code>-1</code>. 
+     */
     public void setMouseMask(int mouseMask)
     {
         if (mouseMask < 0)
@@ -183,55 +183,95 @@ public class ZoomPan
     }      
   
     /** Reports the current mouse position in coordinate space. This method should be used
-      * in preference to <code>mouseX </code>and <code>mouseY</code> if the current display 
-      * has been zoomed or panned.
-      * @return Coordinates of current mouse position accounting for any zooming or panning.
-      */
+     *  in preference to <code>mouseX </code>and <code>mouseY</code> if the current display 
+     *  has been zoomed or panned.
+     *  @return Coordinates of current mouse position accounting for any zooming or panning.
+     */
     public PVector getMouseCoord()
     {
         return getDispToCoord(new PVector(aContext.mouseX,aContext.mouseY));
     }
   
     /** Reports the current zoom scale. Can be used for drawing objects that maintain their
-      * size when zooming.
-      * @return Current zoom scale. 
-      */
+     *  size when zooming.
+     *  @return Current zoom scale. 
+     */
     public double getZoomScale()
     {
         return zoomScale;
     }
+    
+    /** Sets a new zoom scale. Can be used for programmatic control of zoomer, such as
+     *  eased interpolated zooming.
+     *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+     *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+     *         display. Values less than or equal to 0 will be ignored. 
+     */
+    public void setZoomScale(double zoomScale)
+    {
+        this.zoomScale = zoomScale;
+        calcTransformation();
+    }
+    
+    
+    /** Reports the current pan offset. Useful when wishing to use an interpolated panning
+     *  between this current value and some new pan offset.
+     *  @return Current pan offset. Negative coordinates indicate an offset to the left
+     *          or upwards, postive values to the right or downward.       
+     */
+    public PVector getPanOffset()
+    {
+        return new PVector(panOffset.x,panOffset.y);
+    }
+    
+    /** Sets a new pan offset. Can be used for programmatic control of panning, such as
+     *  eased interpolated zooming and panning.
+     *  @param panX X coordinate of new pan offset. A value of 0 indicates no translation
+     *         of the display on the horizontal axis; a negative value indicates a 
+     *         translation to the left; a positive value indicates translation to the right.
+     *  @param panY Y coordinate of new pan offset. A value of 0 indicates no translation
+     *         of the display on the vertical axis; a negative value indicates a translation
+     *         upwards; a positive value indicates translation downwards.
+     *         
+     */
+    public void setPanOffset(float panX, float panY)
+    {
+        panOffset.x = panX;
+        panOffset.y = panY;
+        calcTransformation();
+    }
          
     /** Reports whether display is currently being zoomed (ie mouse is being dragged with 
-      * zoom key/button pressed).
-      * @return True if display is being actively zoomed. 
-      */
+     *  zoom key/button pressed).
+     *  @return True if display is being actively zoomed. 
+     */
     public boolean isZooming()
     {
         return isZooming;
     }
   
     /** Reports whether display is currently being panned (ie mouse is being dragged with
-      * pan key/button pressed).
-      * @return True if display is being actively panned. 
-      */
+     *  pan key/button pressed).
+     *  @return True if display is being actively panned. 
+     */
     public boolean isPanning()
     {
         return isPanning;
     }
   
     /** Reports whether a mouse event has been captured by the zoomer. This allows zoom and 
-      * pan events to be separated from other mouse actions. Usually only useful if the zoomer
-      * uses some mouse mask.
-      * @return True if mouse event has been captured by the zoomer. 
-      */
+     *  pan events to be separated from other mouse actions. Usually only useful if the zoomer
+     *  uses some mouse mask.
+     *  @return True if mouse event has been captured by the zoomer. 
+     */
     public boolean isMouseCaptured()
     {
         return isMouseCaptured;
     }
   
     /** Updates zoom and pan transformation according to mouse activity.
-      * @param e Mouse event.
-      */
+     *  @param e Mouse event.
+     */
     public void mouseEvent(MouseEvent e)
     {   
         if (mouseMask == -1)
@@ -326,12 +366,12 @@ public class ZoomPan
     }
     
     /** Transforms the given point from display to coordinate space. Display space is that which
-     * has been subjected to zooming and panning. Coordinate space is the original space into 
-     * which objects have been placed before zooming and panning. For most drawing operations you
-     * should not need to use this method. It is available for those operations that do not draw
-     * directly, but need to know the transformation between coordinate and screen space.
-     * @param p 2D point in zoomed display space.
-     * @return Location of point in original coordinate space. 
+     *  has been subjected to zooming and panning. Coordinate space is the original space into 
+     *  which objects have been placed before zooming and panning. For most drawing operations you
+     *  should not need to use this method. It is available for those operations that do not draw
+     *  directly, but need to know the transformation between coordinate and screen space.
+     *  @param p 2D point in zoomed display space.
+     *  @return Location of point in original coordinate space. 
      */
     public PVector getDispToCoord(PVector p)
     {
@@ -360,19 +400,22 @@ public class ZoomPan
     /** Sets mouse buttons for zooming and implies that the other mouse button will be for panning.
      *  @param zoomMouseButton Zoom mouse button (must be either PConstants.LEFT or PConstants.RIGHT)
      */
-    public void setZoomMouseButton(int zoomMouseButton){
-        if (zoomMouseButton==PConstants.LEFT || zoomMouseButton==PConstants.RIGHT){
+    public void setZoomMouseButton(int zoomMouseButton)
+    {
+        if (zoomMouseButton==PConstants.LEFT || zoomMouseButton==PConstants.RIGHT)
+        {
             this.zoomMouseButton=zoomMouseButton;
         }
-        else{
-            System.err.println("Parameter must be PConstants.LEFT or PConstants.RIGHT");
+        else
+        {
+            System.err.println("setZoomMouseButton: Parameter must be PConstants.LEFT or PConstants.RIGHT");
         }
     }
 
     // ----------------------------- Private methods -----------------------------
   
     /** Zooms in or out depending on the current values of zoomStartPosition and zoomScale.
-      */
+     */
     private void doZoom()
     {
         // Find coordinate-space location of first mouse click.
@@ -394,9 +437,9 @@ public class ZoomPan
     }
   
     /** Finds the affine transformations that convert between original and display coordinates. 
-      * Updates both the forward transformation (for display) and inverse transformation (for 
-      * decoding of mouse locations. 
-      */
+     *  Updates both the forward transformation (for display) and inverse transformation (for 
+     *  decoding of mouse locations. 
+     */
     private void calcTransformation()
     {    
         trans = new AffineTransform();
@@ -415,12 +458,12 @@ public class ZoomPan
     // ------------------------------ Nested classes -----------------------------
       
     /** Class to handle mouse wheel events. 
-      */
+     */
     private class MouseWheelMonitor implements MouseWheelListener
     {
         /** Responds to a mouse wheel change event by zooming in or out.
-          * @param e Mouse wheel event. 
-          */
+         *  @param e Mouse wheel event. 
+         */
         public void mouseWheelMoved(MouseWheelEvent e)
         {     
             // Test to see if mouse mask is specified and it is pressed.
