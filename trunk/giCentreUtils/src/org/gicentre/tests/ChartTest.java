@@ -10,7 +10,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Tests chart drawing in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.0.1, 13th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -114,14 +114,8 @@ public class ChartTest extends PApplet
     {   
         background(255);
         noLoop();
-        
-        
-        
-        //chart1.draw(0,0,width*.5f,height);        
-//        noFill();
-//        stroke(0);
-//        rect(0,0,width*.5f-1,height-1);
-        
+
+        chart1.draw(0,0,width*.5f,height);        
         chart2.draw(width*.5f,0,width*.5f,height);
     }
     

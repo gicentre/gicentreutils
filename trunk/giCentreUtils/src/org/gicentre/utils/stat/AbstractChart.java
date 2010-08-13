@@ -11,7 +11,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.0.1, 13th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -247,6 +247,37 @@ public abstract class AbstractChart
                 break;
             case RIGHT:
                 minBorderR = Math.max(minBorder,border);
+                break;
+            default:
+                // Do nothing.
+        }
+    }
+    
+    /** Sets the internal border between the given edge of the chart and the drawing area.
+     *  This method is used for explicit setting of border dimensions and will also reset
+     *  the minimum border to the given dimension.
+     *  @param border Border at the given side in pixel units.
+     *  @param side Side of the chart to set the border size.
+     */
+    protected void setBorder(float border, Side side)
+    {
+        switch (side)
+        {
+            case TOP:
+                borderT = border;
+                minBorderT = border;
+                break;
+            case BOTTOM:
+                borderB = border;
+                minBorderB = border;
+                break;
+            case LEFT:
+                borderL = border;
+                minBorderL = border;
+                break;
+            case RIGHT:
+                borderR = border;
+                minBorderR = border;
                 break;
             default:
                 // Do nothing.
