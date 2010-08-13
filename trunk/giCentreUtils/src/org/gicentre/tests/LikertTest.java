@@ -64,8 +64,10 @@ public class LikertTest extends PApplet implements ComponentListener
         
         ellipseMode(PConstants.CORNER);
         
-        frame.setResizable(true);
-        frame.addComponentListener(this);
+        if (frame!=null){//stops it crashing if you start as an applet
+        	frame.setResizable(true);
+        	frame.addComponentListener(this);
+        }
         showBars = true;
         scaleToPrimary = true;
         showSecondary = false;
