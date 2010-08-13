@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.0.1, 13th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -123,17 +123,18 @@ public class XYChart extends AbstractChart
         parent.translate(xOrigin,yOrigin);
         
         // TODO: A fudge to guess at the amount of space to allow the outer axis labels to be drawn.
+        
         setMinBorder(parent.textWidth("XXX"), Side.RIGHT);
         setMinBorder(parent.textAscent()/2,Side.TOP);
         
         if ((yLabel != null) || ((transposeAxes) && (xLabel != null)))
         {
-            setMinBorder(getBorder(Side.LEFT)+parent.textAscent()+parent.textDescent(),Side.LEFT);
+            setBorder(getBorder(Side.LEFT)+parent.textAscent()+parent.textDescent(),Side.LEFT);
         }
         
         if ((xLabel != null) || ((transposeAxes) && (yLabel != null)))
         {
-            setMinBorder(getBorder(Side.BOTTOM)+parent.textAscent()+parent.textDescent(),Side.BOTTOM);
+            setBorder(getBorder(Side.BOTTOM)+parent.textAscent()+parent.textDescent(),Side.BOTTOM);
         }  
         
         float left   = getBorder(Side.LEFT);
@@ -428,6 +429,17 @@ public class XYChart extends AbstractChart
             parent.textAlign(PConstants.RIGHT, PConstants.TOP);
             parent.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
         }
+        
+        // Reset borders if we had enlarged them to fit in axis labels.
+        if ((yLabel != null) || ((transposeAxes) && (xLabel != null)))
+        {
+            setBorder(getBorder(Side.LEFT)-parent.textAscent()-parent.textDescent(),Side.LEFT);
+        }
+        
+        if ((xLabel != null) || ((transposeAxes) && (yLabel != null)))
+        {
+            setBorder(getBorder(Side.BOTTOM)-parent.textAscent()-parent.textDescent(),Side.BOTTOM);
+        }  
 
         parent.popStyle();
         parent.popMatrix();
