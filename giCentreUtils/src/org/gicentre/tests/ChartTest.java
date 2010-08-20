@@ -10,7 +10,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Tests chart drawing in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0.1, 13th August, 2010. 
+ *  @version 3.0.1, 17th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -47,6 +47,7 @@ public class ChartTest extends PApplet
     private XYChart chart2;
     
     private boolean showXAxis, showYAxis;
+    private boolean transpose;
     private boolean useLog;
     
     private int barGap=2;
@@ -59,8 +60,12 @@ public class ChartTest extends PApplet
     {   
         size(640,350);
         smooth(); 
+        textFont(createFont("Helvetica",10));
+        textSize(10);
+        
         showXAxis = true;
         showYAxis = true;
+        transpose = true;
         useLog    = false;
         
         //float[] barData = new float[] {0.358f,0.370f,0.342f,0.348f,0.334f,0.349f,0.317f,0.331f,0.313f,0.300f,0.303f,0.312f};
@@ -75,7 +80,7 @@ public class ChartTest extends PApplet
         chart1.showValueAxis(showYAxis);
         chart1.setValueFormat("###,###.####");
         chart1.showCategoryAxis(showXAxis);
-        chart1.transposeAxes(true);
+        chart1.transposeAxes(transpose);
         //chart1.setBarColour(color(240,50,50));
         chart1.setBarColour(barData,ColourTable.getPresetColourTable(ColourTable.GREENS, -1000, 1000));
         chart1.setBarLabels(new String[] {"Item 1","Item 2","Item 3","Item 4","Item 5","Item 6","Item 7","Item 8","Item 9","Item 10","Item 11","Item 12","Item 13", "Item 14"});
@@ -86,7 +91,7 @@ public class ChartTest extends PApplet
         
         float[] xData = new float[]{2,4,6,8,12,14,15,16,23};
         float[] yData = new float[]{6.0f,7.2f,5.8f,4.3f,2.1f,3.5f,6.8f,6.2f,5.8f};
-        float[] sizeData = new float[]{1,10,4,20,13,6,2,8,5};
+        float[] sizeData = new float[]{1,10,4,20,13,6,2,8,6};
         chart2.setData(xData, yData);
         chart2.showXAxis(showXAxis);
         chart2.showYAxis(showYAxis);
@@ -103,9 +108,6 @@ public class ChartTest extends PApplet
         chart2.setYAxisLabel("This is the y-axis");
         //chart2.setXAxisAt(4);
         //chart2.setYAxisAt(12.5f);
-                
-        textFont(createFont("Helvetica",10));
-        textSize(10);
     }
 
     /** Draws some charts.
@@ -115,8 +117,15 @@ public class ChartTest extends PApplet
         background(255);
         noLoop();
 
-        chart1.draw(0,0,width*.5f,height);        
-        chart2.draw(width*.5f,0,width*.5f,height);
+        strokeWeight(1);
+        
+        stroke(250,100,100);
+        rect(1,1,width*.5f-2,height-2);
+        chart1.draw(1,1,width*.5f-2,height-2);
+        
+        stroke(100,100,250);
+        rect(width*.5f+1,1,width*.5f-2,height-2);
+        chart2.draw(width*.5f+1,1,width*.5f-2,height-2);
     }
     
     public void keyPressed()
@@ -127,6 +136,12 @@ public class ChartTest extends PApplet
             chart1.setLogValues(useLog);
             chart2.setLogX(useLog);
             chart2.setLogY(useLog);
+            loop();
+        }
+        if (key == 't')
+        {
+            transpose = !transpose;
+            chart1.transposeAxes(transpose);
             loop();
         }
         if (key == 'x')

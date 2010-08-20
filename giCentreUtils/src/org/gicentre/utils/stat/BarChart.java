@@ -9,7 +9,7 @@ import processing.core.PConstants;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 20th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -40,8 +40,10 @@ public class BarChart extends AbstractChart
     private boolean reverseCats;
     private ColourTable cTable;
     
-    private String[] catLabels;     // Category labels.
+    private String[] catLabels;                  // Category labels.
     private boolean showLabels;
+    private String categoryLabel, valueLabel;    // Axis labels.
+    private Float catAxisPosition;               // Position of the category axis (defaults to minumum value).
           
     // ------------------------------- Constructors --------------------------------
     
@@ -58,6 +60,8 @@ public class BarChart extends AbstractChart
         cTable        = null;
         catLabels     = null;
         showLabels    = false;
+        categoryLabel = null;
+        valueLabel    = null;
     }
     
     // ---------------------------------- Methods ----------------------------------
@@ -97,15 +101,66 @@ public class BarChart extends AbstractChart
         // Use a local coordinate system with origin at top-left of drawing area.
         parent.translate(xOrigin,yOrigin);
         
-        // TODO: A fudge to guess at the amount of space to allow last (right-most) axis label to be drawn.
-        setMinBorder(parent.textWidth("XXX"), Side.RIGHT);
+        // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
+        // because not all charts label their axes in the same way.
         
-        float left   = getBorder(Side.LEFT);
-        float right  = width - getBorder(Side.RIGHT);
-        float bottom = height-getBorder(Side.BOTTOM);
-        float top    = getBorder(Side.TOP);
+        float extraLeftBorder =2;
+        float extraRightBorder =2;
+        float extraTopBorder =2;
+        float extraBottomBorder =2;
+         
+        // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
+        if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
+        {
+            int axis = transposeAxes?1:0;
+            String lastLabel;
+            if ((catLabels != null) && (!transposeAxes))
+            {
+                lastLabel = catLabels[catLabels.length-1];
+            }
+            else
+            {
+                lastLabel = axisFormatter[axis].format(tics[axis][tics[axis].length-1]);
+            }
+            extraRightBorder += parent.textWidth(lastLabel)/2f;
+        }
+        
+        // Allow space above the vertical axis to accommodate the top tic label.
+        if ((getShowAxis(1)) || ((transposeAxes) && (getShowAxis(0))))
+        {   
+            extraTopBorder += parent.textAscent()/2f+2;
+        }
+        
+        // Allow space to the left of the vertical axis to accommodate its label.
+        if (((valueLabel != null) && getShowAxis(1)) || ((transposeAxes) && (categoryLabel != null) && getShowAxis(0)))
+        {
+            extraLeftBorder += parent.textAscent()+parent.textDescent();
+        }
+        
+        // Allow space below the horizontal axis to accommodate its label.
+        if (((categoryLabel != null) && getShowAxis(0)) || ((transposeAxes) && (valueLabel != null) && getShowAxis(1)))
+        {
+            extraBottomBorder +=parent.textAscent()+parent.textDescent();
+        }  
+        
+        float left   = getBorder(Side.LEFT) + extraLeftBorder;
+        float right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
+        float bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
+        float top    = getBorder(Side.TOP)+extraTopBorder;
         float hRange = right-left;
         float vRange = bottom-top;
+        float axisValue;
+        if (catAxisPosition == null)
+        {
+            // Default value axis is at the lowest value.
+            axisValue = getMin(1);
+        }
+        else
+        {
+            axisValue = catAxisPosition.floatValue();
+        }
+        
+                
         float barWidth;
         
         if (transposeAxes)
@@ -123,7 +178,8 @@ public class BarChart extends AbstractChart
         {
             parent.fill(barColour);
         }
-        
+        //TODO: Allow axis position to be set.
+    
         for (int i=0; i<data[0].length; i++)
         {
             if (cTable != null)
@@ -140,7 +196,7 @@ public class BarChart extends AbstractChart
                 }
                 else
                 {
-                    parent.rect(left, top + i*(barWidth+barGap), hRange*(data[1][index]-getMin(1))/(getMax(1)-getMin(1)),barWidth);
+                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap), hRange*(data[1][index]-axisValue)/(getMax(1)-getMin(1)),barWidth);
                 }
             }
             else
@@ -151,7 +207,7 @@ public class BarChart extends AbstractChart
                 }
                 else
                 {
-                    parent.rect(left + i*(barWidth+barGap), bottom, barWidth, -vRange*(data[1][index]-getMin(1))/(getMax(1)-getMin(1)));
+                    parent.rect(left + i*(barWidth+barGap), bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(data[1][index]-axisValue)/(getMax(1)-getMin(1)));
                 }
             }
         }
@@ -210,6 +266,26 @@ public class BarChart extends AbstractChart
                     }
                 }
             }
+            
+            // Draw axis label if requested.
+            if (valueLabel != null)
+            {
+                if (transposeAxes)
+                {
+                    parent.textAlign(PConstants.CENTER,PConstants.TOP);
+                    parent.text(valueLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
+                }
+                else
+                {
+                    parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+                    // Rotate label.
+                    parent.pushMatrix();
+                     parent.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+                     parent.rotate(-PConstants.HALF_PI);
+                     parent.text(valueLabel,0,0);
+                    parent.popMatrix();
+                }
+            }
         }
         
         if (getShowAxis(0))  // Category axis.
@@ -232,7 +308,6 @@ public class BarChart extends AbstractChart
                     {
                         parent.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap));
                     }
-                    
                 }
                 else
                 {
@@ -246,6 +321,26 @@ public class BarChart extends AbstractChart
                     {
                         parent.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap),bottom+2);
                     }
+                }
+            }
+            
+            // Draw axis label if requested
+            if (categoryLabel != null)
+            {
+                if (transposeAxes)
+                {
+                    parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+                    // Rotate label.
+                    parent.pushMatrix();
+                     parent.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+                     parent.rotate(-PConstants.HALF_PI);
+                     parent.text(categoryLabel,0,0);
+                    parent.popMatrix();
+                }
+                else
+                {
+                    parent.textAlign(PConstants.CENTER,PConstants.TOP);
+                    parent.text(categoryLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
                 }
             }
         }
@@ -280,6 +375,26 @@ public class BarChart extends AbstractChart
        setMax(1,maxVal);
     }
     
+    /** Sets the position of the category axis. Note that this position will be somewhere on along
+     *  the value range.
+     *  @param value Position of axis in data units.
+     */
+    public void setCategoryAxisAt(float value)
+    {
+        this.catAxisPosition = new Float(value);
+
+        // Update range if the axis lies outside of existing range.
+        // Note that the category axis is placed somewhere on the value range.
+        if (value < getMin(1))
+        {
+            setMinValue(value);
+        }
+        else if (value >getMax(1))
+        {
+            setMaxValue(value);
+        }
+    }
+    
     /** Sets the bar names to be displayed as axis labels. If set to null, the category
      *  number is displayed in the axis.
      *  @param labels Array of labels corresponding to each of the bars in the chart.
@@ -310,24 +425,14 @@ public class BarChart extends AbstractChart
         
         float border = getMinBorder();
         
-        if (transposeAxes == false)
-        {
-            // Bar labels are on along the bottom.
-            border = Math.max(border, parent.textAscent()+parent.textDescent());
-            setMinBorder(border,Side.BOTTOM);
-            
-            // TODO:  This is a bit of a fudge to avoid calculating bar width: Assume we need to make space for 
-            //        1/4 of the width of the final label (centred at the middle of the right-hand bar).
-            setMinBorder(parent.textWidth(labels[labels.length-1])/4f,Side.RIGHT);
-        }
-        else
+        if (transposeAxes)
         {
             // Bar labels are up the side.
             for (String label : labels)
             {
                 border = Math.max(border, parent.textWidth(label));
             }
-            setMinBorder(border,Side.LEFT);
+            setMinBorder(border+2,Side.LEFT);
         } 
     }
     
@@ -344,12 +449,13 @@ public class BarChart extends AbstractChart
      */
     public void showCategoryAxis(boolean showAxis)
     {
+        super.showAxis(0,showAxis,transposeAxes?Side.LEFT:Side.BOTTOM);
+        
         if (showAxis && showLabels)
         {
             // Need to recalculate space for labels if they are being made to reappear.
             setBarLabels(catLabels);
         }
-        super.showAxis(0,showAxis,transposeAxes?Side.LEFT:Side.BOTTOM);
     }
     
     /** Determines if the axes should be transposed (so that categories appear on the 
@@ -391,6 +497,22 @@ public class BarChart extends AbstractChart
     public void setCategoryFormat(String format)
     {
         setFormat(0, format);
+    }
+    
+    /** Sets the category axis label. If null, no label is drawn.
+     *  @param label Category axis label to draw or null if no label to be drawn.
+     */
+    public void setCategoryAxisLabel(String label)
+    {
+        this.categoryLabel = label;
+    }
+    
+    /** Sets the value axis label. If null, no label is drawn.
+     *  @param label Value-axis label to draw or null if no label to be drawn.
+     */
+    public void setValueAxisLabel(String label)
+    {
+        this.valueLabel = label;
     }
     
     /** Determines the colours of the bars to be displayed on the chart. This method

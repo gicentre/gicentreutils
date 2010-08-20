@@ -11,7 +11,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0.1, 13th August, 2010. 
+ *  @version 3.1, 19th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -58,7 +58,7 @@ public abstract class AbstractChart
         
     private float[] min,max;    // Minimum and maximum values for data on each axis.
     private float[] minLog,maxLog;
-    
+        
                                 // Determines if minimum and maximum values are to be 
                                 // set explicitly (true) or by the data (false).
     private boolean[] forceMin,forceMax;
