@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0.1, 13th August, 2010. 
+ *  @version 3.1, 19th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -115,32 +115,50 @@ public class XYChart extends AbstractChart
         {
             return;
         }
-        
+
         parent.pushMatrix();
         parent.pushStyle();
         
         // Use a local coordinate system with origin at top-left of drawing area.
         parent.translate(xOrigin,yOrigin);
         
-        // TODO: A fudge to guess at the amount of space to allow the outer axis labels to be drawn.
+        // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
+        // because not all charts label their axes in the same way.
         
-        setMinBorder(parent.textWidth("XXX"), Side.RIGHT);
-        setMinBorder(parent.textAscent()/2,Side.TOP);
-        
-        if ((yLabel != null) || ((transposeAxes) && (xLabel != null)))
+        float extraLeftBorder =2;
+        float extraRightBorder =2;
+        float extraTopBorder =2;
+        float extraBottomBorder =2;
+         
+        // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
+        if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
         {
-            setBorder(getBorder(Side.LEFT)+parent.textAscent()+parent.textDescent(),Side.LEFT);
+            int axis = transposeAxes?1:0;
+            extraRightBorder += parent.textWidth(axisFormatter[axis].format(tics[axis].length-1))/2f;
         }
         
-        if ((xLabel != null) || ((transposeAxes) && (yLabel != null)))
+        // Allow space above the vertical axis to accommodate the top tic label.
+        if ((getShowAxis(1)) || ((transposeAxes) && (getShowAxis(0))))
+        {   
+            extraTopBorder += parent.textAscent()/2f+2;
+        }
+        
+        // Allow space to the left of the vertical axis to accommodate its label.
+        if (((yLabel != null) && getShowAxis(1)) || ((transposeAxes) && (xLabel != null) && getShowAxis(0)))
         {
-            setBorder(getBorder(Side.BOTTOM)+parent.textAscent()+parent.textDescent(),Side.BOTTOM);
+            extraLeftBorder += parent.textAscent()+parent.textDescent();
+        }
+        
+        // Allow space below the horizontal axis to accommodate its label.
+        if (((xLabel != null) && getShowAxis(0)) || ((transposeAxes) && (yLabel != null) && getShowAxis(1)))
+        {
+            extraBottomBorder +=parent.textAscent()+parent.textDescent();
         }  
         
-        float left   = getBorder(Side.LEFT);
-        float right  = width - getBorder(Side.RIGHT);
-        float bottom = height-getBorder(Side.BOTTOM);
-        float top    = getBorder(Side.TOP);
+        float left   = getBorder(Side.LEFT) + extraLeftBorder;
+        float right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
+        float bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
+        float top    = getBorder(Side.TOP)+extraTopBorder;
         float hRange = right-left;
         float vRange = bottom-top;
               
@@ -173,7 +191,14 @@ public class XYChart extends AbstractChart
                 {
                     y = (data[1][i]-getMin(1))/(getMax(1)-getMin(1));
                 }
-                parent.vertex(left + hRange*x, bottom - vRange*y); 
+                if (transposeAxes)
+                {
+                    parent.vertex(left + vRange*y, bottom-hRange*x);
+                }
+                else
+                {
+                    parent.vertex(left + hRange*x, bottom - vRange*y);
+                }
             }
             parent.endShape();
         }
@@ -216,12 +241,27 @@ public class XYChart extends AbstractChart
                 {
                     // Size by data.
                     float radius = (float)(maxPointSize*Math.sqrt(data[3][i]/getMax(3)));
-                    parent.ellipse(left + hRange*x, bottom - vRange*y,radius,radius);
+                    
+                    if (transposeAxes)
+                    {
+                        parent.ellipse(left + vRange*y, bottom-hRange*x,radius,radius);
+                    }
+                    else
+                    {
+                        parent.ellipse(left + hRange*x, bottom - vRange*y,radius,radius);
+                    }
                 }
                 else
                 {
                     // Uniform size.
-                    parent.ellipse(left + hRange*x, bottom - vRange*y,pointSize,pointSize);
+                    if (transposeAxes)
+                    {
+                        parent.ellipse(left + vRange*y, bottom-hRange*x,pointSize,pointSize);
+                    }
+                    else
+                    {
+                        parent.ellipse(left + hRange*x, bottom - vRange*y,pointSize,pointSize);
+                    }
                 }
             }
         }
@@ -235,7 +275,8 @@ public class XYChart extends AbstractChart
             showSingleOriginValue = true;
         }
         int firstTic = showSingleOriginValue?1:0;
-                                
+             
+        // Draw axes if requested.
         if (getShowAxis(0))
         {
             parent.strokeWeight(0.5f);
@@ -297,7 +338,7 @@ public class XYChart extends AbstractChart
                         else
                         {
                             parent.textAlign(PConstants.CENTER, PConstants.TOP);
-                            parent.text(axisFormatter[0].format(tic),left +hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0)),axisPosition+textHeight/2);
+                            parent.text(axisFormatter[0].format(tic),left +hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0)),axisPosition+2);
                         }
                     }
                 }   
@@ -317,7 +358,7 @@ public class XYChart extends AbstractChart
                         else
                         {
                             parent.textAlign(PConstants.CENTER, PConstants.TOP);
-                            parent.text(axisFormatter[0].format(tic),left +hRange*(tic-getMin(0))/(getMax(0)-getMin(0)),axisPosition+textHeight/2);
+                            parent.text(axisFormatter[0].format(tic),left +hRange*(tic-getMin(0))/(getMax(0)-getMin(0)),axisPosition+2);
                         }
                     }
                 }
@@ -331,7 +372,7 @@ public class XYChart extends AbstractChart
                     parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
                     // Rotate label.
                     parent.pushMatrix();
-                     parent.translate(axisPosition-parent.textWidth("XXX"),(top+bottom)/2f);
+                     parent.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
                      parent.rotate(-PConstants.HALF_PI);
                      parent.text(xLabel,0,0);
                     parent.popMatrix();
@@ -339,7 +380,7 @@ public class XYChart extends AbstractChart
                 else
                 {
                     parent.textAlign(PConstants.CENTER,PConstants.TOP);
-                    parent.text(xLabel,(left+right)/2f,axisPosition+2*textHeight);
+                    parent.text(xLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
                 }
             }
         }
@@ -393,7 +434,7 @@ public class XYChart extends AbstractChart
                     if (transposeAxes)
                     {
                         parent.textAlign(PConstants.CENTER, PConstants.TOP);
-                        parent.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),axisPosition+textHeight/2);
+                        parent.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),axisPosition+textHeight/2 -2);
                     }
                     else
                     {
@@ -409,14 +450,14 @@ public class XYChart extends AbstractChart
                 if (transposeAxes)
                 {
                     parent.textAlign(PConstants.CENTER,PConstants.TOP);
-                    parent.text(yLabel,(left+right)/2f,axisPosition+2*textHeight);
+                    parent.text(yLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
                 }
                 else
                 {
                     parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
                     // Rotate label.
                     parent.pushMatrix();
-                     parent.translate(axisPosition-parent.textWidth("XXX"),(top+bottom)/2f);
+                     parent.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
                      parent.rotate(-PConstants.HALF_PI);
                      parent.text(yLabel,0,0);
                     parent.popMatrix();
@@ -430,17 +471,6 @@ public class XYChart extends AbstractChart
             parent.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
         }
         
-        // Reset borders if we had enlarged them to fit in axis labels.
-        if ((yLabel != null) || ((transposeAxes) && (xLabel != null)))
-        {
-            setBorder(getBorder(Side.LEFT)-parent.textAscent()-parent.textDescent(),Side.LEFT);
-        }
-        
-        if ((xLabel != null) || ((transposeAxes) && (yLabel != null)))
-        {
-            setBorder(getBorder(Side.BOTTOM)-parent.textAscent()-parent.textDescent(),Side.BOTTOM);
-        }  
-
         parent.popStyle();
         parent.popMatrix();
     }
@@ -485,7 +515,7 @@ public class XYChart extends AbstractChart
     }
     
     /** Determines the size of the points to be displayed on the chart. This method
-     *  will give a uniform colour to all points. If set to 0 or less, no points are drawn.
+     *  will give a uniform size to all points. If set to 0 or less, no points are drawn.
      *  @param size Size of points to be displayed in pixel units.
      */
     public void setPointSize(float size)
@@ -592,40 +622,40 @@ public class XYChart extends AbstractChart
     }
     
     /** Sets the position of the x-axis. Note that this position will be somewhere on along the y-range.
-     *  @param xValue Position of axis in data units.
+     *  @param yValue Position of axis in data units.
      */
-    public void setXAxisAt(float xValue)
+    public void setXAxisAt(float yValue)
     {
-        this.xAxisPosition = new Float(xValue);
+        this.xAxisPosition = new Float(yValue);
 
         // Update range if the axis lies outside of existing range.
         // Note that the x-axis is placed somewhere on the y-range.
-        if (xValue < getMin(1))
+        if (yValue < getMin(1))
         {
-            setMinY(xValue);
+            setMinY(yValue);
         }
-        else if (xValue >getMax(1))
+        else if (yValue >getMax(1))
         {
-            setMaxY(xValue);
+            setMaxY(yValue);
         }
     }
     
     /** Sets the position of the y-axis. Note that this position will be somewhere on along the x-range.
-     *  @param yValue Position of axis in data units.
+     *  @param xValue Position of axis in data units.
      */
-    public void setYAxisAt(float yValue)
+    public void setYAxisAt(float xValue)
     {
-        this.yAxisPosition = new Float(yValue);
+        this.yAxisPosition = new Float(xValue);
 
         // Update range if the axis lies outside of existing range.
         // Note that the y-axis is placed somewhere on the x-range.
-        if (yValue < getMin(0))
+        if (xValue < getMin(0))
         {
-            setMinX(yValue);
+            setMinX(xValue);
         }
-        else if (yValue >getMax(0))
+        else if (xValue >getMax(0))
         {
-            setMaxX(yValue);
+            setMaxX(xValue);
         }
     }
     
@@ -659,5 +689,14 @@ public class XYChart extends AbstractChart
     public void setLogY(boolean isLog)
     {
         setIsLogScale(1, isLog);
+    }
+    
+    /** Determines if the axes should be transposed (so that the x-axis is vertical 
+     *  and y-axis is horizontal).
+     *  @param transpose Axes are transposed if true.
+     */
+    public void transposeAxes(boolean transpose)
+    {
+        this.transposeAxes = transpose;
     }
 }
