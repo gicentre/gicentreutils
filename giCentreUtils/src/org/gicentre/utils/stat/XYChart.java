@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 19th August, 2010. 
+ *  @version 3.1, 26th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -44,6 +44,7 @@ public class XYChart extends AbstractChart
     private float maxPointSize;                 // Maximum point size (used when sizing points by data value).
     private Float xAxisPosition,yAxisPosition;  // Positions of the axes (if null, defaults to min values).
     private String xLabel, yLabel;              // Axis labels.
+    private float top,left,bottom,right;        // Bounds of the data area (excludes axes and axis labels).
   
     // ------------------------------- Constructors --------------------------------
 
@@ -63,6 +64,10 @@ public class XYChart extends AbstractChart
         yAxisPosition = null;
         xLabel        = null;
         yLabel        = null;
+        top           = 0;
+        bottom        = 0;
+        left          = 0;
+        right         = 0;
     }
     
     // ---------------------------------- Methods ----------------------------------
@@ -125,16 +130,17 @@ public class XYChart extends AbstractChart
         // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
         // because not all charts label their axes in the same way.
         
-        float extraLeftBorder =2;
-        float extraRightBorder =2;
-        float extraTopBorder =2;
+        float extraLeftBorder   =2;
+        float extraRightBorder  =2;
+        float extraTopBorder    =2;
         float extraBottomBorder =2;
          
         // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
         if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
         {
             int axis = transposeAxes?1:0;
-            extraRightBorder += parent.textWidth(axisFormatter[axis].format(tics[axis].length-1))/2f;
+            String lastLabel = axisFormatter[axis].format(tics[axis][tics[axis].length-1]);
+            extraRightBorder += parent.textWidth(lastLabel)/2f;
         }
         
         // Allow space above the vertical axis to accommodate the top tic label.
@@ -155,13 +161,13 @@ public class XYChart extends AbstractChart
             extraBottomBorder +=parent.textAscent()+parent.textDescent();
         }  
         
-        float left   = getBorder(Side.LEFT) + extraLeftBorder;
-        float right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
-        float bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
-        float top    = getBorder(Side.TOP)+extraTopBorder;
+        left   = getBorder(Side.LEFT) + extraLeftBorder;
+        right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
+        bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
+        top    = getBorder(Side.TOP)+extraTopBorder;
         float hRange = right-left;
         float vRange = bottom-top;
-              
+                      
         // Draw line if requested.
         if (lineWidth > 0)
         {
@@ -174,26 +180,29 @@ public class XYChart extends AbstractChart
             for (int i=0; i<data[0].length; i++)
             {
                 float x,y;
+                float xValue = Math.max(Math.min(data[0][i],getMax(0)),getMin(0));
+                float yValue = Math.max(Math.min(data[1][i],getMax(1)),getMin(1));
                 
                 if (getIsLogScale(0))
                 {
-                    x = convertToLog(data[0][i], getMinLog(0), getMaxLog(0));
+                    x = convertToLog(xValue, getMinLog(0), getMaxLog(0));
                 }
                 else
                 {
-                    x = (data[0][i]-getMin(0))/(getMax(0)-getMin(0));
+                    x = (xValue-getMin(0))/(getMax(0)-getMin(0));
                 }
                 if (getIsLogScale(1))
                 {
-                    y = convertToLog(data[1][i], getMinLog(1), getMaxLog(1));
+                    y = convertToLog(yValue, getMinLog(1), getMaxLog(1));
                 }
                 else
                 {
-                    y = (data[1][i]-getMin(1))/(getMax(1)-getMin(1));
+                    y = (yValue-getMin(1))/(getMax(1)-getMin(1));
                 }
+                
                 if (transposeAxes)
                 {
-                    parent.vertex(left + vRange*y, bottom-hRange*x);
+                    parent.vertex(left + hRange*y, bottom-vRange*x);
                 }
                 else
                 {
@@ -219,24 +228,27 @@ public class XYChart extends AbstractChart
                     parent.fill(cTable.findColour(data[2][i]));
                 }
                 
-                float x,y;
+                float x,y;        
+                float xValue = Math.max(Math.min(data[0][i],getMax(0)),getMin(0));
+                float yValue = Math.max(Math.min(data[1][i],getMax(1)),getMin(1));
                 
                 if (getIsLogScale(0))
                 {
-                    x = convertToLog(data[0][i], getMinLog(0), getMaxLog(0));
+                    x = convertToLog(xValue, getMinLog(0), getMaxLog(0));
                 }
                 else
                 {
-                    x = (data[0][i]-getMin(0))/(getMax(0)-getMin(0));
+                    x = (xValue-getMin(0))/(getMax(0)-getMin(0));
                 }
                 if (getIsLogScale(1))
                 {
-                    y = convertToLog(data[1][i], getMinLog(1), getMaxLog(1));
+                    y = convertToLog(yValue, getMinLog(1), getMaxLog(1));
                 }
                 else
                 {
-                    y = (data[1][i]-getMin(1))/(getMax(1)-getMin(1));
+                    y = (yValue-getMin(1))/(getMax(1)-getMin(1));
                 }
+                
                 if (maxPointSize > 0)
                 {
                     // Size by data.
@@ -244,7 +256,7 @@ public class XYChart extends AbstractChart
                     
                     if (transposeAxes)
                     {
-                        parent.ellipse(left + vRange*y, bottom-hRange*x,radius,radius);
+                        parent.ellipse(left + hRange*y, bottom-vRange*x,radius,radius);
                     }
                     else
                     {
@@ -256,7 +268,7 @@ public class XYChart extends AbstractChart
                     // Uniform size.
                     if (transposeAxes)
                     {
-                        parent.ellipse(left + vRange*y, bottom-hRange*x,pointSize,pointSize);
+                        parent.ellipse(left + hRange*y, bottom - vRange*x,pointSize,pointSize);
                     }
                     else
                     {
@@ -326,8 +338,6 @@ public class XYChart extends AbstractChart
                     float logTic = logTics[0][i];
                     float tic = (float)Math.pow(10,logTic);
                     
-                    
-                    //System.err.println("Tic "+i+" is "+tic+" logTic is "+logTic+" min log: "+getMinLog(0)+" max log: "+getMaxLog(0)+" left is "+left);
                     if (tic <= getMax(0))
                     {
                         if (transposeAxes)
@@ -470,12 +480,111 @@ public class XYChart extends AbstractChart
             parent.textAlign(PConstants.RIGHT, PConstants.TOP);
             parent.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
         }
-        
+                
         parent.popStyle();
         parent.popMatrix();
     }
     
+    /** Converts given data point into its screen location. This location will be based on 
+     *  the last time the data were drawn with the <code>draw()</code> method. If this is
+     *  called before any call to <code>draw()</code> has been made, it will return null.
+     *  @param dataPoint (x,y) pair representing an item of data.
+     *  @return Screen coordinates corresponding to the given data point or null if screen space undefined.
+     */
+    public PVector getDataToScreen(PVector dataPoint)
+    {
+        float hRange = right-left;
+        float vRange = bottom-top;
+        
+        if ((vRange <= 0) || (hRange <=0))
+        {
+            return null;
+        }
+        
+        float x,y;
+        
+        //Scale data points between 0-1.
+        if (getIsLogScale(0))
+        {
+            x = convertToLog(dataPoint.x, getMinLog(0), getMaxLog(0));
+        }
+        else
+        {
+            x = (dataPoint.x-getMin(0))/(getMax(0)-getMin(0));
+        }
+        if (getIsLogScale(1))
+        {
+            y = convertToLog(dataPoint.y, getMinLog(1), getMaxLog(1));
+        }
+        else
+        {
+            y = (dataPoint.y-getMin(1))/(getMax(1)-getMin(1));
+        }
+        
+        if (transposeAxes)
+        {
+            return new PVector(left + hRange*y, bottom - vRange*x);
+        }
+        return new PVector(left + hRange*x, bottom - vRange*y);
+    }
     
+    /** Converts given screen coordinate into its equivalent data value. This value will
+     *  be based on the last time the data were drawn with the <code>draw()</code> method. 
+     *  If this is called before any call to <code>draw()</code> has been made, it will return null.
+     *  @param screenPoint Screen coordinates to convert into data pair.
+     *  @return (x,y) pair representing an item of data that would be displayed at the given screen
+     *          location or null if screen space not defined or screenPoint is outside of the 
+     *          visible chart space.
+     */
+    public PVector getScreenToData(PVector screenPoint)
+    {
+        float hRange = right-left;
+        float vRange = bottom-top;
+        
+        if ((vRange <= 0) || (hRange <=0))
+        {
+            return null;
+        }
+        
+        if ((screenPoint.x < left) || (screenPoint.x > right) || (screenPoint.y < top) || (screenPoint.y > bottom))
+        {
+            return null;
+        }
+        
+        // Scale the screen coordinates between 0-1.
+        float x,y;
+        if (transposeAxes)
+        {
+            y = (screenPoint.x - left)/hRange;
+            x = (bottom - screenPoint.y)/vRange;
+        }
+        else
+        {
+            x = (screenPoint.x - left)/hRange;
+            y = (bottom - screenPoint.y)/vRange;
+        }
+        
+        if (getIsLogScale(0))
+        {
+            x = convertFromLog(x, getMinLog(0), getMaxLog(0));
+        }
+        else
+        {
+            x = x*(getMax(0)-getMin(0)) + getMin(0);
+        }
+        
+        if (getIsLogScale(1))
+        {
+            y = convertFromLog(y, getMinLog(1), getMaxLog(1));
+        }
+        else
+        {
+            y = y*(getMax(1)-getMin(1)) + getMin(1);
+        }
+        
+        return new PVector(x,y);
+    }
+        
     /** Determines the colour of the points to be displayed on the chart. This method
      *  will give a uniform colour to all points.
      *  @param colour Colour of points to be displayed.
@@ -570,7 +679,8 @@ public class XYChart extends AbstractChart
     }
     
     /** Sets the minimum value for x values to be represented. This can be used to force
-     *  the x-axis to start at 0.
+     *  the x-axis to start at 0 or some other value. If the given value is <code>Float.NaN</code>,
+     *  then the minimum x-value will be set to the minimum of the data x-values in the chart.
      *  @param minX Minimum x-value to be represented on the x-axis.
      */
     public void setMinX(float minX)
@@ -579,7 +689,8 @@ public class XYChart extends AbstractChart
     }
     
     /** Sets the minimum value for y values to be represented. This can be used to force
-     *  the y-axis to start at 0.
+     *  the y-axis to start at 0 or some other value. If the given value is <code>Float.NaN</code>,
+     *  then the minimum y-value will be set to the minimum of the data y-values in the chart.
      *  @param minY Minimum y-value to be represented on the y-axis.
      */
     public void setMinY(float minY)
@@ -589,7 +700,10 @@ public class XYChart extends AbstractChart
 
     /** Sets the maximum value for x values to be represented. This can be used to force
      *  multiple charts to share the same axis range independently of data to be represented.
-     *  @param maxX Maximum x-value to be represented on the x-axis.
+     *  If the given value is <code>Float.NaN</code>, then the maximum x-value will be set 
+     *  to the maximum of the data x-values in the chart.
+     *  @param maxX Maximum x-value to be represented on the x-axis or <code>Float.NaN</code>
+     *              to use data maximum.
      */
     public void setMaxX(float maxX)
     {
@@ -598,11 +712,54 @@ public class XYChart extends AbstractChart
     
     /** Sets the minimum value for y values to be represented. This can be used to force
      *  multiple charts to share the same axis range independently of data to be represented.
-     *  @param maxY Maximum y-value to be represented on the y-axis.
+     *  If the given value is <code>Float.NaN</code>, then the minimum y-value will be set 
+     *  to the maximum of the data y-values in the chart.
+     *  @param maxY Maximum y-value to be represented on the y-axis or <code>Float.NaN</code>
+     *              go use the data maximum.
      */
     public void setMaxY(float maxY)
     {
         setMax(1,maxY);
+    }
+    
+    /** Reports the minimum x value that can be displayed by the XY chart. Note that this need not
+     *  necessarily be the same as the minimum data value being displayed since axis rounding or
+     *  calls to <code>setMinX()</code> can affect the value.
+     *  @return Minimum value that can be represented by the XY chart on the x axis.
+     */
+    public float getMinX()
+    {
+        return getMin(0);
+    }
+    
+    /** Reports the maximum x value that can be displayed by the XY chart. Note that this need not
+     *  necessarily be the same as the maximum data value being displayed since axis rounding or
+     *  calls to <code>setMaxX()</code> can affect the value.
+     *  @return Maximum value that can be represented by the XY chart on the x axis.
+     */
+    public float getMaxX()
+    {
+        return getMax(0);
+    }
+    
+    /** Reports the minimum y value that can be displayed by the XY chart. Note that this need not
+     *  necessarily be the same as the minimum data value being displayed since axis rounding or
+     *  calls to <code>setMinY()</code> can affect the value.
+     *  @return Minimum value that can be represented by the XY chart on the y axis.
+     */
+    public float getMinY()
+    {
+        return getMin(1);
+    }
+    
+    /** Reports the maximum y value that can be displayed by the XY chart. Note that this need not
+     *  necessarily be the same as the maximum data value being displayed since axis rounding or
+     *  calls to <code>setMaxY()</code> can affect the value.
+     *  @return Maximum value that can be represented by the XY chart on the y axis.
+     */
+    public float getMaxY()
+    {
+        return getMax(1);
     }
     
     /** Sets the x-axis label. If null, no label is drawn.

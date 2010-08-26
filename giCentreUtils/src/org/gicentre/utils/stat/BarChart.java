@@ -4,6 +4,7 @@ import org.gicentre.utils.colour.ColourTable;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PVector;
 
 //  ********************************************************************************
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
@@ -40,10 +41,11 @@ public class BarChart extends AbstractChart
     private boolean reverseCats;
     private ColourTable cTable;
     
-    private String[] catLabels;                  // Category labels.
+    private String[] catLabels;                 // Category labels.
     private boolean showLabels;
-    private String categoryLabel, valueLabel;    // Axis labels.
-    private Float catAxisPosition;               // Position of the category axis (defaults to minumum value).
+    private String categoryLabel, valueLabel;   // Axis labels.
+    private Float catAxisPosition;              // Position of the category axis (defaults to minumum value).
+    private float top,left,bottom,right;        // Bounds of the data area (excludes axes and axis labels).
           
     // ------------------------------- Constructors --------------------------------
     
@@ -62,6 +64,10 @@ public class BarChart extends AbstractChart
         showLabels    = false;
         categoryLabel = null;
         valueLabel    = null;
+        top           = 0;
+        bottom        = 0;
+        left          = 0;
+        right         = 0;
     }
     
     // ---------------------------------- Methods ----------------------------------
@@ -143,10 +149,10 @@ public class BarChart extends AbstractChart
             extraBottomBorder +=parent.textAscent()+parent.textDescent();
         }  
         
-        float left   = getBorder(Side.LEFT) + extraLeftBorder;
-        float right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
-        float bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
-        float top    = getBorder(Side.TOP)+extraTopBorder;
+        left   = getBorder(Side.LEFT) + extraLeftBorder;
+        right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
+        bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
+        top    = getBorder(Side.TOP)+extraTopBorder;
         float hRange = right-left;
         float vRange = bottom-top;
         float axisValue;
@@ -188,26 +194,27 @@ public class BarChart extends AbstractChart
             }
             
             int index = reverseCats?(data[0].length-1-i):i;
+            float dataValue = Math.max(Math.min(data[1][index],getMax(1)),getMin(1));
             if (transposeAxes)
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left, top + i*(barWidth+barGap), hRange*convertToLog(data[1][index],getMinLog(1),getMaxLog(1)),barWidth);                    
+                    parent.rect(left, top + i*(barWidth+barGap), hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
                 }
                 else
                 {
-                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap), hRange*(data[1][index]-axisValue)/(getMax(1)-getMin(1)),barWidth);
+                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap), hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
                 }
             }
             else
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left + i*(barWidth+barGap), bottom, barWidth, -vRange*convertToLog(data[1][index],getMinLog(1),getMaxLog(1)));   
+                    parent.rect(left + i*(barWidth+barGap), bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
                 }
                 else
                 {
-                    parent.rect(left + i*(barWidth+barGap), bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(data[1][index]-axisValue)/(getMax(1)-getMin(1)));
+                    parent.rect(left + i*(barWidth+barGap), bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
                 }
             }
         }
@@ -344,9 +351,111 @@ public class BarChart extends AbstractChart
                 }
             }
         }
-        
         parent.popStyle();
         parent.popMatrix();
+    }
+    
+    /** Converts given data point into its screen location. The x value of the dataPoint should correspond
+     *  to the bar number starting at 0. The x location will be the midpoint of the bar corresponding to the
+     *  data point's bar number. The location returned will be based on the last time the data were drawn 
+     *  with the <code>draw()</code> method. If this is called before any call to <code>draw()</code> has
+     *  been made, it will return null.
+     *  @param dataPoint (x,y) pair representing an item of data.
+     *  @return Screen coordinates corresponding to the given data point or null if screen space undefined.
+     */
+    public PVector getDataToScreen(PVector dataPoint)
+    {
+        float hRange = right-left;
+        float vRange = bottom-top;
+        
+        if ((vRange <= 0) || (hRange <=0))
+        {
+            return null;
+        }
+        
+        float x,y;
+        
+        //Scale data points between 0-1.
+        x = dataPoint.x/(data[0].length-1);
+
+        if (getIsLogScale(1))
+        {
+            y = convertToLog(dataPoint.y, getMinLog(1), getMaxLog(1));
+        }
+        else
+        {
+            y = (dataPoint.y-getMin(1))/(getMax(1)-getMin(1));
+        }
+        
+        
+        if (transposeAxes)
+        {
+            float barWidth = (vRange - (data[0].length-1)*barGap) / data[0].length;   
+            return new PVector(left + hRange*y, bottom - barWidth/2f - (vRange-barWidth)*x);
+        }
+        
+        float barWidth = (hRange - (data[0].length-1)*barGap) / data[0].length;    
+        return new PVector(left + barWidth/2f + (hRange-barWidth)*x, bottom - vRange*y);
+    }
+    
+    /** Converts given screen coordinate into its equivalent data value. This value will
+     *  be based on the last time the data were drawn with the <code>draw()</code> method. 
+     *  If this is called before any call to <code>draw()</code> has been made, it will return null.
+     *  @param screenPoint Screen coordinates to convert into data pair.
+     *  @return (x,y) pair representing an item of data that would be displayed at the given screen
+     *          location or null if screen space not defined or screenPoint is outside of the 
+     *          visible chart space.
+     */
+    public PVector getScreenToData(PVector screenPoint)
+    {
+        float hRange = right-left;
+        float vRange = bottom-top;
+        
+        if ((vRange <= 0) || (hRange <=0))
+        {
+            return null;
+        }
+        
+        if ((screenPoint.x < left) || (screenPoint.x > right) || (screenPoint.y < top) || (screenPoint.y > bottom))
+        {
+            return null;
+        }
+        
+        // Scale the screen coordinates between 0-1.
+        float x,y;
+        if (transposeAxes)
+        {
+            float barWidth = (vRange - (data[0].length-1)*barGap) / data[0].length;
+            y = (screenPoint.x - (left-barWidth/2f))/hRange;
+            x = (bottom - screenPoint.y)/(vRange-barWidth);
+        }
+        else
+        {   
+            x = (screenPoint.x - left)/(hRange);
+            y = (bottom - screenPoint.y)/vRange;
+        }
+        
+        x = (int)(x*data[0].length);
+        
+        if (getIsLogScale(1))
+        {
+            y = convertFromLog(y, getMinLog(1), getMaxLog(1));
+        }
+        else
+        {
+            y = y*(getMax(1)-getMin(1)) + getMin(1);
+        }
+        
+        return new PVector(x,y);
+    }
+    
+    /** Reports the number of bars in the bar chart. This value will include any bars that
+     *  happen to have a height of 0.
+     *  @return Number of bars in the bar chart.
+     */
+    public int getNumBars()
+    {
+        return data[0].length;
     }
     
     /** Determines whether or not the values represented by the length of each bar should be log10-scaled.
@@ -358,17 +467,41 @@ public class BarChart extends AbstractChart
     }
 
     /** Sets the minimum value for the bar chart. Can be used to ensure multiple charts
-     *  can share the same origin.
-     *  @param minVal Minimum value to use for scaling bar lengths.
+     *  can share the same origin. If the given value is <code>Float.NaN</code>, then 
+     *  the minimum value will be set to the minimum of the data values in the chart.
+     *  @param minVal Minimum value to use for scaling bar lengths or <code>Float.NaN</code> 
+     *                if data minimum is to be used.
      */
     public void setMinValue(float minVal)
     {
        setMin(1,minVal);
     }
     
+    /** Reports the minimum value that can be displayed by the bar chart. Note that this need not
+     *  necessarily be the same as the minimum data value being displayed since axis rounding or
+     *  calls to <code>setMinValue()</code> can affect the value.
+     *  @return Minimum value that can be represented by the bar chart.
+     */
+    public float getMinValue()
+    {
+        return getMin(1);
+    }
+    
+    /** Reports the maximum value that can be displayed by the bar chart. Note that this need not
+     *  necessarily be the same as the maximum data value being displayed since axis rounding or
+     *  calls to <code>setMaxValue()</code> can affect the value.
+     *  @return Maximum value that can be represented by the bar chart.
+     */
+    public float getMaxValue()
+    {
+        return getMax(1);
+    }
+    
     /** Sets the maximum value for the bar chart. Can be used to ensure multiple charts
-     *  are scaled to the same maximum.
-     *  @param maxVal Maximum value to use for scaling bar lengths.
+     *  are scaled to the same maximum. If the given value is <code>Float.NaN</code>, then 
+     *  the maximum value will be set to the maximum of the data values in the chart.
+     *  @param maxVal Maximum value to use for scaling bar lengths or <code>Float.NaN</code> 
+     *                if data minimum is to be used.
      */
     public void setMaxValue(float maxVal)
     {
