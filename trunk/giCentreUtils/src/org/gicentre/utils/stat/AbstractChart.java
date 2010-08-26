@@ -11,7 +11,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 19th August, 2010. 
+ *  @version 3.1, 26th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -146,29 +146,55 @@ public abstract class AbstractChart
     }
         
     /** Sets the minimum and maximum values of the data to be charted on the axis of the given dimension.
+     *  If either the min or max values given are <code>Float.NaN</code>, then the minimum or maximum
+     *  value respectively will be set to that of the min/max data items in the given dimension.
      *  @param dimension Dimension of the data whose minimum value is to be set.
-     *  @param min Minimum value to be represented on the axis.
-     *  @param max Maximum value to be represented on the axis.
+     *  @param min Minimum value to be represented on the axis or <code>Float.NaN</code> for natural data minimum.
+     *  @param max Maximum value to be represented on the axis or <code>Float.NaN</code> for natural data maximum..
      */
     protected void setRange(int dimension, float min, float max)
     {
-       forceMin[dimension] = true;
-       this.min[dimension] = min;
- 
-       forceMax[dimension] = true;
-       this.max[dimension] = max;
-       updateChart(dimension);
+        if (Float.isNaN(min))
+        {
+            forceMin[dimension] = false;
+        }
+        else
+        {
+            forceMin[dimension] = true;
+            this.min[dimension] = min;
+        }
+
+        if (Float.isNaN(max))
+        {
+            forceMax[dimension] = false;
+        }
+        else
+        {
+            forceMax[dimension] = true;
+            this.max[dimension] = max;     
+        }
+        updateChart(dimension);
     }
     
     /** Sets the minimum value of the data to be charted on the axis of the given dimension.
+     *  If the given value is <code>Float.NaN</code>, then the minimum value will be set to 
+     *  the minimum of the data items in the given dimension.
      *  @param dimension Dimension of the data whose minimum value is to be set.
-     *  @param min Minimum value to be represented on the axis.
+     *  @param min Minimum value to be represented on the axis or <code>Float.NaN</code> if data
+     *             minimum is to be used.
      */
     protected void setMin(int dimension, float min)
     {
-       forceMin[dimension] = true;
-       this.min[dimension] = min;
-       updateChart(dimension);
+        if (Float.isNaN(min))
+        {
+            forceMin[dimension] = false;
+        }
+        else
+        {
+            forceMin[dimension] = true;
+            this.min[dimension] = min;
+        }
+        updateChart(dimension);
     }
     
     /** Reports the minimum value of the data to be charted on the axis of the given dimension.
@@ -208,13 +234,23 @@ public abstract class AbstractChart
     }
     
     /** Sets the maximum value of the data to be charted on the axis of the given dimension.
+     *  If the given value is <code>Float.NaN</code>, then the maximum value will be set to 
+     *  the maximum of the data items in the given dimension.
      *  @param dimension Dimension of the data whose maximum value is to be set.
-     *  @param max Maximum value to be represented on the axis.
+     *  @param max Maximum value to be represented on the axis or <code>Float.NaN</code> if data
+     *             minimum is to be used.
      */
     protected void setMax(int dimension, float max)
     {
-       forceMax[dimension] = true;
-       this.max[dimension] = max;
+        if (Float.isNaN(max))
+        {
+            forceMax[dimension] = false;
+        }
+        else
+        {
+            forceMax[dimension] = true;
+            this.max[dimension] = max;
+        }
        updateChart(dimension);
     }
     
@@ -455,7 +491,7 @@ public abstract class AbstractChart
         }
     }
     
-    /** Converts the given value assumed to be positive to a log value
+    /** Converts the given value, which is assumed to be positive, to a log value
      *  scaled between 0 and 1
      *  @param dataItem Item from which to find log value.
      *  @param minLogValue Minimum value of the log10 of dataItem (used to scale result between 0-1)
@@ -468,13 +504,25 @@ public abstract class AbstractChart
         {
             return 0;
         }
-        
         return (float)((Math.log10(dataItem)-minLogValue)/(maxLogValue-minLogValue));
+    }
+    
+    /** Converts the given value assumed to be on a log scale between 0 and 1, to an non-log value. 
+     *  @param logValue 0-1 log value from which the data value is to be found. If this value is
+     *                  outside the 0-1 range, a value of 0 will be returned.
+     *  @param minLogValue Minimum value of the log10 of dataItem (used to unscale the logValue from 0-1)
+     *  @param maxLogValue Maximum value of the log10 of dataItem (used to unscale the logValue from 0-1)
+     *  @return Data value that would have produced the given scaled log value within the given range.
+     */
+    protected static float convertFromLog(double logValue, double minLogValue, double maxLogValue)
+    {
+        if ((logValue < 0) || (logValue >1))
+        {
+            return 0;
+        }
         
-        //double smallestInterval = maxValue<1?maxValue/1000:0.5/maxValue;
-        
-        
-        //return (float)(1.0-Math.log10(((dataItem+smallestInterval)/maxValue))/Math.log10(smallestInterval));
+        double unscaledLog = logValue*(maxLogValue-minLogValue) + minLogValue;
+        return (float)Math.pow(10,unscaledLog);
     }
    
     // ------------------------------ Private methods ------------------------------
@@ -485,13 +533,18 @@ public abstract class AbstractChart
      */
     private void updateChart(int dimension)
     {
-        // Update the range of values of dataset 1 if it exists.
+        // Update the range of values of dataset if it exists.
         if ((data[dimension] != null) && (data[dimension].length > 0))
-        {
+        {                                   
             if (forceMin[dimension] == false)
             {
                 min[dimension]    = Float.MAX_VALUE;  
                 minLog[dimension] = Float.MAX_VALUE;
+                
+                for (float dataItem : data[dimension])
+                {
+                    min[dimension] = Math.min(min[dimension], dataItem);
+                }
             }
             else
             {
@@ -503,17 +556,18 @@ public abstract class AbstractChart
             {
                 max[dimension]    = -Float.MAX_VALUE;
                 maxLog[dimension] = -Float.MAX_VALUE;
+                
+                for (float dataItem : data[dimension])
+                {
+                    max[dimension] = Math.max(max[dimension], dataItem);
+                }
             }
             else
             {
                 maxLog[dimension] = (float)Math.log10(max[dimension]);
             }
 
-            for (float dataItem : data[dimension])
-            {
-                max[dimension] = Math.max(max[dimension], dataItem);
-                min[dimension] = Math.min(min[dimension], dataItem);
-            }
+            
 
             tics[dimension] = getTics(min[dimension], max[dimension]);
             

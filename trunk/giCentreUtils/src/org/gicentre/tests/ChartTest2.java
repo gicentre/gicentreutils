@@ -5,11 +5,12 @@ import org.gicentre.utils.stat.XYChart;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PVector;
 
 //  ****************************************************************************************
 /** Tests more sophisticated chart options in a Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 19th August, 2010. 
+ *  @version 3.1, 26th August, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -48,6 +49,7 @@ public class ChartTest2 extends PApplet
     private boolean showXAxis, showYAxis;
     private boolean showXAxisLabel, showYAxisLabel;
     private boolean transpose;
+    private boolean capValues;
     private int barGap=2;
 
     // ---------------------------- Processing methods -----------------------------
@@ -56,7 +58,7 @@ public class ChartTest2 extends PApplet
      */
     public void setup()
     {   
-        size(350,350);
+        size(550,350);
         smooth();
         textFont(createFont("Helvetica",10));
         textSize(10);
@@ -66,33 +68,31 @@ public class ChartTest2 extends PApplet
         showXAxisLabel = true;
         showYAxisLabel = true;
         transpose      = false;
+        capValues      = false;
 
         float[] chartData = new float[] {12,-7,16,13,25};
 
         barChart = new BarChart(this);
         barChart.setData(chartData);
-
-        barChart.showValueAxis(showYAxis);
-        barChart.showCategoryAxis(showXAxis);
         barChart.transposeAxes(false);
         barChart.setBarGap(barGap);
+        barChart.setBarColour(color(200,150,150));
         barChart.setCategoryAxisLabel("This is the x axis");
         barChart.setValueAxisLabel("This is the y axis");
-        barChart.setBarColour(color(200,150,150));
-        barChart.setCategoryAxisAt(0);
-       
+        barChart.showCategoryAxis(showXAxis);
+        barChart.showValueAxis(showYAxis);
+        barChart.setCategoryAxisAt(0);          // Allow bars to dip below axis when negative. 
         
         xyChart = new XYChart(this);
         xyChart.setData(new float[] {1,2,3,4,5}, chartData);
-        xyChart.setXAxisLabel("This is the x axis");
-        xyChart.setYAxisLabel("This is the y axis");
+        
         xyChart.setLineColour(color(80,30,30));
         xyChart.setLineWidth(2);
         xyChart.setPointSize(10);
         xyChart.setPointColour(color(80,80,150,180));
-        xyChart.showXAxis(showXAxis);
-        xyChart.showYAxis(showYAxis);
         xyChart.setXAxisAt(0);
+        xyChart.setMinY(barChart.getMinValue()); // Scale line graph to use same space as bar graph.
+        xyChart.setMaxY(barChart.getMaxValue());
     }
 
     /** Draws some charts.
@@ -101,31 +101,67 @@ public class ChartTest2 extends PApplet
     {   
         background(255);
         noLoop();
-        
-        // Draw a bounding rectangle to check graph occupies space correctly.
-        strokeWeight(1);
-        stroke(250,100,100);
-        rect(1,1,width-2,height-2);
-        
+                
         // Draw the bar chart first, then overlay the line chart.
-        barChart.draw(1,1,width-2,height-2);
-        xyChart.draw(1,1,width-2,height-2); 
+        barChart.draw(1,1,width-2,height-2);  
+        
+        PVector bottomLeft = barChart.getDataToScreen(new PVector(0,barChart.getMinValue()));
+        PVector topRight   = barChart.getDataToScreen(new PVector(barChart.getNumBars()-1,barChart.getMaxValue()));
+                 
+        xyChart.draw(bottomLeft.x-2,topRight.y-2,topRight.x+5-bottomLeft.x,bottomLeft.y-topRight.y+5);
+
+    }
+    
+    public void mousePressed()
+    {
+        PVector dp = barChart.getScreenToData(new PVector(mouseX,mouseY));
+        if (dp == null)
+        {
+            System.out.println("Screen point of "+mouseX+","+mouseY+" is outside the data area.");
+        }
+        else
+        {
+            System.out.println("Screen point of "+mouseX+","+mouseY+" gives XY data point of "+dp.x+","+dp.y);
+            PVector sp = barChart.getDataToScreen(dp);
+            System.out.println("    which in turn gives screen point of "+sp.x+","+sp.y);
+        }
     }
 
     public void keyPressed()
     {
-        if (key == 'x')
+        if (key == 'c')
+        {
+            capValues = ! capValues;
+            
+            if (capValues)
+            {
+                barChart.setMaxValue(20);
+                barChart.setMinValue(-5);
+                xyChart.setMaxY(20);
+                xyChart.setMinY(-5);
+            }
+            else
+            {
+                // Use data to determine range.
+                barChart.setMaxValue(Float.NaN);
+                barChart.setMinValue(Float.NaN);
+                xyChart.setMinY(barChart.getMinValue()); 
+                xyChart.setMaxY(barChart.getMaxValue());
+            }
+            loop();
+        }
+        else if (key == 'x')
         {
             showXAxis = !showXAxis;
             barChart.showCategoryAxis(showXAxis);
-            xyChart.showXAxis(showXAxis);
+            //xyChart.showXAxis(showXAxis);
             loop();
         }
         else if (key == 'y')
         {
             showYAxis = !showYAxis;
             barChart.showValueAxis(showYAxis);
-            xyChart.showYAxis(showYAxis);
+            //xyChart.showYAxis(showYAxis);
             loop();
         }
         else if (key == 'l')
