@@ -10,9 +10,8 @@ import processing.core.PVector;
 
 //  ****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
- *  @author Jo Wood
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 26th August, 2010. 
+ *  @version 3.1, 6th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -855,5 +854,16 @@ public class XYChart extends AbstractChart
     public void transposeAxes(boolean transpose)
     {
         this.transposeAxes = transpose;
+        
+        // This is a bit of a kludge to ensure that new axis borders are calculated
+        // when the graph is transposed. By changing the axis visibility and then changing
+        // them back again, it ensures the new borders are calculated correctly.
+        boolean showXAxis = getShowAxis(0);
+        boolean showYAxis = getShowAxis(1);
+        showXAxis(!showXAxis);
+        showYAxis(!showYAxis);
+        
+        showXAxis(showXAxis);
+        showYAxis(showYAxis);
     }
 }
