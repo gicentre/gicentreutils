@@ -391,6 +391,9 @@ public abstract class AbstractChart
             }
             else if (side == Side.LEFT)
             {
+                
+                //System.err.println("Finding left border using dimension "+dimension);
+                
                 borderL    = minBorder;
                 minBorderL = minBorder;
                 if (showAxis)

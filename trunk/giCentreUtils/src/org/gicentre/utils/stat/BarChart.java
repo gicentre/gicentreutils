@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 20th August, 2010. 
+ *  @version 3.1, 6th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -598,6 +598,17 @@ public class BarChart extends AbstractChart
     public void transposeAxes(boolean transpose)
     {
         this.transposeAxes = transpose;
+        
+        // This is a bit of a kludge to ensure that new axis borders are calculated
+        // when the graph is transposed. By changing the axis visibility and then changing
+        // it back again, it ensures the new values are calcualted.
+        boolean showCategoryAxis = getShowAxis(0);
+        boolean showValueAxis = getShowAxis(1);
+        showCategoryAxis(!showCategoryAxis);
+        showValueAxis(!showValueAxis);
+        
+        showCategoryAxis(showCategoryAxis);
+        showValueAxis(showValueAxis);
     }
     
     /** Sets the gap between adjacent bars.
