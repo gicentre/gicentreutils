@@ -11,7 +11,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 26th August, 2010. 
+ *  @version 3.1, 7th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -143,6 +143,20 @@ public abstract class AbstractChart
         }
         this.data[dimension] = data;
         updateChart(dimension);
+    }
+    
+    /** Reports the data to be displayed along the given axis of the chart. 
+     *  @param dimension Dimension of the data to report.
+     *  @return data Collection of data items represented in the chart or null if no data exist in the given dimension.
+     */
+    protected float[] getData(int dimension)
+    {
+        if (dimension >= MAX_DIMENSIONS)
+        {
+            System.err.println("Warning: Cannot get data for dimension "+dimension+": permissable range 0-"+(MAX_DIMENSIONS-1));
+            return null;
+        }
+        return data[dimension];
     }
         
     /** Sets the minimum and maximum values of the data to be charted on the axis of the given dimension.

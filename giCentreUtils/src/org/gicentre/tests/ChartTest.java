@@ -10,7 +10,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Tests chart drawing in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0.1, 17th August, 2010. 
+ *  @version 3.1, 6th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -51,6 +51,7 @@ public class ChartTest extends PApplet
     private boolean useLog;
     
     private int barGap=2;
+    private int barPad = 0;
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -176,6 +177,24 @@ public class ChartTest extends PApplet
                 {
                     barGap++;
                     chart1.setBarGap(barGap);
+                    loop();
+                }
+            }
+            else if (keyCode == PConstants.DOWN)
+            {
+                if (barPad > 0)
+                {
+                    barPad--;
+                    chart1.setBarPadding(barPad);
+                    loop();
+                }
+            }
+            else if (keyCode == PConstants.UP)
+            {
+                if (barPad < width)
+                {
+                    barPad++;
+                    chart1.setBarPadding(barPad);
                     loop();
                 }
             }

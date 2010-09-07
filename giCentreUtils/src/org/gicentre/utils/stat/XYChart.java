@@ -11,7 +11,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 6th September, 2010. 
+ *  @version 3.1, 7th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -721,6 +721,22 @@ public class XYChart extends AbstractChart
         setMax(1,maxY);
     }
     
+    /** Reports the data values that are displayed in the chart along the X axis.
+     *  @return Sequence of data values represented by their position along the x-axis.
+     */
+    public float[] getXData()
+    {
+        return getData(0);
+    }
+    
+    /** Reports the data values that are displayed in the chart along the Y axis.
+     *  @return Sequence of data values represented by their position along the y-axis.
+     */
+    public float[] getYData()
+    {
+        return getData(1);
+    }
+
     /** Reports the minimum x value that can be displayed by the XY chart. Note that this need not
      *  necessarily be the same as the minimum data value being displayed since axis rounding or
      *  calls to <code>setMinX()</code> can affect the value.
