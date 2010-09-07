@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests more sophisticated chart options in a Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 26th August, 2010. 
+ *  @version 3.1, 7th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -51,6 +51,10 @@ public class ChartTest2 extends PApplet
     private boolean transpose;
     private boolean capValues;
     private int barGap=2;
+    private int barPad=0;
+    
+    private PVector dataScreenLocation;
+    private PVector dataPoint;
 
     // ---------------------------- Processing methods -----------------------------
 
@@ -63,13 +67,14 @@ public class ChartTest2 extends PApplet
         textFont(createFont("Helvetica",10));
         textSize(10);
         
-        showXAxis      = true;
-        showYAxis      = true;
-        showXAxisLabel = true;
-        showYAxisLabel = true;
-        transpose      = false;
-        capValues      = false;
-
+        showXAxis          = true;
+        showYAxis          = true;
+        showXAxisLabel     = true;
+        showYAxisLabel     = true;
+        transpose          = false;
+        capValues          = false;
+        dataScreenLocation = null;
+       
         float[] chartData = new float[] {12,-7,16,13,25};
 
         barChart = new BarChart(this);
@@ -109,22 +114,52 @@ public class ChartTest2 extends PApplet
         PVector topRight   = barChart.getDataToScreen(new PVector(barChart.getNumBars()-1,barChart.getMaxValue()));
                  
         xyChart.draw(bottomLeft.x-2,topRight.y-2,topRight.x+5-bottomLeft.x,bottomLeft.y-topRight.y+5);
-
+        
+        // Draw the last clicked data item.
+        if (dataPoint != null)
+        {
+            stroke(0,200);
+            strokeWeight(2);
+            
+            float barValue = barChart.getData()[(int)dataPoint.x];
+            if (((barValue > 0) && (dataPoint.y <=barValue) && (dataPoint.y >= 0)) ||
+                ((barValue < 0) && (dataPoint.y >=barValue) && (dataPoint.y <=0)))
+            {
+                fill(50,150,50,180);
+            }
+            else
+            {
+                fill(150,50,50,180);
+            }
+            ellipse(dataScreenLocation.x,dataScreenLocation.y,20,20);
+        }
     }
     
     public void mousePressed()
     {
-        PVector dp = barChart.getScreenToData(new PVector(mouseX,mouseY));
-        if (dp == null)
+        dataPoint = barChart.getScreenToData(new PVector(mouseX,mouseY));
+        if (dataPoint == null)
         {
             System.out.println("Screen point of "+mouseX+","+mouseY+" is outside the data area.");
         }
         else
         {
-            System.out.println("Screen point of "+mouseX+","+mouseY+" gives XY data point of "+dp.x+","+dp.y);
-            PVector sp = barChart.getDataToScreen(dp);
-            System.out.println("    which in turn gives screen point of "+sp.x+","+sp.y);
+            System.out.println("Screen point of "+mouseX+","+mouseY+" gives XY data point of "+(int)dataPoint.x+","+dataPoint.y);
+            dataScreenLocation = barChart.getDataToScreen(dataPoint);
+            System.out.println("    which in turn gives screen point of "+
+                               Math.round(dataScreenLocation.x)+","+Math.round(dataScreenLocation.y));
         }
+        loop();
+    }
+    
+    public void mouseDragged()
+    {
+        dataPoint = barChart.getScreenToData(new PVector(mouseX,mouseY));
+        if (dataPoint != null)
+        {
+            dataScreenLocation = barChart.getDataToScreen(dataPoint);
+        }
+        loop();
     }
 
     public void keyPressed()
@@ -154,14 +189,18 @@ public class ChartTest2 extends PApplet
         {
             showXAxis = !showXAxis;
             barChart.showCategoryAxis(showXAxis);
-            //xyChart.showXAxis(showXAxis);
             loop();
         }
         else if (key == 'y')
         {
             showYAxis = !showYAxis;
             barChart.showValueAxis(showYAxis);
-            //xyChart.showYAxis(showYAxis);
+            
+            // Because the value axis visbility has changed, this might result in
+            // a rescaling of the data range. Therefore the XY chart needs to update
+            // its range accordingly.
+            xyChart.setMinY(barChart.getMinValue());
+            xyChart.setMaxY(barChart.getMaxValue());
             loop();
         }
         else if (key == 'l')
@@ -199,6 +238,24 @@ public class ChartTest2 extends PApplet
                 barGap++;
                 barChart.setBarGap(barGap);
                 loop();
+            }
+            else if (keyCode == PConstants.DOWN)
+            {
+                if (barPad > 0)
+                {
+                    barPad--;
+                    barChart.setBarPadding(barPad);
+                    loop();
+                }
+            }
+            else if (keyCode == PConstants.UP)
+            {
+                if (barPad < width)
+                {
+                    barPad++;
+                    barChart.setBarPadding(barPad);
+                    loop();
+                }
             }
         }
     }

@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 6th September, 2010. 
+ *  @version 3.1, 7th September, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -37,7 +37,8 @@ public class BarChart extends AbstractChart
     // ----------------------------- Object variables ------------------------------
       
     private int barColour;
-    private float barGap;
+    private float barGap;                       // Gap between interior bars.
+    private float barPad;                       // Symmetrical padding around each bar
     private boolean reverseCats;
     private ColourTable cTable;
     
@@ -57,6 +58,7 @@ public class BarChart extends AbstractChart
         super(parent);
        
         barGap        = 1;
+        barPad        = 0;
         barColour     = parent.color(180);
         reverseCats   = false;
         cTable        = null;
@@ -86,6 +88,14 @@ public class BarChart extends AbstractChart
             categories[i] = i+1;
         }
         setData(0,categories);
+    }
+    
+    /** Reports the data values used to calculate bar lengths in the chart.
+     *  @return Sequence of data values represented by the bar lengths in the chart.
+     */
+    public float[] getData()
+    {
+        return getData(1);
     }
 
     /** Draws the bar chart within the given bounds.
@@ -171,11 +181,11 @@ public class BarChart extends AbstractChart
         
         if (transposeAxes)
         {
-            barWidth = (vRange - (data[0].length-1)*barGap) / data[0].length;    
+            barWidth = (vRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
         }
         else
         {
-            barWidth = (hRange - (data[0].length-1)*barGap) / data[0].length;    
+            barWidth = (hRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
         }
        
         parent.noStroke();
@@ -199,22 +209,22 @@ public class BarChart extends AbstractChart
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left, top + i*(barWidth+barGap), hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
+                    parent.rect(left, top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
                 }
                 else
                 {
-                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap), hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
+                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
                 }
             }
             else
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left + i*(barWidth+barGap), bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
+                    parent.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
                 }
                 else
                 {
-                    parent.rect(left + i*(barWidth+barGap), bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
+                    parent.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
                 }
             }
         }
@@ -309,11 +319,11 @@ public class BarChart extends AbstractChart
                     int index = reverseCats?(data[0].length-1-i):i;
                     if (showLabels == false)
                     {
-                        parent.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap));
+                        parent.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
                     }
                     else
                     {
-                        parent.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap));
+                        parent.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
                     }
                 }
                 else
@@ -322,11 +332,11 @@ public class BarChart extends AbstractChart
                     int index = reverseCats?(data[0].length-1-i):i;
                     if (showLabels == false)
                     {
-                        parent.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap),bottom+2);
+                        parent.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
                     }
                     else
                     {
-                        parent.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap),bottom+2);
+                        parent.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
                     }
                 }
             }
@@ -387,20 +397,22 @@ public class BarChart extends AbstractChart
             y = (dataPoint.y-getMin(1))/(getMax(1)-getMin(1));
         }
         
-        
         if (transposeAxes)
         {
-            float barWidth = (vRange - (data[0].length-1)*barGap) / data[0].length;   
-            return new PVector(left + hRange*y, bottom - barWidth/2f - (vRange-barWidth)*x);
+            float barWidth = (vRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;   
+            return new PVector(left + hRange*y, bottom - barWidth/2f - barPad/2f - (vRange-barWidth-barPad)*x);
         }
         
-        float barWidth = (hRange - (data[0].length-1)*barGap) / data[0].length;    
-        return new PVector(left + barWidth/2f + (hRange-barWidth)*x, bottom - vRange*y);
+        float barWidth = (hRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
+        return new PVector(left + barPad/2f + barWidth/2f + (hRange-barWidth-barPad)*x, bottom - vRange*y);
     }
     
     /** Converts given screen coordinate into its equivalent data value. This value will
      *  be based on the last time the data were drawn with the <code>draw()</code> method. 
      *  If this is called before any call to <code>draw()</code> has been made, it will return null.
+     *  The x-value of the returned data point corresponds to the zero-indexed counter of the number
+     *  of bars (i.e if the screen location falls within the first bar, the x-value will be 0, if
+     *  it falls within the second 1 will be returned etc.).
      *  @param screenPoint Screen coordinates to convert into data pair.
      *  @return (x,y) pair representing an item of data that would be displayed at the given screen
      *          location or null if screen space not defined or screenPoint is outside of the 
@@ -416,7 +428,7 @@ public class BarChart extends AbstractChart
             return null;
         }
         
-        if ((screenPoint.x < left) || (screenPoint.x > right) || (screenPoint.y < top) || (screenPoint.y > bottom))
+        if ((screenPoint.x < left) || (screenPoint.x >= right) || (screenPoint.y <= top) || (screenPoint.y > bottom))
         {
             return null;
         }
@@ -425,9 +437,8 @@ public class BarChart extends AbstractChart
         float x,y;
         if (transposeAxes)
         {
-            float barWidth = (vRange - (data[0].length-1)*barGap) / data[0].length;
-            y = (screenPoint.x - (left-barWidth/2f))/hRange;
-            x = (bottom - screenPoint.y)/(vRange-barWidth);
+            y = (screenPoint.x - left)/(hRange);
+            x = (bottom - screenPoint.y)/vRange;
         }
         else
         {   
@@ -612,11 +623,21 @@ public class BarChart extends AbstractChart
     }
     
     /** Sets the gap between adjacent bars.
-     *  @param gap Gap between adjacent bars in pixels
+     *  @param gap Gap between adjacent bars in pixel units.
      */
     public void setBarGap(float gap)
     {
         this.barGap = gap;
+    }
+    
+    /** Sets the padding between adjacent bars. Unlike barGap, this value will give a 
+     *  symmetrical padding around each bar. Can be useful when overlaying bars of 
+     *  different thicknesses.
+     *  @param padding Padding around bars in pixel units.
+     */
+    public void setBarPadding(float padding)
+    {
+        this.barPad = padding;
     }
     
     /** Determines if the order of the category values should be reversed or not.
