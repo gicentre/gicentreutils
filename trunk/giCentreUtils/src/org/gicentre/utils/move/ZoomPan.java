@@ -50,7 +50,7 @@ public class ZoomPan
     private boolean isZooming, isPanning,isMouseCaptured;
     private int mouseMask = 0;
     private PApplet aContext;
-    private PGraphics graphics;
+    private PGraphics graphics; //don't reference this directly - always use getGraphics()
     private Vector<ZoomPanListener> listeners;
     private int zoomMouseButton=PConstants.LEFT; // Implies pan is the other button
   
@@ -69,7 +69,7 @@ public class ZoomPan
             System.err.println("Warning: No applet context provided for ZoomPan.");
             return;
         }
-        graphics = aContext.g;
+        graphics = null;
         
         listeners = new Vector<ZoomPanListener>();
         reset();
@@ -112,8 +112,8 @@ public class ZoomPan
      */
     public void transform()
     {    
-        graphics.translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
-        graphics.scale((float)trans.getScaleX(),(float)trans.getScaleY());
+        getGraphics().translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
+        getGraphics().scale((float)trans.getScaleX(),(float)trans.getScaleY());
     }
   
     /** Resets the display to unzoomed and unpanned position.
@@ -414,6 +414,18 @@ public class ZoomPan
 
     // ----------------------------- Private methods -----------------------------
   
+    /** Supplies the graphics - either that supplied in the constructor or that from aContext
+     *  (the reason for this method is that the latter may change).
+     */
+    private PGraphics getGraphics(){
+    	if (graphics==null){
+    		return aContext.g;
+    	}
+    	else{
+    		return graphics;
+    	}
+    }
+    
     /** Zooms in or out depending on the current values of zoomStartPosition and zoomScale.
      */
     private void doZoom()
@@ -445,8 +457,8 @@ public class ZoomPan
         trans = new AffineTransform();
         iTrans = new AffineTransform();
     
-        float centreX = (float)(graphics.width*(1-zoomScale))/2;
-        float centreY = (float)(graphics.height*(1-zoomScale))/2;
+        float centreX = (float)(getGraphics().width*(1-zoomScale))/2;
+        float centreY = (float)(getGraphics().height*(1-zoomScale))/2;
             
         trans.translate(centreX+panOffset.x,centreY+panOffset.y);
         trans.scale(zoomScale,zoomScale);
