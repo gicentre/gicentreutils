@@ -14,7 +14,7 @@ import processing.core.PFont;
  *  separating colons. Calculates the size required to contain all the instructions 
  *  (regardless of sketch size), then centres this.
  *  @author Aidan Slingsby and Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 13th October, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -241,7 +241,7 @@ public class HelpScreen {
             applet.textLeading(headerTextSize);
             applet.fill(headerTextColour);
             applet.textAlign(PConstants.CENTER,PConstants.TOP);
-            applet.text(headerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,y,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),PApplet.max(headerVerticalSpace,headerTextSize+1));   
+            applet.text(headerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,y,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),PApplet.max(headerVerticalSpace,headerTextSize+headerTextSize/2));//added half the text size again, because textsize is too small for the height of a paragraphy box
             y+=headerTextSize+headerVerticalSpace;
             applet.textSize(textSize);
         }
@@ -285,7 +285,7 @@ public class HelpScreen {
             applet.textLeading(footerTextSize);
             applet.fill(footerTextColour);
             applet.textAlign(PConstants.RIGHT,PConstants.BOTTOM);
-            applet.text(footerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,y,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),PApplet.max(footerVerticalSpace,footerTextSize+1));   
+            applet.text(footerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,y,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),PApplet.max(footerVerticalSpace,footerTextSize+footerTextSize/2));//added half the text size again, because textsize is too small for the height of a paragraphy box   
         }
     }
 }
