@@ -1,6 +1,5 @@
 package org.gicentre.tests;
 
-import java.awt.Button;
 import java.awt.GridLayout;
 
 import org.gicentre.utils.multisketch.Slide;
