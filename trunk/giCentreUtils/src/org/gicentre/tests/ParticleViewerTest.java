@@ -49,7 +49,7 @@ public class ParticleViewerTest extends PApplet
 	{
 		size(800,600);
 		smooth();
-		strokeWeight(1);
+		strokeWeight(1);		// For thickness of edge lines.
 		
 		viewer = new ParticleViewer(this, width, height);
 
