@@ -24,7 +24,7 @@ package org.gicentre.utils;
 public class Version 
 {
     private static final float  VERSION = 3.1f;
-    private static final String VERSION_TEXT = "giCentre utils V3.1, 23rd September, 2010";
+    private static final String VERSION_TEXT = "giCentre utils V3.1, 30th November, 2010";
 
     /** Reports the current version of the gicentre utilities package.
       * @return Text describing the current version of this package.
