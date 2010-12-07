@@ -12,7 +12,7 @@ import java.util.*;             // For vector structure.
  *  not suitable for very large structures. For reading very large structures represented as
  *  XML, use SAX processing instead.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -806,9 +806,12 @@ public class DOMProcessor
             {
                 if (version == null)
                 {
-                    version = new String("1.0");
+                	out.print("<?xml version=\"1.0\" ");
                 }
-                out.print("<?xml version=\""+version+"\" ");
+                else
+                {
+                	out.print("<?xml version=\""+version+"\" ");
+                }
                 
                 if (encoding != null)
                 {

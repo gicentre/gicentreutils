@@ -11,7 +11,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests zooming and panning in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 13th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -61,6 +61,7 @@ public class ZoomTest extends PApplet
         smooth(); 
         morphT = 1;                 // 1 indicates no morphing. 
         zoomer = new ZoomPan(this);
+        textFont(createFont("Serif",18),18);
     }
 
     /** Draws a simple object that can be zoomed and panned.
@@ -101,9 +102,19 @@ public class ZoomTest extends PApplet
         fill(180,120,120);
         ellipse(width/2, height/2, 60,60);
         
+        fill(20);
+        textSize(8);
+        textAlign(PConstants.CENTER, PConstants.CENTER);
+        // Use Zoomer's improved text method (try replacing with text() to see improvement).
+        zoomer.text2("Zoom and pan me",width/2,height/2);
+        //text("Zoom and pan me",width/2,height/2);
+        
+        
         popMatrix();        // Retrieve the non zoomed display
+        
         textAlign(PConstants.LEFT, PConstants.BOTTOM);
         fill(80);
+        textSize(18);
         text("This text remains unaffected by zooming and panning.",10,height-3);
     }
     
