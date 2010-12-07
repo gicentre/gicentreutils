@@ -11,7 +11,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 7th September, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -47,7 +47,7 @@ public abstract class AbstractChart
     protected DecimalFormat[] axisFormatter; 
     
                         /** Indicates a side of the chart */
-    protected enum Side { TOP, BOTTOM, LEFT, RIGHT, NO_SIDE};
+    protected enum Side { TOP, BOTTOM, LEFT, RIGHT, NO_SIDE}
     
     
     private float minBorder;    // Minimum internal border between bounds and chart.
@@ -366,15 +366,15 @@ public abstract class AbstractChart
     
     /** Determines whether or not the axis representing the given dimension is drawn.
      *  @param dimension Dimension of the data to have axis displayed or hidden.
-     *  @param showAxis Axis is drawn if true.
+     *  @param isVisible Axis is drawn if true.
      *  @param side Side of chart along which axis is drawn.
      */
-    protected void showAxis(int dimension, boolean showAxis, Side side)
+    protected void showAxis(int dimension, boolean isVisible, Side side)
     {
-        if (this.showAxis[dimension] != showAxis)
+        if (this.showAxis[dimension] != isVisible)
         {
-            this.showAxis[dimension] = showAxis;
-            if (showAxis)
+            this.showAxis[dimension] = isVisible;
+            if (isVisible)
             {
                 axisPositions[dimension] = side;
             }
@@ -387,7 +387,7 @@ public abstract class AbstractChart
             {
                 borderT    = minBorder;
                 minBorderT = minBorder;
-                if (showAxis)
+                if (isVisible)
                 {
                     //  Update the border to accommodate labels assuming horizontal text.
                     borderT = Math.max(borderT,parent.textAscent()+parent.textDescent());
@@ -397,7 +397,7 @@ public abstract class AbstractChart
             {
                 borderB    = minBorder;
                 minBorderB = minBorder;
-                if (showAxis)
+                if (isVisible)
                 {
                     //  Update the border to accommodate labels assuming horizontal text.
                     borderB = Math.max(borderB,parent.textAscent()+parent.textDescent());
@@ -410,7 +410,7 @@ public abstract class AbstractChart
                 
                 borderL    = minBorder;
                 minBorderL = minBorder;
-                if (showAxis)
+                if (isVisible)
                 {
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
@@ -423,7 +423,7 @@ public abstract class AbstractChart
             {
                 borderR    = minBorder;
                 minBorderR = minBorder;
-                if (showAxis)
+                if (isVisible)
                 {
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
@@ -736,9 +736,10 @@ public abstract class AbstractChart
     private static float findSpacing(double minVal, double maxVal)
     {
         double r = maxVal-minVal;
+        double newMaxVal = maxVal;
         if (r <= 0)
         {
-            maxVal = minVal+1;
+            newMaxVal = minVal+1;
         }
 
         int n = (int)Math.floor(Math.log10(r));
@@ -757,6 +758,6 @@ public abstract class AbstractChart
             i++;
         }
         // Shouldn't get to this line.
-        return (float)(maxVal-minVal);
+        return (float)(newMaxVal-minVal);
     }
 }

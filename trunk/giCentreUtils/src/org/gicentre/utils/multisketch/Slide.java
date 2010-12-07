@@ -12,7 +12,7 @@ import processing.core.PImage;
 //******************************************************************************************
 /** Class to represent a presentation slide for use in a slide show.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -315,8 +315,19 @@ public class Slide
         }
         return buf.toString();
     }
-      
-    // ---------------------------- Nested classes ----------------------------
+    
+    // -------------------- Private and package-wide methods --------------------
+    
+    /** Adds the given height to the total representing the slide's contents..
+     *  @param extraHeight Extra height to add to the total.
+     */
+    void addToContentHeight(float extraHeight)
+    {
+    	// Note this method has package-wide scope to allow inner classes to add content.
+    	totalContentHeight += extraHeight;
+    }
+    
+    // ---------------------------- Nested classes ------------------------------
     
     /** Defines the core functionality associated with any embedded slide object.
      */
@@ -353,7 +364,7 @@ public class Slide
             this.fontSize = fontSize;
             this.colour = colour;
             this.hAlign = hAlign;
-            totalContentHeight += fontSize;
+            addToContentHeight(fontSize);
         }
     
         // ------------------- Methods -----------------
@@ -468,7 +479,7 @@ public class Slide
                 this.imgWidth = width;
                 this.imgHeight = height;
             }
-            totalContentHeight += imgHeight;
+            addToContentHeight(imgHeight);
         }
         
         /** Reports the stored image.

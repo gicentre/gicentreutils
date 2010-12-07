@@ -280,7 +280,7 @@ public class LikertChart
             }
             
             // Scale the secondary values.
-            if (chart2 != null)
+            if ((chart2 != null) && (currentFrequencies2 != null))
             {        
                 if (chart2.targetFrequencies == null)
                 {
@@ -468,7 +468,7 @@ public class LikertChart
             }
             
             // Draw the secondary bars if they exist and have been requested.
-            if ((chart2 != null) && (showSecondary))
+            if ((chart2 != null) && (showSecondary) && (currentFrequencies2 != null))
             {
                 parent.fill(secondaryColour);
                 parent.noStroke();

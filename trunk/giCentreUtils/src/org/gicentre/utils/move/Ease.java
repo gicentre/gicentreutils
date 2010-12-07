@@ -12,7 +12,7 @@ import processing.core.PConstants;
  *          by Robert Penner, 2003, 
  *          <a href="http://www.robertpenner.com/easing/penner_chapter7_tweening.pdf" 
  *          target="_blank">Programming Macromedia Flash MX</a>.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -157,8 +157,8 @@ public class Ease
         {
             return cubicIn(t,1);
         } 
-        t = 1-t;
-        return 1-t*t*t;
+        float tPrime = 1-t;
+        return 1-tPrime*tPrime*tPrime;
     }
 
     /** Provides a cubic easing in and out function. Value starts slowly at t=0, 
@@ -170,12 +170,12 @@ public class Ease
     {
         if (t < 0.5)
         {
-            t = t*2;
-            return 0.5f*t*t*t;
+            float tPrime = t*2;
+            return 0.5f*tPrime*tPrime*tPrime;
         }
       
-        t = 2-t*2;
-        return 0.5f*(2-t*t*t);
+        float tPrime = 2-t*2;
+        return 0.5f*(2-tPrime*tPrime*tPrime);
     }
     
     /** Provides a quartic easing in function. Value starts slowly at t=0 and  accelerates 
@@ -229,8 +229,8 @@ public class Ease
         {
             return quarticIn(t,1);
         } 
-        t = 1-t;
-        return 1-t*t*t*t;
+        float tPrime = 1-t;
+        return 1-tPrime*tPrime*tPrime*tPrime;
     }
 
     /** Provides a quartic easing in and out function. Value starts slowly at t=0, 
@@ -242,12 +242,12 @@ public class Ease
     {
         if (t < 0.5)
         {
-            t = t*2;
-            return 0.5f*t*t*t*t;
+            float tPrime = t*2;
+            return 0.5f*tPrime*tPrime*tPrime*tPrime;
         }
       
-        t = 2-t*2;
-        return 0.5f*(2-t*t*t*t);
+        float tPrime = 2-t*2;
+        return 0.5f*(2-tPrime*tPrime*tPrime*tPrime);
     }
     
     /** Provides a quintic easing in function. Value starts slowly at t=0 and  accelerates 
@@ -301,8 +301,8 @@ public class Ease
         {
             return quinticIn(t,1);
         } 
-        t = 1-t;
-        return 1-t*t*t*t*t;
+        float tPrime = 1-t;
+        return 1-tPrime*tPrime*tPrime*tPrime*tPrime;
     }
 
     /** Provides a quintic easing in and out function. Value starts slowly at t=0, 
@@ -314,12 +314,12 @@ public class Ease
     {
         if (t < 0.5)
         {
-            t = t*2;
-            return 0.5f*t*t*t*t*t;
+            float tPrime = t*2;
+            return 0.5f*tPrime*tPrime*tPrime*tPrime*tPrime;
         }
       
-        t = 2-t*2;
-        return 0.5f*(2-t*t*t*t*t);
+        float tPrime = 2-t*2;
+        return 0.5f*(2-tPrime*tPrime*tPrime*tPrime*tPrime);
     }
     
     /** Provides a parabolic bouncing easing in function. From t=0 value starts with a small
@@ -348,21 +348,24 @@ public class Ease
             return bounceOut(t);
         }
       
-        t = 1-t;
+        float tPrime = 1-t;
       
-        if (t < 0.36364)            // 1/2.75
+        if (tPrime < 0.36364)            // 1/2.75
         {
-            return 1- 7.5625f*t*t;
+            return 1- 7.5625f*tPrime*tPrime;
         }
-        if (t < 0.72727)            // 2/2.75
+        
+        if (tPrime < 0.72727)            // 2/2.75
         {
-            return 1- (7.5625f*(t-=0.545454f)*t + 0.75f);
+            return 1- (7.5625f*(tPrime-=0.545454f)*tPrime + 0.75f);
         }
-        if (t < 0.90909)            // 2.5/2.75
+        
+        if (tPrime < 0.90909)            // 2.5/2.75
         {
-            return 1- (7.5625f*(t-=0.81818f)*t + 0.9375f);
+            return 1- (7.5625f*(tPrime-=0.81818f)*tPrime + 0.9375f);
         }
-        return 1- (7.5625f*(t-=0.95455f)*t + 0.984375f); 
+        
+        return 1- (7.5625f*(tPrime-=0.95455f)*tPrime + 0.984375f); 
     }
     
 
@@ -394,20 +397,22 @@ public class Ease
             return bounceIn(t);
         }
       
-        if (t < 0.36364)            // 1/2.75
+        float tPrime = t;
+        
+        if (tPrime < 0.36364)            // 1/2.75
         {
-            return 7.5625f*t*t;
+            return 7.5625f*tPrime*tPrime;
         }
-        if (t < 0.72727)            // 2/2.75
+        if (tPrime < 0.72727)            // 2/2.75
         {
-            return 7.5625f*(t-=0.545454f)*t + 0.75f;
+            return 7.5625f*(tPrime-=0.545454f)*tPrime + 0.75f;
         }
-        if (t < 0.90909)            // 2.5/2.75
+        if (tPrime < 0.90909)            // 2.5/2.75
         {
-            return 7.5625f*(t-=0.81818f)*t + 0.9375f;
+            return 7.5625f*(tPrime-=0.81818f)*tPrime + 0.9375f;
         }
         
-        return 7.5625f*(t-=0.95455f)*t + 0.984375f; 
+        return 7.5625f*(tPrime-=0.95455f)*tPrime + 0.984375f; 
     }
 
     /** Provides an elastic easing in function simulating a 'pinged' elastic. From t=0 value starts
@@ -451,11 +456,11 @@ public class Ease
             return 1;
         }
 
-        t = 1-t;
+        float tPrime = 1-t;
         float p = 0.25f;        // Period
         float a = 1.05f;        // Amplitude.
         float s = 0.0501717f;   // asin(1/a)*p/TWO_PI;
      
-        return (float)Math.min(1,0.5 - a*Math.pow(2,-10*t)*Math.sin((t-s)*PConstants.TWO_PI/p));
+        return (float)Math.min(1,0.5 - a*Math.pow(2,-10*tPrime)*Math.sin((tPrime-s)*PConstants.TWO_PI/p));
     }
 }

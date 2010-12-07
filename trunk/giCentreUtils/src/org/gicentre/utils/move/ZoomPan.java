@@ -22,7 +22,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 13th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -411,24 +411,65 @@ public class ZoomPan
             System.err.println("setZoomMouseButton: Parameter must be PConstants.LEFT or PConstants.RIGHT");
         }
     }
+    
+    /** Replacement for Processing's <code>text()</code> method for faster and more accurate placement of 
+     *  characters in Java2D mode when a zoomed font is to be displayed. This method is not necessary when
+     *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
+     *  or <code>OpenGL</code> modes.
+     *  @param textToDisplay Text to be displayed.
+     *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
+     *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
+     */  
+    public void text2(String textToDisplay, float xPos, float yPos)
+    {
+    	// If we are not using the default renderer, use text() as normal.
+    	if (!(aContext.g.getClass().getName().equals(PConstants.JAVA2D)))
+    	{
+    		aContext.text(textToDisplay, xPos, yPos);
+    		return;
+    	}
 
-    // ----------------------------- Private methods -----------------------------
+    	// Store the original transformation and text size.
+    	aContext.pushMatrix();
+    	float origTextSize = aContext.g.textSize;
+
+    	// Find the current x-scaling from the transformation matrix.
+    	float xScale = aContext.g.getMatrix().get(null)[0];
+
+    	// Find the locaiton of the text position subject to the current transformation.
+    	PVector newTextPos = new PVector(0,0);
+    	aContext.g.getMatrix().mult(new PVector(xPos,yPos),newTextPos);
+
+    	// Temporarily reset the transformaion matrix while we place the text.
+    	aContext.resetMatrix();
+
+    	// Size and place the text.
+    	aContext.textSize(xScale*origTextSize);
+    	aContext.text(textToDisplay,newTextPos.x,newTextPos.y);
+
+    	// Restore the original transformation and text size.
+    	aContext.textSize(origTextSize);
+    	aContext.popMatrix();
+    }
+
+    // ----------------------------- Private and package methods -----------------------------
   
     /** Supplies the graphics - either that supplied in the constructor or that from aContext
      *  (the reason for this method is that the latter may change).
      */
-    private PGraphics getGraphics(){
-    	if (graphics==null){
+    private PGraphics getGraphics()
+    {
+    	if (graphics==null)
+    	{
     		return aContext.g;
     	}
-    	else{
-    		return graphics;
-    	}
+    	
+    	return graphics;
     }
     
     /** Zooms in or out depending on the current values of zoomStartPosition and zoomScale.
      */
-    private void doZoom()
+    void doZoom()
     {
         // Find coordinate-space location of first mouse click.
         PVector pCoord = getDispToCoord(new PVector(zoomStartPosition.x,zoomStartPosition.y));
@@ -447,7 +488,47 @@ public class ZoomPan
         // Finish off transformation by incorporating shifted click position.
         calcTransformation();
     }
+    
+    /** Reports the mouse mask being used.
+     *  @return Mouse mask being used to identify zoom/pan control.
+     */
+    int getMouseMask()
+    {
+    	// This method is of package-wide scope to allow inner classes to have access to it.
+    	return mouseMask;
+    }
+    
+    /** Reports the zoom step being used.
+     *  @return The amount of zooming that occurs when display zoomed by 1 unit.
+     */
+    double getZoomStep()
+    {
+    	// This method is of package-wide scope to allow inner classes to have access to it.
+    	return zoomStep;
+    }
   
+    /** Sets the new zoom-scaling programmatically. Unlike the public method setZoomScale()
+     *  this version is for internal use where recalculation of transformations is handled
+     *  elswhere.
+     *  @param zoomScale New zoom scale to be used.
+     */
+    void setZoomScaleWithoutRecalculation(double zoomScale)
+    {
+    	// This method is of package-wide scope to allow inner classes to have access to it.
+    	this.zoomScale = zoomScale;
+    }
+    
+    /** Programatically sets the start position of a zooming activity. Normally, while the mouse
+     *  is held down on a given point, all zooming is relative to this position. This gets reset
+     *  whenever a new point is selected with the mouse. This method allows that position to be
+     *  set programmatically, for example for use with a mousewheel zooming without a mouse press. 
+     *  @param zoomStartPosition Position in screen coordinates of the start of a zoom activity.
+     */
+    void setZoomStartPosition(PVector zoomStartPosition)
+    {
+    	this.zoomStartPosition = zoomStartPosition;
+    }
+       
     /** Finds the affine transformations that convert between original and display coordinates. 
      *  Updates both the forward transformation (for display) and inverse transformation (for 
      *  decoding of mouse locations. 
@@ -473,27 +554,33 @@ public class ZoomPan
      */
     private class MouseWheelMonitor implements MouseWheelListener
     {
+    	protected MouseWheelMonitor()
+    	{
+    		// Empty constructor required so it can be instantiated by the containing 
+    		// class without having to create a synthetic accessor method.
+    	}
+    	
         /** Responds to a mouse wheel change event by zooming in or out.
          *  @param e Mouse wheel event. 
          */
         public void mouseWheelMoved(MouseWheelEvent e)
         {     
             // Test to see if mouse mask is specified and it is pressed.
-            if ((e.getModifiersEx() & mouseMask) != mouseMask)
+            if ((e.getModifiersEx() & getMouseMask()) != getMouseMask())
             {
                 return;
             }
       
-            zoomStartPosition = new PVector(e.getX(),e.getY());
+            setZoomStartPosition(new PVector(e.getX(),e.getY()));
                     
             if (e.getWheelRotation() < 0)
             {
-                zoomScale *= zoomStep;
+                setZoomScaleWithoutRecalculation(getZoomScale()*getZoomStep());
                 doZoom();                    
             }
             else if (e.getWheelRotation() > 0)
             {
-                zoomScale /= zoomStep;
+                setZoomScaleWithoutRecalculation(getZoomScale()/getZoomStep());
                 doZoom();                    
             }   
         }

@@ -18,7 +18,7 @@ import processing.core.PFont;
  *  class for showing simple text screens as part of a slide show. Progress through the slide show
  *  is controlled with the PageUp ad PageDown keys.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 7th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -149,26 +149,26 @@ public class SlideShow extends Panel
       * of any slides in the slide show. Will not display the timer in any embedded sketches. To display 
       * the time in a sketch, call <code>displayTime()</code> from the <code>draw()</code> method of the
       * embedded sketch.
-      * @param font Font used to display timer. 
+      * @param timerFont Font used to display timer. 
       */
-    public void addTimer(PFont font)
+    public void addTimer(PFont timerFont)
     {
-        addTimer(font,18,Color.gray.getRGB());
+        addTimer(timerFont,18,Color.gray.getRGB());
     }
     
     /** Adds a timer to the slide show displayed using the given font characteristics. This results in the
       * time since this method was last called being displayed in the top right corner of any slides in the 
       * slide show. Will not display the timer in any embedded sketches. To display the time in a sketch, 
       * call <code>displayTime()</code> from the <code>draw()</code> method of the embedded sketch.
-      * @param font Font used to display timer. 
-      * @param fontSize Size of font in pixels used to display timer.
-      * @param fontColour Colour of font used to display timer.
+      * @param timerFont Font used to display timer. 
+      * @param timerFontSize Size of font in pixels used to display timer.
+      * @param timerFontColour Colour of font used to display timer.
       */
-    public void addTimer(PFont font, int fontSize, int fontColour)
+    public void addTimer(PFont timerFont, int timerFontSize, int timerFontColour)
     {
-        this.font = font;
-        this.fontSize = fontSize;
-        this.fontColour = fontColour;
+        this.font = timerFont;
+        this.fontSize = timerFontSize;
+        this.fontColour = timerFontColour;
         timer = new FrameTimer();
         timer.startTimer();
     }
@@ -179,11 +179,11 @@ public class SlideShow extends Panel
       * as 0:00. Will not display the timer in any embedded sketches. To display the time in a sketch, call
       * <code>displayTime()</code> from the <code>draw()</code> method of the embedded sketch.
       * @param startTime Start time in seconds (e.g. to add a 2 minute countdown, this should be 120). 
-      * @param font Font used to display timer. 
+      * @param timerFont Font used to display timer. 
       */
-    public void addCountdownTimer(int startTime, PFont font)
+    public void addCountdownTimer(int startTime, PFont timerFont)
     {
-        addCountdownTimer(startTime,font,18,Color.gray.getRGB());
+        addCountdownTimer(startTime,timerFont,18,Color.gray.getRGB());
     }
     
     /** Adds a countdown timer displayed using the given font characteristics to the slide show. This results
@@ -192,16 +192,16 @@ public class SlideShow extends Panel
       * not display the timer in any embedded sketches. To display the time in a sketch, call 
       * <code>displayTime()</code> from the <code>draw()</code> method of the embedded sketch.
       * @param startTime Start time in seconds (e.g. to add a 2 minute countdown, this should be 120). 
-      * @param font Font used to display timer. 
-      * @param fontSize Size of font in pixels used to display timer.
-      * @param fontColour Colour of font used to display timer.
+      * @param timerFont Font used to display timer. 
+      * @param timerFontSize Size of font in pixels used to display timer.
+      * @param timerFontColour Colour of font used to display timer.
       */
-    public void addCountdownTimer(int startTime, PFont font, int fontSize, int fontColour)
+    public void addCountdownTimer(int startTime, PFont timerFont, int timerFontSize, int timerFontColour)
     {
         this.countdown = Math.max(0, startTime);
-        this.font = font;
-        this.fontSize = fontSize;
-        this.fontColour = fontColour;
+        this.font = timerFont;
+        this.fontSize = timerFontSize;
+        this.fontColour = timerFontColour;
 
         timer = new FrameTimer();
         timer.startTimer();
@@ -210,9 +210,9 @@ public class SlideShow extends Panel
     /** Displays the time since <code>addTimer()</code> was last called in the top-right corner of the
       * given sketch. Nothing will be displayed if <code>addTimer()</code> has not been called.
       * @param sketch Sketch in which to display the time.
-      * @param font Font in which to display time.
+      * @param timerFont Font in which to display time.
       */
-    public void displayTime(EmbeddedSketch sketch, PFont font)
+    public void displayTime(EmbeddedSketch sketch, PFont timerFont)
     {
         String formattedTime;
         if (countdown > 0)
@@ -226,7 +226,7 @@ public class SlideShow extends Panel
         sketch.pushStyle();
         sketch.textAlign(PConstants.RIGHT, PConstants.TOP);
         sketch.fill(fontColour);
-        sketch.textFont(font,fontSize);
+        sketch.textFont(timerFont,fontSize);
         sketch.text(formattedTime,sketch.width-4,4);
         sketch.popStyle();
     }
