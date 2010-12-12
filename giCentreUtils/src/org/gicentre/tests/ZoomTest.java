@@ -7,11 +7,10 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 
-
 //  ****************************************************************************************
 /** Tests zooming and panning in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 7th December, 2010. 
+ *  @version 3.1, 12th December, 2010. 
  */ 
 // *****************************************************************************************
 

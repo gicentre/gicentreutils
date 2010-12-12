@@ -22,7 +22,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 7th December, 2010. 
+ *  @version 3.1, 12th December, 2010. 
  */ 
 // *****************************************************************************************
 
@@ -422,34 +422,51 @@ public class ZoomPan
      */  
     public void text2(String textToDisplay, float xPos, float yPos)
     {
+    	// Call the static version providing the applet context that was given to the constructor.
+    	text2(aContext,textToDisplay, xPos,yPos);
+    }
+        
+    /** Replacement for Processing's <code>text()</code> method for faster and more accurate placement of 
+     *  characters in Java2D mode when a zoomed font is to be displayed. This version does not require a
+     *  ZoomPan object to be instantiated but does need the <code>PApplet</code> context to be provided.
+     *  As with the other <code>text2()</code> method it is not necessary to call this method if the
+     *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
+     *  or <code>OpenGL</code> modes.
+     *  @param applet Sketch in which text is to be drawn.
+     *  @param textToDisplay Text to be displayed.
+     *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
+     *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
+     */  
+    public static void text2(PApplet applet, String textToDisplay, float xPos, float yPos)
+    {
     	// If we are not using the default renderer, use text() as normal.
-    	if (!(aContext.g.getClass().getName().equals(PConstants.JAVA2D)))
+    	if (!(applet.g.getClass().getName().equals(PConstants.JAVA2D)))
     	{
-    		aContext.text(textToDisplay, xPos, yPos);
+    		applet.text(textToDisplay, xPos, yPos);
     		return;
     	}
 
     	// Store the original transformation and text size.
-    	aContext.pushMatrix();
-    	float origTextSize = aContext.g.textSize;
+    	applet.pushMatrix();
+    	float origTextSize = applet.g.textSize;
 
     	// Find the current x-scaling from the transformation matrix.
-    	float xScale = aContext.g.getMatrix().get(null)[0];
+    	float xScale = applet.g.getMatrix().get(null)[0];
 
     	// Find the locaiton of the text position subject to the current transformation.
     	PVector newTextPos = new PVector(0,0);
-    	aContext.g.getMatrix().mult(new PVector(xPos,yPos),newTextPos);
+    	applet.g.getMatrix().mult(new PVector(xPos,yPos),newTextPos);
 
     	// Temporarily reset the transformaion matrix while we place the text.
-    	aContext.resetMatrix();
+    	applet.resetMatrix();
 
     	// Size and place the text.
-    	aContext.textSize(xScale*origTextSize);
-    	aContext.text(textToDisplay,newTextPos.x,newTextPos.y);
+    	applet.textSize(xScale*origTextSize);
+    	applet.text(textToDisplay,newTextPos.x,newTextPos.y);
 
     	// Restore the original transformation and text size.
-    	aContext.textSize(origTextSize);
-    	aContext.popMatrix();
+    	applet.textSize(origTextSize);
+    	applet.popMatrix();
     }
 
     // ----------------------------- Private and package methods -----------------------------
