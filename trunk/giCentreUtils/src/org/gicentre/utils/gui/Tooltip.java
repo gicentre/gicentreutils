@@ -359,6 +359,15 @@ public class Tooltip implements MouseListener
     {
         return displayWidth;
     }
+
+    /** Reports the height of the tooltip.
+     *  @return Height of the tooltip in pixel units.
+     */
+    public float getHeight()
+    {
+        return maxHeight;
+    }
+
     
     /** Checks to see if the user has clicked on the close icon of this tooltip if present.
      *  If clicked, the tooltip state is set to closed.
