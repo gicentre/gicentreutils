@@ -18,7 +18,7 @@ import processing.core.PImage;
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 12th January, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -394,7 +394,8 @@ public class ColourPicker implements MouseListener, MouseMotionListener
     private void createPickerImage(PGraphics buffer)
     {
         swatches = new HashMap<Rectangle2D.Float, ColourTable>();
-        PFont font = sketch.createFont("sans serif", 12);
+        PFont largeFont = sketch.loadFont("./data/BonvenoCF-Light-18.vlw");
+        PFont smallFont = sketch.loadFont("./data/BonvenoCF-Light-10.vlw");
 
         buffer.beginDraw();
         buffer.smooth();
@@ -413,11 +414,11 @@ public class ColourPicker implements MouseListener, MouseMotionListener
         int rowOffset = 24 + border;
 
         buffer.fill(120);
-        buffer.textFont(font,18);
+        buffer.textFont(largeFont);
         buffer.text("Sequential",border+barWidth+textSpace/2,border);
         buffer.text("Diverging", 2*border + 3*(border+barWidth) + 1.5f*textSpace,border);
         buffer.text("Categorical",2*border + 2.7f*(border+barWidth) + 1.5f*textSpace, border + (coloursDiv.length+1)*25);
-        buffer.textFont(font,10);
+        buffer.textFont(smallFont);
 
         // Brewer continuous colours 
         for (int bar=0; bar<coloursCont.length; bar++)
