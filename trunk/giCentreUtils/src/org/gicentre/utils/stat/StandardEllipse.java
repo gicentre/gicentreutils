@@ -18,7 +18,7 @@ import processing.core.PVector;
  *  and the coordinates of the endpoints of the axes can also be retrieved. Weighted or 
  *  unweighted points can be used by selecting <code>setIsWeighted()</code>.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 14th January, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -48,6 +48,9 @@ public class StandardEllipse
     private float rotation,wRotation;    // Rotation of the major axis clockwise in radians.
     private float axisScale;             // Scaling factor to apply to the axes.
     private boolean useWeights;          // Determines if weighted points are used.
+    
+    private static final double DEG2RAD = Math.PI/180.0;
+    private static final double RAD2DEG = 180.0/Math.PI;
   
     // ------------------------------ Constructors -------------------------------
   
@@ -72,15 +75,32 @@ public class StandardEllipse
         calcEndpoints();
     }
   
-    /** Creates a standard ellipse from the given set of 2D point values. The angle of the two axes
-     *  of the ellipse will represent the directions of greatest and least point dispersion. Their
-     *  lengths will be 2*standard deviation of the spread in those directions. See Ebdon, p.139. 
-     *  If the z component of each point is not zero, its value is used to calculate the weighted
-     *  mean centre and dispersion as well as the unweighted version. The collection should store 
-     *  objects of type <code>PVector</code>.
+    /** Creates a standard ellipse from the given set of 2D Cartesian point values. The angle of 
+     *  the two axes of the ellipse will represent the directions of greatest and least point
+     *  dispersion. Their lengths will be 2*standard deviation of the spread in those directions.
+     *  See Ebdon, p.139. If the z component of each point is not zero, its value is used to 
+     *  calculate the weighted mean centre and dispersion as well as the unweighted version. The
+     *  collection should store objects of type <code>PVector</code>.
      *  @param points Collection of 2d point values.
      */
     public StandardEllipse(Collection<PVector> points)
+    {
+    	this(points,false);
+    }
+    
+    /** Creates a standard ellipse from the given set of 2D Cartesian or latitude/longitude point
+     *  values. The angle of the two axes of the ellipse will represent the directions of greatest
+     *  and least point dispersion. Their lengths will be 2*standard deviation of the spread in 
+     *  those directions. See Ebdon, p.139. If the z component of each point is not zero, its value
+     *  is used to calculate the weighted mean centre and dispersion as well as the unweighted version.
+     *  The collection should store  objects of type <code>PVector</code>.
+     *  @param points Collection of 2d point values. If lat/long angles are assumed to be in
+     *                decimal degrees in the longitude range of +-180 and latitude range of +-90
+     *                degrees.
+     *  @param isLatLong If true, points are assumed to represent latitude/longitude bearings, 
+     *                   otherwise Cartesian points are assumed.
+     */
+    public StandardEllipse(Collection<PVector> points, boolean isLatLong)
     {  
         axisScale = 1;
         useWeights = false;
@@ -98,131 +118,17 @@ public class StandardEllipse
             wRotation = 0;
             calcEndpoints();
             return;
-        }
-   
-        float xTotal = 0, yTotal=0, weightTotal=0;
-            
-        // Calculate the mean centre.  
-        for (PVector p : points)
-        {
-            xTotal += p.x;
-            yTotal += p.y;
-        }
-        centre = new PVector(xTotal/points.size(),yTotal/points.size());
-        
-        // Calculate the weighted mean centre.  
-        weightTotal = 0;
-        xTotal = 0;
-        yTotal = 0;
-        for (PVector p : points)
-        {
-            float weight = 1;
-            if (p.z > 0)
-            {
-                weight = p.z;
-            }
-      
-            xTotal += p.x*weight;
-            yTotal += p.y*weight;
-     
-            weightTotal+= weight;
-        }
-        wCentre = new PVector(xTotal/weightTotal,yTotal/weightTotal);
-        
-        // Calculate the unweighted rotation of the standard distance ellipse. Formula from Ebdon, 1985, pp.134-141.
-        double sumXSq =0, sumYSq=0, sumXY=0;
-        for (PVector p : points)
-        {
-            sumXSq += (p.x - centre.x)*(p.x - centre.x);
-            sumYSq += (p.y - centre.y)*(p.y - centre.y);
-            sumXY  += (p.x - centre.x)*(p.y - centre.y);
-        }
-       
-        double tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
-        rotation = (float)Math.atan(tanAlpha);
-        if (Double.isNaN(rotation))
-        {
-            rotation = 0;
-        }
-    
-        // Calculate the major and minor axes.
-        double sinAlpha = Math.sin(rotation),
-               cosAlpha = Math.cos(rotation);
-                 
-        majorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/points.size());
-       
-        if (Double.isNaN(majorAxis))
-        {
-            majorAxis = 0;
-        }
-     
-        minorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/points.size());
-        if (Double.isNaN(minorAxis))
-        {
-            minorAxis = 0;
         } 
-    
-        // Make sure that the major axis is the longer one.
-        if (majorAxis < minorAxis)
+        
+        if (isLatLong)
         {
-            float temp = majorAxis;
-            majorAxis = minorAxis;
-            minorAxis = temp;
-            rotation = (rotation+PConstants.HALF_PI)%PConstants.TWO_PI;
+        	calcAxesFromLatLong(points);
+        }
+        else
+        {
+        	calcAxesFromPoints(points);	
         }
         
-        // ----------------------------------------------------------------
-        // Calculate the weighted rotation of the standard distance ellipse.
-        sumXSq =0;
-        sumYSq=0;
-        sumXY=0;
-        for (PVector p : points)
-        {
-            float weight = 1;
-            if (p.z > 0)
-            {
-                weight = p.z;
-            }
-            
-            sumXSq += weight*(p.x - wCentre.x)*(p.x - wCentre.x);
-            sumYSq += weight*(p.y - wCentre.y)*(p.y - wCentre.y);
-            sumXY  += weight*(p.x - wCentre.x)*(p.y - wCentre.y);
-        }
-       
-        tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
-        wRotation = (float)Math.atan(tanAlpha);
-        if (Double.isNaN(wRotation))
-        {
-            wRotation = 0;
-        }
-    
-        // Calculate the major and minor axes.
-        sinAlpha = Math.sin(wRotation);
-        cosAlpha = Math.cos(wRotation);
-                 
-        wMajorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/weightTotal);
-       
-        if (Double.isNaN(wMajorAxis))
-        {
-            wMajorAxis = 0;
-        }
-     
-        wMinorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/weightTotal);
-        if (Double.isNaN(wMinorAxis))
-        {
-            wMinorAxis = 0;
-        } 
-    
-        // Make sure that the major axis is the longer one.
-        if (wMajorAxis < wMinorAxis)
-        {
-            float temp = wMajorAxis;
-            wMajorAxis = wMinorAxis;
-            wMinorAxis = temp;
-            wRotation = (wRotation+PConstants.HALF_PI)%PConstants.TWO_PI;
-        }
-    
-        calcEndpoints(); 
     }
     
     // -------------------------------- Methods ----------------------------------
@@ -297,10 +203,10 @@ public class StandardEllipse
         return rotation;
     }
   
-    /** Reports the coordinates of one of the endpoints of the major axis. This will always
+    /** Reports the coordinates of one of the end points of the major axis. This will always
      *  be the opposite end of that reported by <code>getMajorEndpoint2()</code>. This will be  
      *  based on the weighted dispersion if <code>isWeighted()</code> is true.
-     *  @return Endpoint of the major axis.
+     *  @return End point of the major axis.
      */
     public PVector getMajorEndpoint1()
     {
@@ -311,10 +217,10 @@ public class StandardEllipse
         return a1;
     }
   
-    /** Reports the coordinates of one of the endpoints of the major axis. This will always
+    /** Reports the coordinates of one of the end points of the major axis. This will always
      *  be the opposite end of that reported by <code>getMajorEndpoint1()</code>. This will be  
      *  based on the weighted dispersion if <code>isWeighted()</code> is true.
-     *  @return Endpoint of the major axis.
+     *  @return End point of the major axis.
      */
     public PVector getMajorEndpoint2()
     {
@@ -325,10 +231,10 @@ public class StandardEllipse
         return a2;
     }
   
-    /** Reports the coordinates of one of the endpoints of the minor axis. This will always
+    /** Reports the coordinates of one of the end points of the minor axis. This will always
      *  be the opposite end of that reported by <code>getMinorEndpoint2()</code>. This will be  
      *  based on the weighted dispersion if <code>isWeighted()</code> is true.
-     *  @return Endpoint of the minor axis.
+     *  @return End point of the minor axis.
      */
     public PVector getMinorEndpoint1()
     {
@@ -339,10 +245,10 @@ public class StandardEllipse
         return b1;
     }
   
-    /** Reports the coordinates of one of the endpoints of the minor axis. This will always
+    /** Reports the coordinates of one of the end points of the minor axis. This will always
      *  be the opposite end of that reported by <code>getMinorEndpoint1()</code>. This will be  
      *  based on the weighted dispersion if <code>isWeighted()</code> is true.
-     *  @return Endpoint of the minor axis.
+     *  @return End point of the minor axis.
      */
     public PVector getMinorEndpoint2()
     {
@@ -415,6 +321,302 @@ public class StandardEllipse
     }
   
     // ---------------------------- Private methods ------------------------------
+    
+    /** Calculates the major and minor axes of an ellipse that represents the given set of 2D
+     *  point values. The angle of the two axes of the ellipse will represent the directions of 
+     *  greatest and least point dispersion. Their lengths will be 2*standard deviation of the 
+     *  spread in those directions. See Ebdon, p.139. If the z component of each point is not zero,
+     *  its value is used to calculate the weighted mean centre and dispersion as well as the
+     *  unweighted version. The collection should store objects of type <code>PVector</code>.
+     *  @param points Collection of 2d point values.
+     */
+    private void calcAxesFromPoints(Collection<PVector> points)
+    {  
+    	float xTotal = 0, yTotal=0, weightTotal=0;
+
+    	// Calculate the mean centre.  
+    	for (PVector p : points)
+    	{
+    		xTotal += p.x;
+    		yTotal += p.y;
+    	}
+    	centre = new PVector(xTotal/points.size(),yTotal/points.size());
+
+    	// Calculate the weighted mean centre.  
+    	weightTotal = 0;
+    	xTotal = 0;
+    	yTotal = 0;
+    	for (PVector p : points)
+    	{
+    		float weight = 1;
+    		if (p.z > 0)
+    		{
+    			weight = p.z;
+    		}
+
+    		xTotal += p.x*weight;
+    		yTotal += p.y*weight;
+
+    		weightTotal+= weight;
+    	}
+    	wCentre = new PVector(xTotal/weightTotal,yTotal/weightTotal);
+
+    	// Calculate the unweighted rotation of the standard distance ellipse. Formula from Ebdon, 1985, pp.134-141.
+    	double sumXSq =0, sumYSq=0, sumXY=0;
+    	for (PVector p : points)
+    	{
+    		sumXSq += (p.x - centre.x)*(p.x - centre.x);
+    		sumYSq += (p.y - centre.y)*(p.y - centre.y);
+    		sumXY  += (p.x - centre.x)*(p.y - centre.y);
+    	}
+
+    	double tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
+    	rotation = (float)Math.atan(tanAlpha);
+    	if (Double.isNaN(rotation))
+    	{
+    		rotation = 0;
+    	}
+
+    	// Calculate the major and minor axes.
+    	double sinAlpha = Math.sin(rotation),
+    	cosAlpha = Math.cos(rotation);
+
+    	majorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/points.size());
+
+    	if (Double.isNaN(majorAxis))
+    	{
+    		majorAxis = 0;
+    	}
+
+    	minorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/points.size());
+    	if (Double.isNaN(minorAxis))
+    	{
+    		minorAxis = 0;
+    	} 
+
+    	// Make sure that the major axis is the longer one.
+    	if (majorAxis < minorAxis)
+    	{
+    		float temp = majorAxis;
+    		majorAxis = minorAxis;
+    		minorAxis = temp;
+    		rotation = (rotation+PConstants.HALF_PI)%PConstants.TWO_PI;
+    	}
+
+    	// ----------------------------------------------------------------
+    	// Calculate the weighted rotation of the standard distance ellipse.
+    	sumXSq =0;
+    	sumYSq=0;
+    	sumXY=0;
+    	for (PVector p : points)
+    	{
+    		float weight = 1;
+    		if (p.z > 0)
+    		{
+    			weight = p.z;
+    		}
+
+    		sumXSq += weight*(p.x - wCentre.x)*(p.x - wCentre.x);
+    		sumYSq += weight*(p.y - wCentre.y)*(p.y - wCentre.y);
+    		sumXY  += weight*(p.x - wCentre.x)*(p.y - wCentre.y);
+    	}
+
+    	tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
+    	wRotation = (float)Math.atan(tanAlpha);
+    	if (Double.isNaN(wRotation))
+    	{
+    		wRotation = 0;
+    	}
+
+    	// Calculate the major and minor axes.
+    	sinAlpha = Math.sin(wRotation);
+    	cosAlpha = Math.cos(wRotation);
+
+    	wMajorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/weightTotal);
+
+    	if (Double.isNaN(wMajorAxis))
+    	{
+    		wMajorAxis = 0;
+    	}
+
+    	wMinorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/weightTotal);
+    	if (Double.isNaN(wMinorAxis))
+    	{
+    		wMinorAxis = 0;
+    	} 
+
+    	// Make sure that the major axis is the longer one.
+    	if (wMajorAxis < wMinorAxis)
+    	{
+    		float temp = wMajorAxis;
+    		wMajorAxis = wMinorAxis;
+    		wMinorAxis = temp;
+    		wRotation = (wRotation+PConstants.HALF_PI)%PConstants.TWO_PI;
+    	}
+    	calcEndpoints();
+    }
+    
+    
+    /** Calculates the major and minor axes of an ellipse that represents the given set of 
+     *  latitude longitude values. The angle of the two axes of the ellipse will represent the
+     *  directions of greatest and least point dispersion. Their lengths will be 2*standard 
+     *  deviation of the spread in those directions. See Ebdon, p.139. If the z component o
+     *  of each point is not zero, its value is used to calculate the weighted mean centre and
+     *  dispersion as well as the unweighted version. The collection should store objects of 
+     *  type <code>PVector</code> representing long/lat pairs in degrees.
+     *  @param points Collection of 2d point values.
+     */
+    private void calcAxesFromLatLong(Collection<PVector> points)
+    {  
+    	double sinComp = 0, cosComp=0, latTotal=0, weightTotal=0;
+
+    	// Calculate the mean centre.  
+    	for (PVector p : points)
+    	{
+    		if ((p.x < -180) || (p.x > 180))
+    		{
+    			System.err.println("Warning: longitude falls outside the range +-180: "+p.x);
+    		}
+    		if ((p.y < -90) || (p.y > 90))
+    		{
+    			System.err.println("Warning: latitude falls outside the range +-90: "+p.y);
+    		}
+    			
+    		sinComp += Math.sin(p.x*DEG2RAD);
+    		cosComp += Math.cos(p.x*DEG2RAD);
+    		latTotal += p.y;
+    	}
+    	centre = new PVector((float)(RAD2DEG*Math.atan2(sinComp,cosComp)),(float)(latTotal/points.size()));	
+
+    	// Calculate the weighted mean centre.  
+    	weightTotal = 0;
+    	sinComp = 0;
+    	cosComp = 0;
+    	latTotal = 0;
+    	for (PVector p : points)
+    	{
+    		float weight = 1;
+    		if (p.z > 0)
+    		{
+    			weight = p.z;
+    		}
+
+    		sinComp += Math.sin(p.x*DEG2RAD)*weight;
+    		cosComp += Math.cos(p.x*DEG2RAD)*weight;
+    		latTotal += p.y*weight;
+    		weightTotal+= weight;
+    	}
+    	wCentre = new PVector((float)(RAD2DEG*Math.atan2(sinComp,cosComp)),(float)(latTotal/weightTotal));	
+    	
+    	// Calculate the unweighted rotation of the standard distance ellipse. Formula from Ebdon, 1985, pp.134-141.
+    	double sumXSq =0, sumYSq=0, sumXY=0;
+    	
+    	for (PVector p : points)
+    	{
+    		// Find smallest angle between each longitude point and the mean longitude.
+    		float smallestLong = ((p.x+180)-(centre.x+180))%360;
+    		if (Math.abs(smallestLong) > 180)
+    		{
+    			smallestLong = 360-Math.abs(smallestLong);
+    		}
+
+    		sumXSq += smallestLong*smallestLong;
+    		sumYSq += (p.y - centre.y)*(p.y - centre.y);
+    		sumXY  += smallestLong*(p.y - centre.y);
+    	}
+
+    	double tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
+    	rotation = (float)Math.atan(tanAlpha);
+    	if (Double.isNaN(rotation))
+    	{
+    		rotation = 0;
+    	}
+
+    	// Calculate the major and minor axes.
+    	double sinAlpha = Math.sin(rotation),
+    	cosAlpha = Math.cos(rotation);
+
+    	majorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/points.size());
+
+    	if (Double.isNaN(majorAxis))
+    	{
+    		majorAxis = 0;
+    	}
+
+    	minorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/points.size());
+    	if (Double.isNaN(minorAxis))
+    	{
+    		minorAxis = 0;
+    	} 
+
+    	// Make sure that the major axis is the longer one.
+    	if (majorAxis < minorAxis)
+    	{
+    		float temp = majorAxis;
+    		majorAxis = minorAxis;
+    		minorAxis = temp;
+    		rotation = (rotation+PConstants.HALF_PI)%PConstants.TWO_PI;
+    	}
+
+    	// ----------------------------------------------------------------
+    	// Calculate the weighted rotation of the standard distance ellipse.
+    	sumXSq =0;
+    	sumYSq=0;
+    	sumXY=0;
+    	for (PVector p : points)
+    	{
+    		float weight = 1;
+    		if (p.z > 0)
+    		{
+    			weight = p.z;
+    		}
+    		
+    		// Find smallest angle between each longitude point and the mean longitude.
+    		float smallestLong = ((p.x+180)-(centre.x+180))%360;
+    		if (Math.abs(smallestLong) > 180)
+    		{
+    			smallestLong = 360-Math.abs(smallestLong);
+    		}
+
+    		sumXSq += weight*(smallestLong*smallestLong);
+    		sumYSq += weight*((p.y - centre.y)*(p.y - centre.y));
+    		sumXY  += weight*(smallestLong*(p.y - centre.y));
+    	}
+
+    	tanAlpha = ((sumXSq-sumYSq) + Math.sqrt((sumXSq-sumYSq)*(sumXSq-sumYSq) + 4*sumXY*sumXY))/(2*sumXY);
+    	wRotation = (float)Math.atan(tanAlpha);
+    	if (Double.isNaN(wRotation))
+    	{
+    		wRotation = 0;
+    	}
+
+    	// Calculate the major and minor axes.
+    	sinAlpha = Math.sin(wRotation);
+    	cosAlpha = Math.cos(wRotation);
+
+    	wMajorAxis = 2*(float)Math.sqrt((sumXSq*cosAlpha*cosAlpha - 2*sumXY*sinAlpha*cosAlpha + sumYSq*sinAlpha*sinAlpha)/weightTotal);
+
+    	if (Double.isNaN(wMajorAxis))
+    	{
+    		wMajorAxis = 0;
+    	}
+
+    	wMinorAxis = 2*(float)Math.sqrt((sumXSq*sinAlpha*sinAlpha + 2*sumXY*sinAlpha*cosAlpha + sumYSq*cosAlpha*cosAlpha)/weightTotal);
+    	if (Double.isNaN(wMinorAxis))
+    	{
+    		wMinorAxis = 0;
+    	} 
+
+    	// Make sure that the major axis is the longer one.
+    	if (wMajorAxis < wMinorAxis)
+    	{
+    		float temp = wMajorAxis;
+    		wMajorAxis = wMinorAxis;
+    		wMinorAxis = temp;
+    		wRotation = (wRotation+PConstants.HALF_PI)%PConstants.TWO_PI;
+    	}
+    	calcEndpoints();
+    }
   
     /** Given the centre, scaling and rotation of the axes, this method calculates the 
      *  coordinates of the axes' endpoints.
