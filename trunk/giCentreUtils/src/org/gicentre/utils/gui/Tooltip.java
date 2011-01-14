@@ -13,7 +13,7 @@ import processing.core.*;
 /** Class to allow a simple 'tooltip' type pop-up panel to display text at a given location.
  *  Can be used for mouse-based tooltips or info-boxes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 14th January, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -367,7 +367,6 @@ public class Tooltip implements MouseListener
     {
         return maxHeight;
     }
-
     
     /** Checks to see if the user has clicked on the close icon of this tooltip if present.
      *  If clicked, the tooltip state is set to closed.
