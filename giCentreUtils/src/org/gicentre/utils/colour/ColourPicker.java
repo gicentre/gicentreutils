@@ -4,6 +4,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -18,7 +20,7 @@ import processing.core.PImage;
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 12th January, 2011. 
+ *  @version 3.1, 14th January, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -394,9 +396,56 @@ public class ColourPicker implements MouseListener, MouseMotionListener
     private void createPickerImage(PGraphics buffer)
     {
         swatches = new HashMap<Rectangle2D.Float, ColourTable>();
-        PFont largeFont = sketch.loadFont("./data/BonvenoCF-Light-18.vlw");
-        PFont smallFont = sketch.loadFont("./data/BonvenoCF-Light-10.vlw");
+        
+        // Use the class loader to ensure we look in this .jar file for the fonts.
+        PFont largeFont=null,smallFont=null;
+        ClassLoader cl = getClass().getClassLoader();
 
+        InputStream stream = cl.getResourceAsStream("data/BonvenoCF-Light-18.vlw");
+        if (stream != null) 
+        {
+        	String cn = stream.getClass().getName();
+        	if (!cn.equals("sun.plugin.cache.EmptyInputStream")) 
+        	{
+        		try
+        		{
+        			largeFont = new PFont(stream);
+        			stream.close();
+        		}
+        		catch (IOException e)
+        		{
+        			// Silently fail.
+        		}
+        	}
+        }
+
+        stream = cl.getResourceAsStream("data/BonvenoCF-Light-10.vlw");
+        if (stream != null) 
+        {
+        	String cn = stream.getClass().getName();
+        	if (!cn.equals("sun.plugin.cache.EmptyInputStream")) 
+        	{
+        		try
+        		{
+        			smallFont = new PFont(stream);
+        			stream.close();
+        		}
+        		catch (IOException e)
+        		{
+        			// Silently fail.
+        		}
+        	}
+        }
+        
+        if (largeFont == null)
+        {
+        	largeFont = sketch.createFont("sans serif",18);
+        }
+        if (smallFont == null)
+        {
+        	smallFont = sketch.createFont("sans serif",10);
+        }
+        
         buffer.beginDraw();
         buffer.smooth();
         buffer.background(255,220);
