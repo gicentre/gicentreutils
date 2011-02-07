@@ -13,7 +13,7 @@ import processing.core.PVector;
  *  mouse. This tests the ability to calculate standard ellipse across the 'join' in a
  *  global map projection.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 12th January, 2011. 
+ *  @version 3.1, 15th January, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -55,20 +55,10 @@ public class StandardEllipseLatLongTest extends PApplet
 	 */
 	public void setup()
 	{
-		size(360,180);
+		size(720,360);
 		smooth();
-		
 
-		points = new ArrayList<PVector>();
-
-		/*
-		points.add(new PVector(-7,45,1));
-		points.add(new PVector(-5,55,1));
-		points.add(new PVector(-0,55,1));
-		points.add(new PVector( 5,55,1));
-		points.add(new PVector( 7,45,1));
-	*/
-	
+		points = new ArrayList<PVector>();	
 		points.add(new PVector(173,45,1));
 		points.add(new PVector(175,55,1));
 		points.add(new PVector(180,55,1));
@@ -90,8 +80,8 @@ public class StandardEllipseLatLongTest extends PApplet
 		stroke(0);
 		
 		// Transform to show lat long range in window
-		translate(180,90);
-		scale(1,-1);
+		scale(width/360,-height/180);
+		translate(180,-90);
 
 		// Plot the original points 
 		for (PVector p : points)
@@ -119,15 +109,15 @@ public class StandardEllipseLatLongTest extends PApplet
 	 */
 	public void mouseClicked()
 	{
-		mousePoint.x = mouseX-180;
-		mousePoint.y = 90-mouseY;
+		mousePoint.x = map(mouseX,0,width,-180,180);
+		mousePoint.y = -map(mouseY,0,height,-90,90);
 	}
 	
 	/** Updates one of the points to reflect current mouse position.
 	 */
 	public void mouseDragged()
 	{
-		mousePoint.x = mouseX-180;
-		mousePoint.y = 90-mouseY;
+		mousePoint.x = map(mouseX,0,width,-180,180);
+		mousePoint.y = -map(mouseY,0,height,-90,90);
 	}
 }
