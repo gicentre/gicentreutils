@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests zooming and panning in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 12th December, 2010. 
+ *  @version 3.1, 7th February, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -105,7 +105,7 @@ public class ZoomTest extends PApplet
         textSize(8);
         textAlign(PConstants.CENTER, PConstants.CENTER);
         // Use Zoomer's improved text method (try replacing with text() to see improvement).
-        zoomer.text2("Zoom and pan me",width/2,height/2);
+        zoomer.text("Zoom and pan me",width/2,height/2);
         //text("Zoom and pan me",width/2,height/2);
         
         
