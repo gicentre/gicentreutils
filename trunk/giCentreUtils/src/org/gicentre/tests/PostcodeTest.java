@@ -6,7 +6,7 @@ import org.gicentre.utils.spatial.Postcode;
 //  ****************************************************************************************
 /** Set of unit tests for postcode parsing.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 8th February, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -31,13 +31,15 @@ public class PostcodeTest extends TestCase
     {
         "LE1 7RH", "Le1   7RH","   le1\t7rh","le17rh", "s10 2Tn", "ec1v 0HB"," e c 1 v 0 h b ",
         "S1", "S     1", "S1 0", "S10", "s10hb", "s1 0hb", "s1 05hb",
-        "SW", "s w1", "s w 1 7", "sw 1 7 3", "sw100", "sw1 0 0", "s100", "S 1 0", "S 1 0 3"
+        "SW", "s w1", "SW12","s w 1 7", "sw 1 7 3", "sw100", "sw1 0 0", "s100", "S 1 0", "S 1 0 3",
+        "W1C 1JF", "W1C1 JF", "w 1C   1JF", 
+        "A","A1","A12","A1B","AB1","A123","A1B2","AB12", "AB1 2","AB1C","A12BC","AB123","AB1C2","A123BC","A1B2CD","AB12CD","AB123CD","AB1C2DE"
     };
     
     private String[] invalidPostcodes = 
     {
             "le1_7rh", "sw 1 7 3 a", null, "", "E% 5HT", "E7 3LRa", "EH24a 7RB", "510 2LR", "S10 a",
-            "MK1 7r", "MK17 3r", "MKR 3", "MK  1  73a "
+            "MK1 7r", "MK17 3r", "MK  1  73a ", "MKR 3"
     };
     
     // ---------------------------------- Methods ----------------------------------
@@ -70,6 +72,10 @@ public class PostcodeTest extends TestCase
         for (String postcodeText : validPostcodes)
         {
              Postcode pc = new Postcode(postcodeText);
+             if (pc.isValid() == false)
+             {
+            	 System.err.println("Valid postcode '"+postcodeText+"' classified as invalid: "+pc.getErrorMessage());
+             }
              assertTrue(pc.isValid());
              System.out.println("'"+postcodeText+"' -> '"+pc.toString()+"'");   
         }

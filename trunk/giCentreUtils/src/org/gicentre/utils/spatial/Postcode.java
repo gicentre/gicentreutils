@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  *  identified individually. Will parse partial postcodes as well as those containing
  *  arbitrary whitespace.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 8th February, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -259,10 +259,9 @@ public class Postcode
             return false;
         }
                 
-        // Possible postcode formats are as follows where L=letter, D=digit:
-        // LD DLL, LDD DLL, LLD DLL, LLDD DLL, LLDL DLL
-        
-    
+        // Possible full postcode formats are as follows where L=letter, D=digit:
+        // LD DLL, LDD DLL, LDL DLL, LLD DLL, LLDD DLL, LLDL DLL
+      
         // Grab the unit first if it exists.
         if (pcNoSpaces.length() >= 5)
         {
@@ -290,8 +289,8 @@ public class Postcode
             }
         }
         
-        // Area must start with either 1 letter or 2 letters.: LD, LDD, LLD, LLDD, LLDL
-        
+        // Area must start with either 1 letter or 2 letters.: LD, LDD, LDL, LLD, LLDD, LLDL
+       
         // First character (Area) must be a letter to be valid.
         char nextChar = getNextCharacter(pcUpperCase); 
         if (isLetter(nextChar))
@@ -324,8 +323,8 @@ public class Postcode
         }
         
         // If we have a space between the second and third characters, and we already have a 
-        // district value, the third must be the sector if it is the final character, or the 
-        // second digit of the district if it is not the final one.
+        // district value, the third must be the sector if it is the final character and numeric,
+        // or the second digit of the district if it is a letter
         if ((pcDistrict.length() > 0) && (pcUpperCase.length() > 3) && (pcUpperCase.charAt(pos)==' ') && (pcSector.length()==0))
         {
             nextChar = getNextCharacter(pcUpperCase);
@@ -338,11 +337,24 @@ public class Postcode
                     pcSector = Character.toString(nextChar);
                     return true;
                 }
-                errorMessage = "Postcode sector contains unexpected letter '"+nextChar+"'.";
+                
+                // Must be the second character in the district (non-numeric)
+                //pcDistrict = pcDistrict + Character.toString(nextChar);
+                
+                //errorMessage = "Postcode sector contains unexpected letter '"+nextChar+"'.";
+                //return false;
+            }
+            
+            if (isNumber(nextChar))
+            {
+            	pcDistrict = pcDistrict+Character.toString(nextChar);
+            }
+            else
+            {
+            	errorMessage = "Last part of postcode district or postcode sector contains unexpected letter '"+nextChar+"'.";
                 return false;
             }
             
-            pcDistrict = pcDistrict+Character.toString(nextChar);
             if (isNumber(finalChar))
             {
                 pcSector = Character.toString(finalChar);
@@ -358,22 +370,21 @@ public class Postcode
             }
         }
         
-        // Third character must be a number, either first or second number of district.
+        // Third character could be a number or letter, either first (number) or second (number or letter) of district.
         nextChar = getNextCharacter(pcUpperCase);
         if (nextChar == Character.MIN_VALUE)
         {
             // Nothing else defined in postcode
             return true;
         }
-        if (isNumber(nextChar))
+               
+        if ((isLetter(nextChar)) && (pcDistrict.length()==0))
         {
-            pcDistrict = pcDistrict+Character.toString(nextChar);
-        }
-        else
-        {
-            errorMessage = "Postcode district contains unexpected letter '"+nextChar+"'.";
-            return false;
-        }
+        	 errorMessage = "Postcode district should start with a number but starts with unexpected character '"+nextChar+"'.";
+             return false;
+        }            
+       
+        pcDistrict = pcDistrict+Character.toString(nextChar);
         
         // If we have a space between the third and fourth characters, the fourth must be the sector if it is
         // the final character, or the second digit of the district if it is not the final one.
