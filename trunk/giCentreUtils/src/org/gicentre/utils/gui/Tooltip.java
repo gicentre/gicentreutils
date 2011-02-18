@@ -13,7 +13,7 @@ import processing.core.*;
 /** Class to allow a simple 'tooltip' type pop-up panel to display text at a given location.
  *  Can be used for mouse-based tooltips or info-boxes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 14th January, 2011. 
+ *  @version 3.1, 18th February, 2011. 
  */ 
 // *****************************************************************************************
 

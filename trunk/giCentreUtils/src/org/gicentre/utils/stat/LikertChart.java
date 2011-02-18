@@ -16,8 +16,8 @@ import processing.core.PFont;
  *  ordered dataset. Typically, these are questionnaire responses in the form 'strongly 
  *  disagree', 'disagree', 'neutral', 'agree' and 'strongly agree'. Likert scales can be 
  *  over any range, but are typically between 3 and 7 and usually odd. 
-*  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @author Jo Wood, giCentre, City University London.
+ *  @version 3.1, 18th February, 2011. 
  */ 
 // *****************************************************************************************
 

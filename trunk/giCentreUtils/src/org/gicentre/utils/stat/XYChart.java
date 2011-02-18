@@ -8,10 +8,10 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 
-//  ****************************************************************************************
+// *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 7th September, 2010. 
+ *  @version 3.1, 18th February, 2011.
  */ 
 // *****************************************************************************************
 

@@ -11,7 +11,7 @@ import processing.core.*;
  *  sketch does not loop when the embedded sketch is not active (e.g. it is in its own 
  *  window that has been minimised).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 18th February, 2011.
  */ 
 // *****************************************************************************************
 
