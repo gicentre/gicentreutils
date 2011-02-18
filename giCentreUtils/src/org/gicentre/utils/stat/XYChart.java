@@ -709,7 +709,7 @@ public class XYChart extends AbstractChart
        setMax(0,maxX);
     }
     
-    /** Sets the minimum value for y values to be represented. This can be used to force
+    /** Sets the maximum value for y values to be represented. This can be used to force
      *  multiple charts to share the same axis range independently of data to be represented.
      *  If the given value is <code>Float.NaN</code>, then the minimum y-value will be set 
      *  to the maximum of the data y-values in the chart.
