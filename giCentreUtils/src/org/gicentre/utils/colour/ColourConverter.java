@@ -8,7 +8,7 @@ import java.awt.Color;
  *  documentation for each conversion routine.
  *  @author Jo Wood,giCentre, City University London. Includes modified code from Duane 
  *  Schwartzwald and Harry Parker.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 18th February, 2011.
  */ 
 // *****************************************************************************************
 

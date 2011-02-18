@@ -9,7 +9,7 @@ import processing.core.PVector;
  *  <a href="http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c" target="_new">
  *  http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c</a>.
  *  @author Jo Wood, giCentre, City University London and T. Mittan.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 18th February, 2011. 
  */ 
 // *****************************************************************************************
 

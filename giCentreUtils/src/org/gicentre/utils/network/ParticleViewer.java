@@ -21,7 +21,7 @@ import traer.physics.Vector3D;
  *  for particle management and the <a href="http://www.cs.princeton.edu/~traer/animation">traer
  *  animation library</a> for smooth camera movement. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th December, 2010. 
+ *  @version 3.1, 18th February, 2011. 
  */ 
 // *****************************************************************************************
 

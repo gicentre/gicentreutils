@@ -10,7 +10,7 @@ import processing.core.PVector;
  *  target="_new">www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents</a>
  *  for details of the transformation.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.1, 18th February, 2011.
  */ 
 // *****************************************************************************************
 
