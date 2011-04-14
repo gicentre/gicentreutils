@@ -1,5 +1,6 @@
 package org.gicentre.utils.network;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import traer.physics.Vector3D;
  *  for particle management and the <a href="http://www.cs.princeton.edu/~traer/animation">traer
  *  animation library</a> for smooth camera movement. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.1.1, 14th March, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -55,9 +56,12 @@ public class ParticleViewer
 	private ZoomPan zoomer;           		   // For interactive zooming and panning.
 	private Node selectedNode;		 		   // Optionally selected node for query or interaction.
 
-	private static final float EDGE_STRENGTH   = 1;
-	private static final float SPRING_STRENGTH = 0.5f;
-	private static final float DAMPING         = 0.1f;
+								/** Default strength for all edges. */
+	public static final float EDGE_STRENGTH   = 1;
+								/** Default strength for all springs. */
+	public static final float SPRING_STRENGTH = 0.5f;
+							    /** Default damping for all particle movements. */
+	public static final float DAMPING         = 0.1f;
 
 	// ------------------------------- Constructors --------------------------------
 
@@ -215,6 +219,7 @@ public class ParticleViewer
 		return false;
 	}
 
+	
 	/** Creates a spring between the two given nodes. If the two nodes not directly connected by an
 	 *  edge already have a spring between them, it will be replaced by this one. The strength of the
 	 *  spring will be less than that of connected edges.
@@ -224,6 +229,19 @@ public class ParticleViewer
 	 * @return True if the viewer contains the two nodes and a spring between them has been created.
 	 */
 	public boolean addSpring(Node node1, Node node2, float length)
+	{
+		return addSpring(node1,node2,length,SPRING_STRENGTH);
+	}
+	
+	/** Creates a spring between the two given nodes with the given strength. If the two nodes not directly 
+	 *  connected by an edge already have a spring between them, it will be replaced by this one. 
+	 * @param node1 First of the two nodes to have a spring between them. 
+	 * @param node2 Second of the two nodes to have a spring between them.
+	 * @param length The length of this spring (natural rest distance at which the two nodes would sit).
+	 * @param strength The strength of this new spring. 
+	 * @return True if the viewer contains the two nodes and a spring between them has been created.
+	 */
+	public boolean addSpring(Node node1, Node node2, float length, float strength)
 	{
 		Particle p1 = nodes.get(node1);
 		if (p1 == null)
@@ -250,7 +268,7 @@ public class ParticleViewer
 		}
 
 		// Add the new force.
-		physics.makeSpring(p1,p2, SPRING_STRENGTH, DAMPING,length);
+		physics.makeSpring(p1,p2, strength, DAMPING,length);
 		return false;
 	}
 	
@@ -328,14 +346,14 @@ public class ParticleViewer
 	}
 
 	/** Adds the given edge to those to be displayed in the viewer. Note that the edge must connect
-	 *  nodes that have already been added to the viewer.
+	 *  nodes that have already been added to the viewer. This version will use the locations of the
+	 *  two nodes to calculate their distance of separation. 
 	 *  @param edge Edge to add to the display.
 	 *  @return True if edge was added successfully. False if edge contains nodes that have not been
 	 *               added to the viewer.
 	 */
 	public boolean addEdge(Edge edge)
 	{
-
 		Particle p1 = nodes.get(edge.getNode1());
 		if (p1 == null)
 		{
@@ -362,7 +380,72 @@ public class ParticleViewer
 		}
 		return true;
 	}
+	
+	/** Adds the given edge to those to be displayed in the viewer. Note that the edge must connect
+	 *  nodes that have already been added to the viewer. This version will fix the distance of 
+	 *  separation between nodes to the given value
+	 *  @param edge Edge to add to the display.
+	 *  @return True if edge was added successfully. False if edge contains nodes that have not been
+	 *               added to the viewer.
+	 */
+	public boolean addEdge(Edge edge, float distance)
+	{
+		Particle p1 = nodes.get(edge.getNode1());
+		if (p1 == null)
+		{
+			System.err.println("Warning: Node1 not found when creating edge.");
+			return false;
+		}
+		Particle p2 = nodes.get(edge.getNode2());
+		if (p2 == null)
+		{
+			System.err.println("Warning: Node2 not found when creating edge.");
+			return false;
+		}
 
+		// Only add edge if it does not already exist in the collection
+		if (!edges.containsKey(edge))
+		{
+			// Strength, damping, reset length
+			edges.put(edge, physics.makeSpring(p1, p2, EDGE_STRENGTH, DAMPING, distance));
+		}
+		return true;
+	}
+
+	/** Attempts to space out non-connected nodes from one another. This is achieved by adding a strong repulsive force
+	 *  between non-connected nodes. Note that this produces n-squared forces so can be slow for large networks where
+	 *  many nodes are not connected to each other. 
+	 */
+	public void spaceNodes()
+	{
+		ArrayList<Particle> pList = new ArrayList<Particle>(nodes.values());
+		for (int i=0; i<pList.size(); i++)
+		{
+			for (int j=0; j<pList.size();j++)
+			{
+				if (i>j)
+				{
+					Particle p1 = pList.get(i);
+					Particle p2 = pList.get(j);
+					
+					// See if we have a connection between nodes
+					for (Spring spring : edges.values())
+					{
+						if (((spring.getOneEnd() == p1) && (spring.getTheOtherEnd() == p2)) ||
+							((spring.getOneEnd() ==p2) && (spring.getTheOtherEnd()== p1)))
+						{
+							// Do nothing as we already have an edge connecting these two particles
+						}
+						else
+						{
+							// Add a small repulsive force
+							physics.makeAttraction(p1,p2, -1000, 0.1f);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/** Allows a node to be selected with the mouse.
 	 */
