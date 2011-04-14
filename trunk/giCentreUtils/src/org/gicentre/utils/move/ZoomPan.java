@@ -22,7 +22,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.1.2, 14th April, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -110,15 +110,26 @@ public class ZoomPan
 
 	// ------------------------------ Public methods -----------------------------
 
-	/** Performs the zooming/panning transformation. This method must be called at
-	 *  the start of the draw() method. 
+	/** Performs the zooming/panning transformation. This method should be called in the
+	 *  draw() method before any drawing that is to be zoomed or panned. 
 	 */
 	public void transform()
 	{    
 		getGraphics().translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
 		getGraphics().scale((float)trans.getScaleX(),(float)trans.getScaleY());
 	}
-
+	
+	/** Performs the zooming/panning transformation in the given graphics context. This version of transform()
+	 *  can be used for transforming off-screen buffers that were not provided to the constructor. Can
+	 *  be useful when a sketch temporarily creates an off-screen buffer that needs to be zoomed and panned
+	 *  in the same way as the main PApplet.
+	 */
+	public void transform(PGraphics offScreenBuffer)
+	{    
+		offScreenBuffer.translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
+		offScreenBuffer.scale((float)trans.getScaleX(),(float)trans.getScaleY());
+	}
+	
 	/** Resets the display to unzoomed and unpanned position.
 	 */
 	public void reset()
@@ -149,6 +160,7 @@ public class ZoomPan
 	{
 		return listeners.remove(zoomPanListener); 
 	}
+	
 
 	/** Sets the key that must be pressed before mouse actions are active. By default, no key
 	 *  is needed for the mouse to be active. Specifying a value allows normal mouse actions to

@@ -83,7 +83,7 @@ public class ParticleViewerTest extends PApplet
 		viewer.selectNearestWithMouse();
 	}
 	
-	/** Responds to a mouse released event by relasing any selected node.
+	/** Responds to a mouse released event by releasing any selected node.
 	 */
 	public void mouseReleased()
 	{

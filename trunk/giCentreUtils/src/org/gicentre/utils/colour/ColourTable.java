@@ -25,7 +25,7 @@ import org.gicentre.utils.io.DOMProcessor;
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011.
+ *  @version 3.1.1, 23rd March, 2011.
  */ 
 // *****************************************************************************************
 
@@ -1004,23 +1004,38 @@ public class ColourTable implements Serializable
         return (argb << 8) | alpha;  
     }   
     
-    /** Converts a given colour into its HTML-like hex string in the form <code>#rrggbb</code>.
-      * @param colour Colour to convert.
-      * @return HTML hex string representing colour.
-      */  
+    /** Converts a given colour into its HTML-like hex string in the form <code>#rrggbb</code> or
+     *  <code>rrggbbaa</code> if the colour has a non-opaque alpha value.
+     *  @param colour Colour to convert.
+     *  @return HTML hex string representing colour.
+     */  
     public static String getHexString(int colour)
     {
         int red   = (colour & RED) >> 16;
         int green = (colour & GRN) >>  8;
         int blue  = (colour & BLU);
         
+        int alf   = (colour & ALF) >> 24;
+        // Convert to unsigned integer.
+        if (alf < 0) 
+        {
+            alf +=256;
+        }
+        
+        // The #rrggbbaa version.
+        if (alf <255)
+        {
+        	return new String("#"+paddedHex (red) + paddedHex (green) + paddedHex (blue)+ paddedHex(alf));
+        }
+        
+        // The #rrggbb version.
         return new String("#"+paddedHex (red) + paddedHex (green) + paddedHex (blue));            
     }
     
     /** Converts a given colour into its hex string in the form <code>aabbggrr</code>.
-      * @param colour Colour to convert.
-      * @return Hex string representing colour.
-      */  
+     *  @param colour Colour to convert.
+     *  @return Hex string representing colour.
+     */  
     public static String getHexStringABGR(int colour)
     {
         int alf   = (colour & ALF) >> 24;
