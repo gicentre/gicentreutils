@@ -75,7 +75,7 @@ public class ChartTest2 extends PApplet
         capValues          = false;
         dataScreenLocation = null;
        
-        float[] chartData = new float[] {12,-7,16,13,25};
+        float[] chartData = new float[] {12,-7,16,13,25,6,4,7,5,-3,-6,2,5,4,10,4,6,7,9,3};
 
         barChart = new BarChart(this);
         barChart.setData(chartData);
@@ -89,7 +89,7 @@ public class ChartTest2 extends PApplet
         barChart.setCategoryAxisAt(0);          // Allow bars to dip below axis when negative. 
         
         xyChart = new XYChart(this);
-        xyChart.setData(new float[] {1,2,3,4,5}, chartData);
+        xyChart.setData(new float[] {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}, chartData);
         
         xyChart.setLineColour(color(80,30,30));
         xyChart.setLineWidth(2);
@@ -98,6 +98,7 @@ public class ChartTest2 extends PApplet
         xyChart.setXAxisAt(0);
         xyChart.setMinY(barChart.getMinValue()); // Scale line graph to use same space as bar graph.
         xyChart.setMaxY(barChart.getMaxValue());
+        xyChart.calcDataSpacing();
     }
 
     /** Draws some charts.
@@ -108,12 +109,14 @@ public class ChartTest2 extends PApplet
         noLoop();
                 
         // Draw the bar chart first, then overlay the line chart.
-        barChart.draw(1,1,width-2,height-2);  
+        barChart.draw(2,1,width-4,height-2);  
         
         PVector bottomLeft = barChart.getDataToScreen(new PVector(0,barChart.getMinValue()));
         PVector topRight   = barChart.getDataToScreen(new PVector(barChart.getNumBars()-1,barChart.getMaxValue()));
-                 
-        xyChart.draw(bottomLeft.x-2,topRight.y-2,topRight.x+5-bottomLeft.x,bottomLeft.y-topRight.y+5);
+                         
+        xyChart.draw(bottomLeft.x-xyChart.getLeftSpacing(),topRight.y-xyChart.getTopSpacing(),
+        		     topRight.x+xyChart.getRightSpacing()-(bottomLeft.x-xyChart.getLeftSpacing()),
+        		     bottomLeft.y+xyChart.getBottomSpacing()-(topRight.y-xyChart.getTopSpacing()));
         
         // Draw the last clicked data item.
         if (dataPoint != null)
@@ -131,7 +134,7 @@ public class ChartTest2 extends PApplet
             {
                 fill(150,50,50,180);
             }
-            ellipse(dataScreenLocation.x,dataScreenLocation.y,20,20);
+            ellipse(dataScreenLocation.x,dataScreenLocation.y,10,10);
         }
     }
     

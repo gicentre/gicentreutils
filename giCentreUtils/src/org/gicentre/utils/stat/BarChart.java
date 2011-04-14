@@ -111,19 +111,14 @@ public class BarChart extends AbstractChart
             return;
         }
         
-        parent.pushMatrix();
         parent.pushStyle();
-        
-        // Use a local coordinate system with origin at top-left of drawing area.
-        parent.translate(xOrigin,yOrigin);
         
         // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
         // because not all charts label their axes in the same way.
-        
-        float extraLeftBorder =2;
-        float extraRightBorder =2;
-        float extraTopBorder =2;
-        float extraBottomBorder =2;
+        float extraLeftBorder   = 2;
+        float extraRightBorder  = 2;
+        float extraTopBorder    = 2;
+        float extraBottomBorder = 2;
          
         // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
         if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
@@ -159,10 +154,10 @@ public class BarChart extends AbstractChart
             extraBottomBorder +=parent.textAscent()+parent.textDescent();
         }  
         
-        left   = getBorder(Side.LEFT) + extraLeftBorder;
-        right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
-        bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
-        top    = getBorder(Side.TOP)+extraTopBorder;
+        left   = xOrigin + getBorder(Side.LEFT) + extraLeftBorder;
+        right  = xOrigin + width - (getBorder(Side.RIGHT)+extraRightBorder);
+        bottom = yOrigin + height-(getBorder(Side.BOTTOM)+extraBottomBorder);
+        top    = yOrigin + getBorder(Side.TOP)+extraTopBorder;
         float hRange = right-left;
         float vRange = bottom-top;
         float axisValue;
@@ -362,7 +357,6 @@ public class BarChart extends AbstractChart
             }
         }
         parent.popStyle();
-        parent.popMatrix();
     }
     
     /** Converts given data point into its screen location. The x value of the dataPoint should correspond

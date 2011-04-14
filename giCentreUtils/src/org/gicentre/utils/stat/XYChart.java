@@ -11,7 +11,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011.
+ *  @version 3.1.2, 14th April, 2011.
  */ 
 // *****************************************************************************************
 
@@ -44,7 +44,9 @@ public class XYChart extends AbstractChart
     private Float xAxisPosition,yAxisPosition;  // Positions of the axes (if null, defaults to min values).
     private String xLabel, yLabel;              // Axis labels.
     private float top,left,bottom,right;        // Bounds of the data area (excludes axes and axis labels).
-  
+    											// Borders between data area and graph area (taken up by axes and labels).
+    private float leftSpace,rightSpace,topSpace,bottomSpace;	
+    
     // ------------------------------- Constructors --------------------------------
 
     /** Initialises an XY chart.
@@ -67,6 +69,9 @@ public class XYChart extends AbstractChart
         bottom        = 0;
         left          = 0;
         right         = 0;
+
+        // Find spacing between data space and full graph space.
+        calcDataSpacing();
     }
     
     // ---------------------------------- Methods ----------------------------------
@@ -120,50 +125,13 @@ public class XYChart extends AbstractChart
             return;
         }
 
-        parent.pushMatrix();
         parent.pushStyle();
+        calcDataSpacing();
         
-        // Use a local coordinate system with origin at top-left of drawing area.
-        parent.translate(xOrigin,yOrigin);
-        
-        // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
-        // because not all charts label their axes in the same way.
-        
-        float extraLeftBorder   =2;
-        float extraRightBorder  =2;
-        float extraTopBorder    =2;
-        float extraBottomBorder =2;
-         
-        // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
-        if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
-        {
-            int axis = transposeAxes?1:0;
-            String lastLabel = axisFormatter[axis].format(tics[axis][tics[axis].length-1]);
-            extraRightBorder += parent.textWidth(lastLabel)/2f;
-        }
-        
-        // Allow space above the vertical axis to accommodate the top tic label.
-        if ((getShowAxis(1)) || ((transposeAxes) && (getShowAxis(0))))
-        {   
-            extraTopBorder += parent.textAscent()/2f+2;
-        }
-        
-        // Allow space to the left of the vertical axis to accommodate its label.
-        if (((yLabel != null) && getShowAxis(1)) || ((transposeAxes) && (xLabel != null) && getShowAxis(0)))
-        {
-            extraLeftBorder += parent.textAscent()+parent.textDescent();
-        }
-        
-        // Allow space below the horizontal axis to accommodate its label.
-        if (((xLabel != null) && getShowAxis(0)) || ((transposeAxes) && (yLabel != null) && getShowAxis(1)))
-        {
-            extraBottomBorder +=parent.textAscent()+parent.textDescent();
-        }  
-        
-        left   = getBorder(Side.LEFT) + extraLeftBorder;
-        right  = width - (getBorder(Side.RIGHT)+extraRightBorder);
-        bottom = height-(getBorder(Side.BOTTOM)+extraBottomBorder);
-        top    = getBorder(Side.TOP)+extraTopBorder;
+        left   = xOrigin + leftSpace;
+        right  = xOrigin + width - rightSpace;
+        bottom = yOrigin + height - bottomSpace;
+        top    = yOrigin + topSpace;
         float hRange = right-left;
         float vRange = bottom-top;
                       
@@ -481,7 +449,6 @@ public class XYChart extends AbstractChart
         }
                 
         parent.popStyle();
-        parent.popMatrix();
     }
     
     /** Converts given data point into its screen location. This location will be based on 
@@ -777,6 +744,40 @@ public class XYChart extends AbstractChart
         return getMax(1);
     }
     
+    /** Reports the spacing between the left of the chart and the left of the dataspace within the chart.
+     *  This value is the space required for drawing the axis and labels.
+     *  @return Spacing between dataspace and graph bounds. 
+     */
+    public float getLeftSpacing()
+    {
+    	return leftSpace;
+    }
+    
+    /** Reports the spacing between the right of the chart and the right of the dataspace within the chart.
+     *  @return Spacing between dataspace and graph bounds. 
+     */
+    public float getRightSpacing()
+    {
+    	return rightSpace;
+    }
+    
+    /** Reports the spacing between the bottom of the chart and the bottom of the dataspace within the chart.
+     *  This value is the space required for drawing the axis and labels.
+     *  @return Spacing between dataspace and graph bounds. 
+     */
+    public float getBottomSpacing()
+    {
+    	return bottomSpace;
+    }
+    
+    /** Reports the spacing between the top of the chart and the top of the dataspace within the chart.
+     *  @return Spacing between dataspace and graph bounds. 
+     */
+    public float getTopSpacing()
+    {
+    	return topSpace;
+    }
+    
     /** Sets the x-axis label. If null, no label is drawn.
      *  @param label x-axis label to draw or null if no label to be drawn.
      */
@@ -881,5 +882,51 @@ public class XYChart extends AbstractChart
         
         showXAxis(showXAxis);
         showYAxis(showYAxis);
+    }
+    
+    /** Calculates the spacing between the graph area and the data to display. This method need only be
+     *  called if data spacing values are required and some aspect of the chart's spacing has changed
+     *  since it was first constructed (e.g. axes have been shown).
+     */
+    public void calcDataSpacing()
+    {
+    	// Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
+        // because not all charts label their axes in the same way.
+        
+        float extraLeftBorder   =2;
+        float extraRightBorder  =2;
+        float extraTopBorder    =2;
+        float extraBottomBorder =2;
+         
+        // Allow space to the right of the horizontal axis to accommodate right-hand tic label.
+        if ((getShowAxis(0)) || ((transposeAxes) && (getShowAxis(1))))
+        {
+            int axis = transposeAxes?1:0;
+            String lastLabel = axisFormatter[axis].format(tics[axis][tics[axis].length-1]);
+            extraRightBorder += parent.textWidth(lastLabel)/2f;
+        }
+        
+        // Allow space above the vertical axis to accommodate the top tic label.
+        if ((getShowAxis(1)) || ((transposeAxes) && (getShowAxis(0))))
+        {   
+            extraTopBorder += parent.textAscent()/2f+2;
+        }
+        
+        // Allow space to the left of the vertical axis to accommodate its label.
+        if (((yLabel != null) && getShowAxis(1)) || ((transposeAxes) && (xLabel != null) && getShowAxis(0)))
+        {
+            extraLeftBorder += parent.textAscent()+parent.textDescent();
+        }
+        
+        // Allow space below the horizontal axis to accommodate its label.
+        if (((xLabel != null) && getShowAxis(0)) || ((transposeAxes) && (yLabel != null) && getShowAxis(1)))
+        {
+            extraBottomBorder +=parent.textAscent()+parent.textDescent();
+        }  
+        
+        leftSpace   = getBorder(Side.LEFT) + extraLeftBorder;
+        rightSpace  = getBorder(Side.RIGHT)+extraRightBorder;
+        bottomSpace = getBorder(Side.BOTTOM)+extraBottomBorder;
+        topSpace    = getBorder(Side.TOP)+extraTopBorder;
     }
 }
