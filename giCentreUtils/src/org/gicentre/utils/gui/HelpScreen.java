@@ -227,7 +227,8 @@ public class HelpScreen {
             height+=footerVerticalSpace;
         }
         colonX=(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)+widthLeftColumn;
-        y=(applet.height/2)-(height/2);
+        int top=(applet.height/2)-(height/2)-outerPadding;
+        y=top+outerPadding;
         
         applet.fill(backgroundColour);
         applet.stroke(borderColour);
@@ -285,7 +286,8 @@ public class HelpScreen {
             applet.textLeading(footerTextSize);
             applet.fill(footerTextColour);
             applet.textAlign(PConstants.RIGHT,PConstants.BOTTOM);
-            applet.text(footerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,y,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),PApplet.max(footerVerticalSpace,footerTextSize+footerTextSize/2));//added half the text size again, because textsize is too small for the height of a paragraphy box   
+            int heightOfFooterParagraphBox=(int)PApplet.max(footerVerticalSpace,footerTextSize+footerTextSize/2);//added half the text size again, because textsize is too small for the height of a paragraphy box  
+            applet.text(footerText,(applet.width/2)-((widthLeftColumn+widthRightColumn)/2)-2-spaceBetweenColon,top+height+outerPadding-heightOfFooterParagraphBox,widthLeftColumn+widthRightColumn+2*(spaceBetweenColon+2),heightOfFooterParagraphBox); 
         }
     }
 }
