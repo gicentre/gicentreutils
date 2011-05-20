@@ -14,7 +14,7 @@ import processing.core.PFont;
  *  separating colons. Calculates the size required to contain all the instructions 
  *  (regardless of sketch size), then centres this.
  *  @author Aidan Slingsby and Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 20th May, 2011. 
  */ 
 // *****************************************************************************************
 
