@@ -1,17 +1,24 @@
 package org.gicentre.utils.move;
 
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
+
+import org.gicentre.utils.move.ZoomPanListener;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
+import quicktime.app.actions.MouseController;
 
 // *****************************************************************************************
 /** Class to allow interactive zooming and panning of the Processing display. To use, simply
@@ -21,8 +28,8 @@ import processing.core.PVector;
  *  Can also zoom in and out with the mouse wheel if present. Mouse actions can be filtered
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
- *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1.2, 14th April, 2011. 
+ *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
+ *  @version 3.2, 20th May, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -54,7 +61,14 @@ public class ZoomPan
 	private PGraphics graphics; //don't reference this directly - always use getGraphics()
 	private Vector<ZoomPanListener> listeners;
 	private int zoomMouseButton=PConstants.LEFT; // Implies pan is the other button
-
+	private Rectangle mouseBoundsMask=null; //zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning. Null means no mask
+	//The fields below are used to ensure a lag between the mouse wheel last being
+	//used and a zoom event
+	private Long timeAtLastWheelZoom=null;//The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
+	private Timer timer; //Timer so that we have a delay before a zoom event is triggered with the timer
+	private CheckTiggerWheelZoomEvent checkTiggerWheelZoomEvent; //Contains the code to trigger a zoom event
+	int millisecondsBeforeWheelZoomEvent=700; //milliseconds before a zoom event is trigger with the mouse wheel - set to 0.7 of a second by default  
+	
 	// ------------------------------- Constructor ------------------------------- 
 
 	/** Initialises the zooming and panning transformations for the given applet context. 
@@ -77,6 +91,10 @@ public class ZoomPan
 		reset();
 		aContext.registerMouseEvent(this);
 		aContext.addMouseWheelListener(new MouseWheelMonitor());
+		//Set up
+		timer=new Timer();
+		checkTiggerWheelZoomEvent=new CheckTiggerWheelZoomEvent();
+		
 	}
 
 	/** Initialises the zooming and panning transformations for the given applet and graphics contexts. 
@@ -357,13 +375,18 @@ public class ZoomPan
 			return;
 		}
 
-		if (e.getID() == MouseEvent.MOUSE_PRESSED)
+		//Only interpret the mousepressed event if the mouse is within mouseBoundsMask
+		//(or there's no mouseBoundsMask)
+		if (e.getID() == MouseEvent.MOUSE_PRESSED
+				&& (mouseBoundsMask==null || (mouseBoundsMask!=null && mouseBoundsMask.contains(aContext.mouseX,aContext.mouseY))))
+
 		{
 			isMouseCaptured   = true;
 			zoomStartPosition = new PVector(e.getX(),e.getY());
 			oldPosition       = new PVector(e.getX(),e.getY());
 		}
-		else if (e.getID() == MouseEvent.MOUSE_DRAGGED)
+		//dragging is allowed outside the mouseBoundsMask
+ 		else if (e.getID() == MouseEvent.MOUSE_DRAGGED) 
 		{
 			// Check in case applet has been destroyed.
 			if ((aContext == null) || (oldPosition == null))
@@ -371,7 +394,7 @@ public class ZoomPan
 				return;
 			}
 
-			if ((aContext.mouseButton==zoomMouseButton) && (allowZoomButton))
+			if ((aContext.mouseButton==zoomMouseButton) && (allowZoomButton) && isMouseCaptured)
 			{
 				isZooming = true;
 
@@ -386,7 +409,7 @@ public class ZoomPan
 				doZoom();
 				zoomStep += 0.005;    // Accelerate zooming with prolonged drag.
 			}
-			else if (allowPanButton)
+			else if (allowPanButton && isMouseCaptured)
 			{        
 				isPanning = true;
 				//panOffset.setLocation((panOffset.y + e.getX() - oldPosition.y),
@@ -399,6 +422,16 @@ public class ZoomPan
 		}
 	}
 
+	/**Sets the screen area outside which mouse movements will have no effect on
+	 * the zooming and panning
+	 * Use null if there is to be no mask (the default) 
+	 * @param mouseBoundsMask
+	 */
+	public void setMouseBoundsMask(Rectangle mouseBoundsMask){
+		this.mouseBoundsMask=mouseBoundsMask;
+	}
+
+	
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
 	 *  which objects have been placed before zooming and panning. For most drawing operations you
@@ -415,6 +448,7 @@ public class ZoomPan
 		return new PVector(pCoord.x,pCoord.y);        
 	}
 
+	
 	/** Transforms the given point from coordinate to display space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
 	 *  which objects have been placed before zooming and panning. For most drawing operations you
@@ -633,6 +667,7 @@ public class ZoomPan
 		iTrans.scale(1/zoomScale,1/zoomScale);
 		iTrans.translate(-centreX-panOffset.x, -centreY-panOffset.y);
 	}
+	
 
 	// ------------------------------ Nested classes -----------------------------
 
@@ -656,19 +691,54 @@ public class ZoomPan
 			{
 				return;
 			}
-
+			
+			//Ignore if outside the  mouseBoundsMask
+			if (mouseBoundsMask!=null && !mouseBoundsMask.contains(e.getX(),e.getY()))
+				return;
+			
 			setZoomStartPosition(new PVector(e.getX(),e.getY()));
 
 			if (e.getWheelRotation() < 0)
 			{
 				setZoomScaleWithoutRecalculation(getZoomScale()*getZoomStep());
-				doZoom();                    
+				doZoom();
+				//store the time at which this was done
+				timeAtLastWheelZoom=new Date().getTime();
+				//schedule triggering a zoom event
+				timer.schedule(checkTiggerWheelZoomEvent, millisecondsBeforeWheelZoomEvent);
 			}
 			else if (e.getWheelRotation() > 0)
 			{
 				setZoomScaleWithoutRecalculation(getZoomScale()/getZoomStep());
-				doZoom();                    
+				doZoom();
+				//store the time at which this was done
+				timeAtLastWheelZoom=new Date().getTime();
+				//schedule triggering a zoom event
+				timer.schedule(checkTiggerWheelZoomEvent, millisecondsBeforeWheelZoomEvent);
 			}   
 		}
+	}
+
+	/**Scheduled by the timer. If the last mouse wheel was used at least 
+	 * millisecondsBeforeWheelZoomEvent ago, the event is triggered
+	 * 
+	 */
+	private class CheckTiggerWheelZoomEvent extends TimerTask{
+		@Override
+		/**
+		 * Checks if the last wheel zoom was at least millisecondsBeforeWheelZoomEvent ago.
+		 * If so, zoom event is triggered on any ZoomPanListeners
+		 */
+		public void run() {
+			if (timeAtLastWheelZoom!=null){
+				if (timeAtLastWheelZoom+millisecondsBeforeWheelZoomEvent-100<new Date().getTime()){
+					for (ZoomPanListener listener:listeners){
+						timeAtLastWheelZoom=null;
+						listener.zoomEnded();
+					}
+				}
+			}
+		}
+		
 	}
 }
