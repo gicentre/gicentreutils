@@ -7,6 +7,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,7 +19,6 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PVector;
-import quicktime.app.actions.MouseController;
 
 // *****************************************************************************************
 /** Class to allow interactive zooming and panning of the Processing display. To use, simply
@@ -66,7 +66,6 @@ public class ZoomPan
 	//used and a zoom event
 	private Long timeAtLastWheelZoom=null;//The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
 	private Timer timer; //Timer so that we have a delay before a zoom event is triggered with the timer
-	private CheckTiggerWheelZoomEvent checkTiggerWheelZoomEvent; //Contains the code to trigger a zoom event
 	int millisecondsBeforeWheelZoomEvent=700; //milliseconds before a zoom event is trigger with the mouse wheel - set to 0.7 of a second by default  
 	
 	// ------------------------------- Constructor ------------------------------- 
@@ -93,7 +92,6 @@ public class ZoomPan
 		aContext.addMouseWheelListener(new MouseWheelMonitor());
 		//Set up
 		timer=new Timer();
-		checkTiggerWheelZoomEvent=new CheckTiggerWheelZoomEvent();
 		
 	}
 
@@ -705,7 +703,7 @@ public class ZoomPan
 				//store the time at which this was done
 				timeAtLastWheelZoom=new Date().getTime();
 				//schedule triggering a zoom event
-				timer.schedule(checkTiggerWheelZoomEvent, millisecondsBeforeWheelZoomEvent);
+				timer.schedule(new CheckTiggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
 			}
 			else if (e.getWheelRotation() > 0)
 			{
@@ -714,11 +712,11 @@ public class ZoomPan
 				//store the time at which this was done
 				timeAtLastWheelZoom=new Date().getTime();
 				//schedule triggering a zoom event
-				timer.schedule(checkTiggerWheelZoomEvent, millisecondsBeforeWheelZoomEvent);
+				timer.schedule(new CheckTiggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
 			}   
 		}
 	}
-
+	
 	/**Scheduled by the timer. If the last mouse wheel was used at least 
 	 * millisecondsBeforeWheelZoomEvent ago, the event is triggered
 	 * 
