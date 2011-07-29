@@ -29,7 +29,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.2, 20th May, 2011. 
+ *  @version 3.3, 29th July, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -66,7 +66,10 @@ public class ZoomPan
 	//used and a zoom event
 	private Long timeAtLastWheelZoom=null;//The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
 	private Timer timer; //Timer so that we have a delay before a zoom event is triggered with the timer
-	int millisecondsBeforeWheelZoomEvent=700; //milliseconds before a zoom event is trigger with the mouse wheel - set to 0.7 of a second by default  
+	int millisecondsBeforeWheelZoomEvent=700; //milliseconds before a zoom event is trigger with the mouse wheel - set to 0.7 of a second by default
+	
+	double minZoomScale=Double.MIN_VALUE;
+	double maxZoomScale=Double.MAX_VALUE;
 	
 	// ------------------------------- Constructor ------------------------------- 
 
@@ -240,7 +243,7 @@ public class ZoomPan
 	 */
 	public void setZoomScale(double zoomScale)
 	{
-		this.zoomScale = zoomScale;
+		setZoomScaleWithoutRecalculation(zoomScale);
 		calcTransformation();
 	}
 
@@ -398,11 +401,11 @@ public class ZoomPan
 
 				if (aContext.mouseY < oldPosition.y)
 				{
-					zoomScale *= zoomStep;
+					setZoomScaleWithoutRecalculation(zoomScale*zoomStep);
 				}
 				else if (aContext.mouseY > oldPosition.y)
 				{
-					zoomScale /= zoomStep;
+					setZoomScaleWithoutRecalculation(zoomScale/zoomStep);
 				}
 				doZoom();
 				zoomStep += 0.005;    // Accelerate zooming with prolonged drag.
@@ -429,6 +432,21 @@ public class ZoomPan
 		this.mouseBoundsMask=mouseBoundsMask;
 	}
 
+	/**Sets the minimum allows zoom scale (i.e. how far zoomed out is allowed
+	 * to be).
+	 * @param minZoomScale
+	 */
+	public void setMinZoomScale(double minZoomScale){
+		this.minZoomScale=minZoomScale;
+	}
+	
+	/**Sets the minimum allows zoom scale (i.e. how far zoomed in is allowed
+	 * to be).
+	 * @param minZoomScale
+	 */
+	public void setMaxZoomScale(double maxZoomScale){
+		this.maxZoomScale=maxZoomScale;
+	}
 	
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
@@ -633,7 +651,13 @@ public class ZoomPan
 	void setZoomScaleWithoutRecalculation(double zoomScale)
 	{
 		// This method is of package-wide scope to allow inner classes to have access to it.
-		this.zoomScale = zoomScale;
+
+		//limit zoom to min/max
+		synchronized (this) {
+			this.zoomScale = zoomScale;
+			this.zoomScale=Math.min(this.zoomScale,maxZoomScale);
+			this.zoomScale=Math.max(this.zoomScale,minZoomScale);
+		}
 	}
 
 	/** Programmatically sets the start position of a zooming activity. Normally, while the mouse
@@ -653,11 +677,13 @@ public class ZoomPan
 	 */
 	private void calcTransformation()
 	{    
-		trans = new AffineTransform();
-		iTrans = new AffineTransform();
 
 		float centreX = (float)(getGraphics().width*(1-zoomScale))/2;
 		float centreY = (float)(getGraphics().height*(1-zoomScale))/2;
+
+		trans = new AffineTransform();
+		iTrans = new AffineTransform();
+
 
 		trans.translate(centreX+panOffset.x,centreY+panOffset.y);
 		trans.scale(zoomScale,zoomScale);
