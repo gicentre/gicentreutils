@@ -281,14 +281,15 @@ public class CIELuv
     public ColourTable getSequential(double hue1, double hue2, double saturation, double brightness, int numColours)
     {
         boolean isContinuous = false;
+        int validNumColours = numColours;
         
-        if (numColours <=0)
+        if (validNumColours <=0)
         {
             isContinuous = true;
-            numColours = 12;
+            validNumColours = 12;
         }
         ColourTable cTable = new ColourTable();     
-        double c = Math.min(0.88,0.34+0.06*numColours);
+        double c = Math.min(0.88,0.34+0.06*validNumColours);
         
         // Define the surface by the three corner points in LCh space
         double[] p0 = new double[] {0,0,hue1};
@@ -348,9 +349,9 @@ public class CIELuv
         double[] q2 = new double[] {p2[0]*(1-saturation) + p1[0]*saturation, p2[1]*(1-saturation) + p1[1]*saturation, p2[2]*(1-saturation) + p1[2]*saturation};
         double[] q1 = new double[] {0.5*(q0[0]+q2[0]),     0.5*(q0[1]+q2[1]),     0.5*(q0[2]+q2[2])};
         
-        for (int i=0; i<numColours; i++)
+        for (int i=0; i<validNumColours; i++)
         {
-            double t = (double)i/(numColours-1);
+            double t = (double)i/(validNumColours-1);
    
             double Lt = 125 - 125*Math.pow(0.2, (1-c)*brightness + t*c);
             double TLt = T(Lt, p0[0], p2[0], q0[0], q1[0], q2[0]);
@@ -373,7 +374,7 @@ public class CIELuv
             {   
                 if (isContinuous)
                 {
-                    cTable.addContinuousColourRule((float)i/(numColours-1), 255,255,255);
+                    cTable.addContinuousColourRule((float)i/(validNumColours-1), 255,255,255);
                 }
                 else
                 {
@@ -384,7 +385,7 @@ public class CIELuv
             {
                 if (isContinuous)
                 {
-                    cTable.addContinuousColourRule((float)i/(numColours-1),colour.getRed(), colour.getGreen(), colour.getBlue());
+                    cTable.addContinuousColourRule((float)i/(validNumColours-1),colour.getRed(), colour.getGreen(), colour.getBlue());
                 }
                 else
                 {
@@ -463,10 +464,8 @@ public class CIELuv
         */
     }
     
-    /** Finds the nearest in-gamut colour to the given RGB values.
-     *  @param red Red component of colour to find. This can be out of range 0-1.
-     *  @param grn Green component of colour to find. This can be out of range 0-1.
-     *  @param blu Blue component of colour to find. This can be out of range 0-1.
+    /** Finds the nearest in-gamut colour to the given RGB triplet.
+     *  @param rgb Colour to find. Each value can be out of range 0-1.
      *  @param Luv The Luv triplet that give rise to the given RGB triplet.
      *  @return A guaranteed in-gamut colour as close as possible in CIELuv space to the given colour. 
      */

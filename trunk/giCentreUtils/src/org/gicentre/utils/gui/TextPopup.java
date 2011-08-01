@@ -39,7 +39,7 @@ public class TextPopup
     private int xBorder, yBorder;
     private int xMargin,yMargin;
     private PFont font;
-    private float textSize;
+    float textSize;
     private int fgColour,bgColour;
     
     
@@ -286,14 +286,14 @@ public class TextPopup
     
     /** Adds a given line of text to that displayed in the popup window
      *  @param textLine Line of text to add.
-     *  @param textSize Vertical size in pixels of text for this line.
+     *  @param lineTextSize Vertical size in pixels of text for this line.
      */
-    public void addText(String textLine, float textSize)
+    public void addText(String textLine, float lineTextSize)
     {
         String[] lines = PApplet.split(textLine,'\n');
         for (String line : lines)
         {
-            textLines.add(new TextLine(line,textSize));
+            textLines.add(new TextLine(line,lineTextSize));
         }
     }
     

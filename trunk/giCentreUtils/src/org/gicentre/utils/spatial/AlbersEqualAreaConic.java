@@ -231,7 +231,7 @@ public class AlbersEqualAreaConic
     {
         double rh1;          // Height above ellipsoid.
         double qs;       
-        double con;          // temporary sign value.
+        double con1;         // Temporary sign value.
         double theta;
         long   flag;         // Error flag.
         double easting = p.x;
@@ -246,27 +246,27 @@ public class AlbersEqualAreaConic
         if (ns0 >= 0)
         {
             rh1 = Math.sqrt(easting*easting + northing*northing);
-            con = 1.0;
+            con1 = 1.0;
         }
         else
         {
             rh1 = -Math.sqrt(easting*easting + northing*northing);
-            con = -1.0;
+            con1 = -1.0;
         }
 
         theta = 0.0;
         if (rh1 != 0.0)
         {
-            theta = Math.atan2(con*easting, con*northing);
+            theta = Math.atan2(con1*easting, con1*northing);
         }
         
-        con = rh1 * ns0 / ellipsoid.getEquatorialRadius();
-        qs = (c - con * con) / ns0;
+        con1 = rh1 * ns0 / ellipsoid.getEquatorialRadius();
+        qs = (c - con1 * con1) / ns0;
         if (eccentricity >= 1e-10)
         {
-            con = 1 - .5 * (1.0 - ellipsoid.getSquaredEccentricity()) * Math.log((1.0 - eccentricity) / (1.0 + eccentricity))/eccentricity;
+            con1 = 1 - .5 * (1.0 - ellipsoid.getSquaredEccentricity()) * Math.log((1.0 - eccentricity) / (1.0 + eccentricity))/eccentricity;
    
-            if (Math.abs(Math.abs(con) - Math.abs(qs)) > .0000000001 )
+            if (Math.abs(Math.abs(con1) - Math.abs(qs)) > .0000000001 )
             {
                 phi = phi1z(qs);
       
@@ -320,8 +320,8 @@ public class AlbersEqualAreaConic
       */
     private double msfnz(double sinPhi, double cosPhi)
     {
-        double con = eccentricity * sinPhi;
-        return((cosPhi / (Math.sqrt (1.0 - con * con))));
+        double con1 = eccentricity * sinPhi;
+        return((cosPhi / (Math.sqrt (1.0 - con1 * con1))));
     }
     
     /** Computes the constant small q which is the radius of a parallel of latitude,
@@ -330,23 +330,24 @@ public class AlbersEqualAreaConic
       */
     private double qsfnz(double sinPhi)
     {
-        double con;
+        double con1;
 
         if (eccentricity > 1.0e-7)
         {
-            con = eccentricity * sinPhi;
-            return (( 1.0 - eccentricity*eccentricity)*(sinPhi/(1.0 - con*con) - (.5/eccentricity)*Math.log((1.0 - con)/(1.0 + con))));
+            con1 = eccentricity * sinPhi;
+            return (( 1.0 - eccentricity*eccentricity)*(sinPhi/(1.0 - con1*con1) - (.5/eccentricity)*Math.log((1.0 - con1)/(1.0 + con1))));
         }
         return(2.0 * sinPhi);
     }
     
     /** Adjusts a longitude angle to range from -180 to 180 degrees (in radians).
-      * @param lng Longitude value to adjust.
+      * @param origLng Longitude value to adjust.
       * @return Longitude value guaranteed to be within +- 180 (in radians).
       */
-    private double adjustLong(double lng) 
+    private double adjustLong(double origLng) 
     {
         long count = 0;
+        double lng = origLng;
         for(;;)
         {
             if (Math.abs(lng) <= Math.PI)
@@ -382,16 +383,15 @@ public class AlbersEqualAreaConic
         return(lng);
     }
     
-    /** Computes phi1, the latitude for the inverse of the
-      * Albers Conic Equal-Area projection.
-      * @param qs Angle in radians.
-      * @return phi1 or Double.NaN if error computing value.
-      */
+    /** Computes phi1, the latitude for the inverse of the Albers Conic Equal-Area projection.
+     *  @param qs Angle in radians.
+     *  @return phi1 or Double.NaN if error computing value.
+     */
     private double phi1z (double qs)
     {
         double eccntSq = ellipsoid.getSquaredEccentricity();
         double dphi;
-        double con;
+        double con1;
         double com;
         double sinpi;
         double cospi;
@@ -409,10 +409,10 @@ public class AlbersEqualAreaConic
         {
             sinpi = Math.sin(phi);
             cospi = Math.cos(phi);
-            con = eccentricity * sinpi; 
-            com = 1.0 - con*con;
+            con1 = eccentricity * sinpi; 
+            com = 1.0 - con1*con1;
             dphi = .5 * com*com/cospi * (qs/(1.0-eccntSq) - sinpi / com + 
-                   .5 / eccentricity * Math.log ((1.0 - con) / (1.0 + con)));
+                   .5 / eccentricity * Math.log ((1.0 - con1) / (1.0 + con1)));
             phi = phi + dphi;
                         
             if (Math.abs(dphi) <= 1e-7)
@@ -425,22 +425,23 @@ public class AlbersEqualAreaConic
     }
     
     /** Calculates the inverse sin and eliminates rounding errors.
-      * @param con Value to calculate inverse sine from.
+      * @param origCon Value to calculate inverse sine from.
       * @return Inverse sine.
       */
-    private double asinz (double con)
+    private double asinz (double origCon)
     {
-        if (Math.abs(con) > 1.0)
+    	double con1 = origCon;
+        if (Math.abs(con1) > 1.0)
         {
-            if (con > 1.0)
+            if (con1 > 1.0)
             {
-                con = 1.0;
+                con1 = 1.0;
             }
             else
             {
-                con = -1.0;
+                con1 = -1.0;
             }
         }
-        return(Math.asin(con));
+        return(Math.asin(con1));
     }
 }

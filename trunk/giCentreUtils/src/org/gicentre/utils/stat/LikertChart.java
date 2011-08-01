@@ -824,34 +824,35 @@ public class LikertChart
     }
     
     /** Provides an animated transition to the given set of values.
-     *  @param frequencies Frequency distribution of the new values to represent in the chart.
-     *  @param numDontKnow Number of 'don't know' answers in the target distribution.
-     *  @param numNA Number of Not Applicable answers in the target distribution.
-     *  @param numMissing Number of missing values in the target distribution.
+     *  @param newFrequencies Frequency distribution of the new values to represent in the chart.
+     *  @param newNumDontKnow Number of 'don't know' answers in the target distribution.
+     *  @param newNumNA Number of Not Applicable answers in the target distribution.
+     *  @param newNumMissing Number of missing values in the target distribution.
      */
-    public void animateToNewValues(float[] frequencies, float numDontKnow, float numNA, float numMissing)
+    public void animateToNewValues(float[] newFrequencies, float newNumDontKnow, float newNumNA, float newNumMissing)
     {
         resetTarget();
-        this.targetFrequencies = frequencies;
+        this.targetFrequencies = newFrequencies;
         interp =0;  // Signals that a transition will be required.
         
         // Find the range of values in the distribution.
         for (int i=0; i<numBars; i++)
         {
-            if (targetMaxHeight < frequencies[i])
+            if (targetMaxHeight < newFrequencies[i])
             {
-                targetMaxHeight = frequencies[i];
+                targetMaxHeight = newFrequencies[i];
             }
-            if (targetMinHeight > frequencies[i])
+            if (targetMinHeight > newFrequencies[i])
             {
-                targetMinHeight = frequencies[i];
+                targetMinHeight = newFrequencies[i];
             }
         }
 
         // Add the don't know, NA and missing values to the middle bar and check if it is now the max value.
         if (numBars%2 == 1)
         {
-            targetMaxHeight = Math.max(targetMaxHeight, frequencies[(numBars-1)/2]+numDontKnow+numNA+numMissing);
+            targetMaxHeight = Math.max(targetMaxHeight,
+            		                   newFrequencies[(numBars-1)/2]+newNumDontKnow+newNumNA+newNumMissing);
         }
         
         // Calculate the mean and consensus values (see Tastle and Wierman, 2006)
@@ -862,14 +863,14 @@ public class LikertChart
 
             for (int i=0; i<numBars; i++)
             {
-                total += frequencies[i];
-                targetMean  += frequencies[i]*(i+1);
+                total += newFrequencies[i];
+                targetMean  += newFrequencies[i]*(i+1);
             }
             targetMean = targetMean / total;
 
             for (int i=0; i<numBars; i++)
             {
-                targetConsensus += ((frequencies[i]/total)*Math.log(1 - Math.abs((i+1)-targetMean)/dx)/LOG2);
+                targetConsensus += ((newFrequencies[i]/total)*Math.log(1 - Math.abs((i+1)-targetMean)/dx)/LOG2);
             }
             targetConsensus += 1;
         }
@@ -1079,7 +1080,14 @@ public class LikertChart
      */
     private static class CustomComparator implements Comparator<LikertChart>
     {
-        /** Compares two Likert 'order' values. If the first is less than the second, 
+    	/** Creates a new custom comparator for ordering Likert charts.
+    	 */
+        public CustomComparator() 
+        {
+			// Do nothing for the moment.
+		}
+
+		/** Compares two Likert 'order' values. If the first is less than the second, 
          *  -1 is returned. If it is greater 1 is returned. If they are identical, their
          *  hashcodes are compared.
          * @param chart1 First chart to compare.
@@ -1119,7 +1127,14 @@ public class LikertChart
      */
     private static class MeanComparator implements Comparator<LikertChart>
     {
-        /** Compares two Likert mean scores. If the first is greater than the second, 
+    	/** Creates a new comparator for ordering Likert charts by their mean value.
+    	 */
+        public MeanComparator() 
+        {
+			// Do nothing for the moment.
+		}
+
+		/** Compares two Likert mean scores. If the first is greater than the second, 
          *  -1 is returned. If it is less, 1 is returned. If they are identical, their
          *  order values are compared.
          * @param chart1 First chart to compare.
@@ -1169,7 +1184,14 @@ public class LikertChart
      */
     private static class ConsensusComparator implements Comparator<LikertChart>
     {
-        /** Compares two Likert consensus scores. If the first is less than the second, 
+    	/** Creates a new comparitor for ordering by consensus value.
+    	 */
+        public ConsensusComparator() 
+        {
+			// Do nothing for the moment.
+		}
+
+		/** Compares two Likert consensus scores. If the first is less than the second, 
          *  -1 is returned. If it is greater 1 is returned. If they are identical, their
          *  mean values are compared.
          * @param chart1 First chart to compare.

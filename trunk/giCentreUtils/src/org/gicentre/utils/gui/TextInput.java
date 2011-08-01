@@ -195,15 +195,16 @@ public class TextInput
      */
     public void setText(String text)
     {
+    	String textLine = text;
         if (text == null)
         {
-            text = new String();
+            textLine = new String();
         }
         inputLines.clear();
         activeLineNumber = 0;
         
-        inputLines.add(new StringBuffer(text));
-        caretPos = text.length();
+        inputLines.add(new StringBuffer(textLine));
+        caretPos = textLine.length();
     }
     
     /** Reports the text that has been entered in the input field.
