@@ -17,7 +17,7 @@ import processing.core.PVector;
  *  process described by <b>Wijffelaars, Vliegen, van Wijk and van der Linden</b> (2008)
  *  Generating color palettes using intuitive parameters, <i>Computer Graphics Forum,27(3)</i>.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

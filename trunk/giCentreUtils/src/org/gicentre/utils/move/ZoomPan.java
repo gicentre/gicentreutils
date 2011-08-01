@@ -7,7 +7,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,7 +28,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 29th July, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -58,15 +57,14 @@ public class ZoomPan
 	private boolean allowZoomButton, allowPanButton;
 	private int mouseMask = 0;
 	private PApplet aContext;
-	private PGraphics graphics; //don't reference this directly - always use getGraphics()
+	private PGraphics graphics; 					// Don't reference this directly - always use getGraphics()
 	private Vector<ZoomPanListener> listeners;
-	private int zoomMouseButton=PConstants.LEFT; // Implies pan is the other button
-	private Rectangle mouseBoundsMask=null; //zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning. Null means no mask
-	//The fields below are used to ensure a lag between the mouse wheel last being
-	//used and a zoom event
-	private Long timeAtLastWheelZoom=null;//The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
-	private Timer timer; //Timer so that we have a delay before a zoom event is triggered with the timer
-	int millisecondsBeforeWheelZoomEvent=700; //milliseconds before a zoom event is trigger with the mouse wheel - set to 0.7 of a second by default
+	private int zoomMouseButton=PConstants.LEFT; 	// Implies pan is the other button
+	
+	Rectangle mouseBoundsMask=null; 				// Zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning.
+	Long timeAtLastWheelZoom=null;					// The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
+	private Timer timer; 							// Timer so that we have a delay before a zoom event is triggered with the timer
+	int millisecondsBeforeWheelZoomEvent=700; 		// Milliseconds before a zoom event is triggered by the mouse wheel - set to 0.7 of a second by default
 	
 	double minZoomScale=Double.MIN_VALUE;
 	double maxZoomScale=Double.MAX_VALUE;
@@ -423,28 +421,33 @@ public class ZoomPan
 		}
 	}
 
-	/**Sets the screen area outside which mouse movements will have no effect on
-	 * the zooming and panning
-	 * Use null if there is to be no mask (the default) 
+	/** Sets the screen area outside which mouse movements will have no effect on zooming and panning.
+	 *  Use null if there is to be no mask (the default).
 	 * @param mouseBoundsMask
+	 * @deprecated Greater flexibility can be achieved by setting a mouse mask at the sketch level.           
 	 */
-	public void setMouseBoundsMask(Rectangle mouseBoundsMask){
+	public void setMouseBoundsMask(Rectangle mouseBoundsMask)
+	{
 		this.mouseBoundsMask=mouseBoundsMask;
 	}
 
-	/**Sets the minimum allows zoom scale (i.e. how far zoomed out is allowed
-	 * to be).
-	 * @param minZoomScale
+	/** Sets the minimum permitted zoom scale (i.e. how far zoomed out a view is allowed to be).
+	 *  A value above zero but less than one means that the view will be smaller than its 'natural'
+	 *  size. A value greater than one means the view will be larger than its natural size.
+	 *  @param minZoomScale
 	 */
-	public void setMinZoomScale(double minZoomScale){
+	public void setMinZoomScale(double minZoomScale)
+	{
 		this.minZoomScale=minZoomScale;
 	}
 	
-	/**Sets the minimum allows zoom scale (i.e. how far zoomed in is allowed
-	 * to be).
-	 * @param minZoomScale
+	/** Sets the maximum permitted zoom scale (i.e. how far zoomed in a view is allowed to be).
+	 *  A value above zero but less than one means that the view will be smaller than its 'natural'
+	 *  size. A value greater than one means the view will be larger than its natural size.
+	 *  @param maxZoomScale
 	 */
-	public void setMaxZoomScale(double maxZoomScale){
+	public void setMaxZoomScale(double maxZoomScale)
+	{
 		this.maxZoomScale=maxZoomScale;
 	}
 	
@@ -717,8 +720,10 @@ public class ZoomPan
 			}
 			
 			//Ignore if outside the  mouseBoundsMask
-			if (mouseBoundsMask!=null && !mouseBoundsMask.contains(e.getX(),e.getY()))
+			if ((mouseBoundsMask!=null) && (!mouseBoundsMask.contains(e.getX(),e.getY())))
+			{
 				return;
+			}
 			
 			setZoomStartPosition(new PVector(e.getX(),e.getY()));
 
@@ -743,9 +748,8 @@ public class ZoomPan
 		}
 	}
 	
-	/**Scheduled by the timer. If the last mouse wheel was used at least 
-	 * millisecondsBeforeWheelZoomEvent ago, the event is triggered
-	 * 
+	/** Scheduled by the timer. If the last mouse wheel was used at least millisecondsBeforeWheelZoomEvent ago,
+	 *  the event is triggered
 	 */
 	private class CheckTiggerWheelZoomEvent extends TimerTask{
 		@Override

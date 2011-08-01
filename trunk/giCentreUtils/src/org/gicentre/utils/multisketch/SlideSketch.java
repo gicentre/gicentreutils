@@ -7,7 +7,7 @@ import processing.core.PFont;
 /** Class for representing a slide as Processing sketch. Can be used to embed a Slide object
  *  inside a sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

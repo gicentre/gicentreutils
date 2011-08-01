@@ -18,11 +18,12 @@ import traer.physics.Vector3D;
 // *****************************************************************************************
 /** Allows particles to be viewed and animated. Suitable for spring embedded / force directed
  *  layouts for arranging networks and other collections of interacting objects. Note this
- *  class relies on the <a href="http://www.cs.princeton.edu/~traer/physics/">traer physics library</a>
- *  for particle management and the <a href="http://www.cs.princeton.edu/~traer/animation">traer
- *  animation library</a> for smooth camera movement. 
+ *  class relies on the <a href="http://murderandcreate.com/physics/">traer physics library</a>
+ *  for particle management and the 
+ *  <a href="http://classic-web.archive.org/web/20060911111322/http://www.cs.princeton.edu/~traer/animation/">
+ *  traer animation library</a> for smooth camera movement. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1.1, 14th March, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

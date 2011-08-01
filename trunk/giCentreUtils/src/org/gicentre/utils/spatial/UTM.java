@@ -11,7 +11,7 @@ import processing.core.PVector;
  *  direction. This can be determined by passing a reasonably central longitude/latitude
  *  coordinate pair to the constructor.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011.  
  */ 
 // *****************************************************************************************
 

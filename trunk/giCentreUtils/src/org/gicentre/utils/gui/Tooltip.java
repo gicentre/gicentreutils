@@ -13,7 +13,7 @@ import processing.core.*;
 /** Class to allow a simple 'tooltip' type pop-up panel to display text at a given location.
  *  Can be used for mouse-based tooltips or info-boxes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -582,7 +582,6 @@ public class Tooltip implements MouseListener
     
     /** Updates the layout of the text. Should be called if the text layout needs changing,
      *  for example due to new text being set, or an new anchor size or position being set.
-     *  @param text Text to be displayed.
      */
     private void updateText()
     {

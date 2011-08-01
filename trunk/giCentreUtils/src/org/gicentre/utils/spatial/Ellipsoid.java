@@ -7,7 +7,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Stores an ellipsoid representation for global map projections.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011.  
  */ 
 // *****************************************************************************************
 
@@ -368,15 +368,15 @@ public class Ellipsoid implements Serializable
     
     /** Stores the given ellipsoid parameters and calculates some convenience
       * constants such as b and n. 
-      * @param id Ellipsoid ID.
+      * @param eid Ellipsoid ID.
       * @param radius Equatorial radius.
-      * @param e2 Squared ellipsoid eccentricity.
+      * @param ee2 Squared ellipsoid eccentricity.
       */ 
-    private void store(int id, double radius, double e2)
+    private void store(int eid, double radius, double ee2)
     {
-        this.id = id;
+        this.id = eid;
         this.a  = radius;
-        this.e2 = e2;
+        this.e2 = ee2;
         this.b  = Math.sqrt(a*a*(1-e2));
         this.n  = (a-b)/(a+b);
     }
