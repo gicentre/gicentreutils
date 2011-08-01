@@ -14,7 +14,7 @@ import processing.core.PVector;
  *  For details see <a href="http://en.wikipedia.org/wiki/Lab_color_space" target="_blank">
  *  en.wikipedia.org/wiki/Lab_color_space</a>. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011.
+ *  @version 3.2, 1st August, 2011.
  */ 
 // *****************************************************************************************
 

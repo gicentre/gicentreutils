@@ -18,7 +18,7 @@ import processing.core.PVector;
  *  and the coordinates of the endpoints of the axes can also be retrieved. Weighted or 
  *  unweighted points can be used by selecting <code>setIsWeighted()</code>.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011.
+ *  @version 3.2, 1st August, 2011.
  */ 
 // *****************************************************************************************
 

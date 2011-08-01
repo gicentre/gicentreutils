@@ -11,7 +11,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1.2, 14th April, 2011.
+ *  @version 3.2, 1st August, 2011.
  */ 
 // *****************************************************************************************
 
@@ -491,6 +491,7 @@ public class XYChart extends AbstractChart
         {
             return new PVector(left + hRange*y, bottom - vRange*x);
         }
+        
         return new PVector(left + hRange*x, bottom - vRange*y);
     }
     

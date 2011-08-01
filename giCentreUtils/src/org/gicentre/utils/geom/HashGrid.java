@@ -19,7 +19,7 @@ import processing.core.PVector;
  *  a spatial query. Generally, the smaller the radius the quicker the retrieval.
  *  @param <E> Type of locatable objects stored in the hash grid.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 18th February, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

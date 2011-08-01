@@ -10,7 +10,7 @@ import processing.core.PApplet;
 //****************************************************************************************
 /** Tests the standard colour picker class for selecting Brewer colour palettes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.1, 14th January, 2011. 
+ *  @version 3.2, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests the conversion to and from CIELab colour space.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.0, 10th August, 2010. 
+ *  @version 3.2, 1st August, 2011.. 
  */ 
 // *****************************************************************************************
 
