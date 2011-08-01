@@ -95,18 +95,18 @@ public class Tooltip implements MouseListener
     // ---------------------------------- Methods ----------------------------------
         
     /** Draws the tooltip at the given location.
-     *  @param x x coordinate of location to display tooltip.
-     *  @param y y coordinate of location to display tooltip.
+     *  @param ttX x coordinate of location to display tooltip.
+     *  @param ttY y coordinate of location to display tooltip.
      */
-    public void draw(float x, float y)
+    public void draw(float ttX, float ttY)
     {
         if (isActive == false)
         {
             return;
         }
         
-        this.x = x;
-        this.y = y;
+        this.x = ttX;
+        this.y = ttY;
         
         if ((lines == null) || (lines.size()==0))
         {
@@ -271,21 +271,21 @@ public class Tooltip implements MouseListener
     }
     
     /** Determines whether or not a pointer drawn as part of the tip pointing towards the anchor.
-     *  @param showPointer Pointer is drawn if true.
+     *  @param show Pointer is drawn if true.
      */
-    public void showPointer(boolean showPointer)
+    public void showPointer(boolean show)
     {
-        this.showPointer = showPointer;
+        this.showPointer = show;
         updateLayout();
     }
     
     /** Determines if a 'close' icon should be drawn in the tooltip. If present, clicking on the icon 
      *  will set the state of the tip to be inactive (<code>isActive()</code> will return false).
-     *  @param showClose True if a close icon is to be drawn.
+     *  @param show True if a close icon is to be drawn.
      */
-    public void showCloseIcon(boolean showClose)
+    public void showCloseIcon(boolean show)
     {
-        this.showClose = showClose;
+        this.showClose = show;
         parent.removeMouseListener(this);
         
         if (showClose)

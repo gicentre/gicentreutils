@@ -105,10 +105,8 @@ public class CIELab
         return new Color((float)rgb[0],(float)rgb[1],(float)rgb[2]);        
     }
          
-    /** Finds the nearest in-gamut colour to the given RGB values.
-     *  @param red Red component of colour to find. This can be out of range 0-1.
-     *  @param grn Green component of colour to find. This can be out of range 0-1.
-     *  @param blu Blue component of colour to find. This can be out of range 0-1.
+    /** Finds the nearest in-gamut colour to the given RGB triplet.
+     *  @param rgb Colour to find. Each component can be out of range 0-1.
      *  @param Lab The Lab triplet that give rise to the given RGB triplet.
      *  @return A guaranteed in-gamut colour as close as possible in CIELab space to the given colour. 
      */

@@ -220,7 +220,12 @@ public class ConvexHull
      */
     private static class XSort implements Comparator<PVector>
     {
-        public int compare(PVector p1, PVector p2)
+        public XSort() 
+        {
+			// Does nothing but prevents synthetic accessor method from having to be created.
+		}
+
+		public int compare(PVector p1, PVector p2)
         {
             int order = Float.compare(p1.x,p2.x);
             

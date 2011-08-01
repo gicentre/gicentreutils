@@ -335,7 +335,7 @@ public class HashGrid<E extends Locatable> implements Set<E>
       * @param obj Object to compare with this hash grid.
       * @return True if the given object contains a set that is equal to the set stored in this hash grid.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public boolean equals(Object obj)
     {       
         if (obj instanceof HashGrid)

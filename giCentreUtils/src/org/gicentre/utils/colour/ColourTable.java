@@ -868,6 +868,11 @@ public class ColourTable implements Serializable
             rule = i.next();
             output.append(rule.toString());
         }
+        
+        if (rule == null)
+        {
+            return ("Empty colour table");
+        }
           
         // Check for old format rules where last colour is defined by upper rule only.
         if (rule.getlIndex() != rule.getuIndex())
@@ -1143,50 +1148,52 @@ public class ColourTable implements Serializable
      */
     private static float getDefaultMax(int type, float min)
     {
-        if (Float.isNaN(min))
+    	float validMin = min;
+    	
+        if (Float.isNaN(validMin))
         {
-            min = getDefaultMin(type);
+            validMin = getDefaultMin(type);
         }
         
         switch (type)
         {
             // The random scheme is the only categorical scheme that does not have a predefined number of classes.
             case RANDOM:
-                return (min-1) + 10;
+                return (validMin-1) + 10;
             
             case FEATURES:
                 return UPEAK;       // Highest feature value.
             
             // Categorical schemes start at min and end according to the number of categories
             case SET1_3: case SET2_3: case SET3_3: case PASTEL1_3: case PASTEL2_3: case DARK2_3: case PAIRED_3: case ACCENT_3:
-                return (min-1)+3;
+                return (validMin-1)+3;
                 
             case SET1_4: case SET2_4: case SET3_4: case PASTEL1_4: case PASTEL2_4: case DARK2_4: case PAIRED_4: case ACCENT_4:
-                return (min-1)+4;
+                return (validMin-1)+4;
                 
             case SET1_5: case SET2_5: case SET3_5: case PASTEL1_5: case PASTEL2_5: case DARK2_5: case PAIRED_5: case ACCENT_5:
-                return (min-1)+5;
+                return (validMin-1)+5;
                 
             case SET1_6: case SET2_6: case SET3_6: case PASTEL1_6: case PASTEL2_6: case DARK2_6: case PAIRED_6: case ACCENT_6:
-                return (min-1)+6;
+                return (validMin-1)+6;
                 
             case SET1_7: case SET2_7: case SET3_7: case PASTEL1_7: case PASTEL2_7: case DARK2_7: case PAIRED_7: case ACCENT_7:
-                return (min-1)+7;
+                return (validMin-1)+7;
             
             case SET1_8: case SET2_8: case SET3_8: case PASTEL1_8: case PASTEL2_8: case DARK2_8: case PAIRED_8: case ACCENT_8:
-                return (min-1)+8;
+                return (validMin-1)+8;
                 
             case SET1_9: case SET3_9: case PASTEL1_9: case PAIRED_9:
-                return (min-1)+9;
+                return (validMin-1)+9;
             
             case SET3_10: case PAIRED_10:
-                return (min-1)+10;
+                return (validMin-1)+10;
             
             case SET3_11: case PAIRED_11:
-                return (min-1)+11;
+                return (validMin-1)+11;
                 
             case SET3_12: case PAIRED_12:
-                return (min-1)+12;
+                return (validMin-1)+12;
             
             // All other schemes end at 1.
             default:
@@ -1208,24 +1215,27 @@ public class ColourTable implements Serializable
      */
     public static ColourTable getPresetColourTable(int type, float min, float max)
     {
-        if (Float.isNaN(min))
+    	float validMin = min;
+    	float validMax = max;
+    	
+        if (Float.isNaN(validMin))
         {
-            min = getDefaultMin(type);
+            validMin = getDefaultMin(type);
         }
-        if (Float.isNaN(max))
+        if (Float.isNaN(validMax))
         {
-            max = getDefaultMax(type,min);
+            validMax = getDefaultMax(type,validMin);
         }
         
-        float range = max - min,
+        float range = validMax - validMin,
               interval;
         
         ColourTable colours =  new ColourTable();
     
         if (range <= 0)
         {
-            colours.addContinuousColourRule(max,0,0,0);
-            colours.addContinuousColourRule(min,0,0,0);
+            colours.addContinuousColourRule(validMax,0,0,0);
+            colours.addContinuousColourRule(validMin,0,0,0);
             return colours;
         }
             
@@ -1266,82 +1276,82 @@ public class ColourTable implements Serializable
                 
             case DIVERGING_BLURED:
                 colours.name = "diverging2";
-                if (min >0)
+                if (validMin >0)
                 {
-                    colours.addContinuousColourRule(min,           0,  0,  0);
-                    colours.addContinuousColourRule(min+range/3f,  0,  0,255);
-                    colours.addContinuousColourRule((max+min)/2f,255,255,255);
-                    colours.addContinuousColourRule(max-range/3f,255,  0,  0);
-                    colours.addContinuousColourRule(max,           0,  0,  0);
+                    colours.addContinuousColourRule(validMin,           0,  0,  0);
+                    colours.addContinuousColourRule(validMin+range/3f,  0,  0,255);
+                    colours.addContinuousColourRule((validMax+validMin)/2f,255,255,255);
+                    colours.addContinuousColourRule(validMax-range/3f,255,  0,  0);
+                    colours.addContinuousColourRule(validMax,           0,  0,  0);
                 }
                 else
                 {
                     // Centre around 0.
-                    float lowerInterval = 2*(0-min)/3f;
-                    float upperInterval = 2*max/3f;
-                    colours.addContinuousColourRule(min,           0,  0,  0);
-                    colours.addContinuousColourRule(min+lowerInterval,  0,  0,255);
+                    float lowerInterval = 2*(0-validMin)/3f;
+                    float upperInterval = 2*validMax/3f;
+                    colours.addContinuousColourRule(validMin,           0,  0,  0);
+                    colours.addContinuousColourRule(validMin+lowerInterval,  0,  0,255);
                     colours.addContinuousColourRule(0,255,255,255);
-                    colours.addContinuousColourRule(max-upperInterval,255,  0,  0);
-                    colours.addContinuousColourRule(max,           0,  0,  0);
+                    colours.addContinuousColourRule(validMax-upperInterval,255,  0,  0);
+                    colours.addContinuousColourRule(validMax,           0,  0,  0);
                 }
                 break;
                 
             case DIVERGING_GRNYEL:
                 colours.name = "diverging3";
-                if (min >0)
+                if (validMin >0)
                 {
-                    colours.addContinuousColourRule(min,           0,  0,  0);
-                    colours.addContinuousColourRule(min+range/3f,  0,255,  0);
-                    colours.addContinuousColourRule((max+min)/2f,255,255,255);
-                    colours.addContinuousColourRule(max-range/3f,255,255,  0);
-                    colours.addContinuousColourRule(max,           0,  0,  0);
+                    colours.addContinuousColourRule(validMin,           0,  0,  0);
+                    colours.addContinuousColourRule(validMin+range/3f,  0,255,  0);
+                    colours.addContinuousColourRule((validMax+validMin)/2f,255,255,255);
+                    colours.addContinuousColourRule(validMax-range/3f,255,255,  0);
+                    colours.addContinuousColourRule(validMax,           0,  0,  0);
                 }
                 else
                 {
                     // Centre around 0.
-                    float lowerInterval = 2*(0-min)/3f;
-                    float upperInterval = 2*max/3f;
-                    colours.addContinuousColourRule(min,                0,  0,  0);
-                    colours.addContinuousColourRule(min+lowerInterval,  0,255,  0);
+                    float lowerInterval = 2*(0-validMin)/3f;
+                    float upperInterval = 2*validMax/3f;
+                    colours.addContinuousColourRule(validMin,                0,  0,  0);
+                    colours.addContinuousColourRule(validMin+lowerInterval,  0,255,  0);
                     colours.addContinuousColourRule(0,                255,255,255);
-                    colours.addContinuousColourRule(max-upperInterval,255,255,  0);
-                    colours.addContinuousColourRule(max,                0,  0,  0);
+                    colours.addContinuousColourRule(validMax-upperInterval,255,255,  0);
+                    colours.addContinuousColourRule(validMax,                0,  0,  0);
                 }
                 break;
                 
             case DIVERGING_BLUYELRED:
                 colours.name = "diverging1";
-                if (min >0)
+                if (validMin >0)
                 {
                     interval = range/12f;
-                    colours.addContinuousColourRule(min,             49, 54,149);
-                    colours.addContinuousColourRule(min+interval,   49, 54,149);
-                    colours.addContinuousColourRule(min+2*interval,  69,117,180);
-                    colours.addContinuousColourRule(min+3*interval,116,173,209);
-                    colours.addContinuousColourRule(min+4*interval,171,217,233);
-                    colours.addContinuousColourRule(min+5*interval,224,243,248);
+                    colours.addContinuousColourRule(validMin,             49, 54,149);
+                    colours.addContinuousColourRule(validMin+interval,   49, 54,149);
+                    colours.addContinuousColourRule(validMin+2*interval,  69,117,180);
+                    colours.addContinuousColourRule(validMin+3*interval,116,173,209);
+                    colours.addContinuousColourRule(validMin+4*interval,171,217,233);
+                    colours.addContinuousColourRule(validMin+5*interval,224,243,248);
                     
-                    colours.addContinuousColourRule(min+6*interval,     255,255,191);
+                    colours.addContinuousColourRule(validMin+6*interval,     255,255,191);
                     
-                    colours.addContinuousColourRule(min+7*interval,254,224,144);
-                    colours.addContinuousColourRule(min+8*interval,253,174, 97);
-                    colours.addContinuousColourRule(min+9*interval,244,109, 67);
-                    colours.addContinuousColourRule(min+10*interval,  215, 48, 39);     
-                    colours.addContinuousColourRule(min+11*interval,  165,  0, 38);
-                    colours.addContinuousColourRule(max,            165,  0, 38);
+                    colours.addContinuousColourRule(validMin+7*interval,254,224,144);
+                    colours.addContinuousColourRule(validMin+8*interval,253,174, 97);
+                    colours.addContinuousColourRule(validMin+9*interval,244,109, 67);
+                    colours.addContinuousColourRule(validMin+10*interval,  215, 48, 39);     
+                    colours.addContinuousColourRule(validMin+11*interval,  165,  0, 38);
+                    colours.addContinuousColourRule(validMax,            165,  0, 38);
                 }
                 else
                 {
                     // Centre around 0.
-                    float lowerInterval = (0-min)/6f;
-                    float upperInterval = max/6f;
-                    colours.addContinuousColourRule(min,             49, 54,149);
-                    colours.addContinuousColourRule(min+lowerInterval,   49, 54,149);
-                    colours.addContinuousColourRule(min+2*lowerInterval,  69,117,180);
-                    colours.addContinuousColourRule(min+3*lowerInterval,116,173,209);
-                    colours.addContinuousColourRule(min+4*lowerInterval,171,217,233);
-                    colours.addContinuousColourRule(min+5*lowerInterval,224,243,248);
+                    float lowerInterval = (0-validMin)/6f;
+                    float upperInterval = validMax/6f;
+                    colours.addContinuousColourRule(validMin,             49, 54,149);
+                    colours.addContinuousColourRule(validMin+lowerInterval,   49, 54,149);
+                    colours.addContinuousColourRule(validMin+2*lowerInterval,  69,117,180);
+                    colours.addContinuousColourRule(validMin+3*lowerInterval,116,173,209);
+                    colours.addContinuousColourRule(validMin+4*lowerInterval,171,217,233);
+                    colours.addContinuousColourRule(validMin+5*lowerInterval,224,243,248);
                     colours.addContinuousColourRule(0,     255,255,191);
                     
                     colours.addContinuousColourRule(upperInterval,254,224,144);
@@ -1349,115 +1359,115 @@ public class ColourTable implements Serializable
                     colours.addContinuousColourRule(3*upperInterval,244,109, 67);
                     colours.addContinuousColourRule(4*upperInterval,  215, 48, 39);     
                     colours.addContinuousColourRule(5*upperInterval,  165,  0, 38);
-                    colours.addContinuousColourRule(max,            165,  0, 38);
+                    colours.addContinuousColourRule(validMax,            165,  0, 38);
                 }
                 break;
                 
             case GREYSCALE:
                 colours.name = "grey1";
-                colours.addContinuousColourRule(min,  0,  0,  0);
-                colours.addContinuousColourRule(max,255,255,255);
+                colours.addContinuousColourRule(validMin,  0,  0,  0);
+                colours.addContinuousColourRule(validMax,255,255,255);
                 break;
             
             case INV_GREYSCALE:
                 colours.name = "grey2";
-                colours.addContinuousColourRule(min,255,255,255);
-                colours.addContinuousColourRule(max,  0,  0,  0);
+                colours.addContinuousColourRule(validMin,255,255,255);
+                colours.addContinuousColourRule(validMax,  0,  0,  0);
                 break;
                 
             case IMHOF_L1:
                 colours.name = "land1";
                 interval = range/6.5f;
-                colours.addContinuousColourRule(min,            98,123, 92);
-                colours.addContinuousColourRule(min+interval,  130,152,117);
-                colours.addContinuousColourRule(min+2*interval,155,180,139);
-                colours.addContinuousColourRule(min+3*interval,196,197,160);
-                colours.addContinuousColourRule(min+4*interval,229,216,175);
-                colours.addContinuousColourRule(min+5*interval,244,232,195);
-                colours.addContinuousColourRule(min+6*interval,249,242,230);
-                colours.addContinuousColourRule(max,           249,242,230);
+                colours.addContinuousColourRule(validMin,            98,123, 92);
+                colours.addContinuousColourRule(validMin+interval,  130,152,117);
+                colours.addContinuousColourRule(validMin+2*interval,155,180,139);
+                colours.addContinuousColourRule(validMin+3*interval,196,197,160);
+                colours.addContinuousColourRule(validMin+4*interval,229,216,175);
+                colours.addContinuousColourRule(validMin+5*interval,244,232,195);
+                colours.addContinuousColourRule(validMin+6*interval,249,242,230);
+                colours.addContinuousColourRule(validMax,           249,242,230);
                 break;
                 
             case IMHOF_L2:
                 colours.name = "land2";
                 interval = range/6.5f;
-                colours.addContinuousColourRule(min,           161,212,179);
-                colours.addContinuousColourRule(min+interval,  199,221,182);
-                colours.addContinuousColourRule(min+2*interval,231,234,195);
-                colours.addContinuousColourRule(min+3*interval,248,231,190);
-                colours.addContinuousColourRule(min+4*interval,235,213,174);
-                colours.addContinuousColourRule(min+5*interval,224,195,158);
-                colours.addContinuousColourRule(min+6*interval,216,172,136);
-                colours.addContinuousColourRule(max,           216,172,136);
+                colours.addContinuousColourRule(validMin,           161,212,179);
+                colours.addContinuousColourRule(validMin+interval,  199,221,182);
+                colours.addContinuousColourRule(validMin+2*interval,231,234,195);
+                colours.addContinuousColourRule(validMin+3*interval,248,231,190);
+                colours.addContinuousColourRule(validMin+4*interval,235,213,174);
+                colours.addContinuousColourRule(validMin+5*interval,224,195,158);
+                colours.addContinuousColourRule(validMin+6*interval,216,172,136);
+                colours.addContinuousColourRule(validMax,           216,172,136);
                 break;
                 
             case IMHOF_L3:
                 colours.name = "land3";
                 interval = range/6.5f;
-                colours.addContinuousColourRule(min,           141,166,141);
-                colours.addContinuousColourRule(min+interval,  172,194,155);
-                colours.addContinuousColourRule(min+2*interval,221,219,167);
-                colours.addContinuousColourRule(min+3*interval,254,235,181);
-                colours.addContinuousColourRule(min+4*interval,248,212,153);
-                colours.addContinuousColourRule(min+5*interval,241,170,109);
-                colours.addContinuousColourRule(min+6*interval,227,112, 72);
-                colours.addContinuousColourRule(max,           227,112, 72);
+                colours.addContinuousColourRule(validMin,           141,166,141);
+                colours.addContinuousColourRule(validMin+interval,  172,194,155);
+                colours.addContinuousColourRule(validMin+2*interval,221,219,167);
+                colours.addContinuousColourRule(validMin+3*interval,254,235,181);
+                colours.addContinuousColourRule(validMin+4*interval,248,212,153);
+                colours.addContinuousColourRule(validMin+5*interval,241,170,109);
+                colours.addContinuousColourRule(validMin+6*interval,227,112, 72);
+                colours.addContinuousColourRule(validMax,           227,112, 72);
                 break;
                 
             case IMHOF_L4:
                 colours.name = "land4";
                 interval = range/7f;
-                colours.addContinuousColourRule(min,              153,201,171);
-                colours.addContinuousColourRule(min+interval,     202,224,190);
-                colours.addContinuousColourRule(min+2*interval,   252,239,201);
-                colours.addContinuousColourRule(min+3*interval,   252,222,197);
-                colours.addContinuousColourRule(min+4*interval,   254,207,177);
-                colours.addContinuousColourRule(min+5*interval,   217,199,210);
-                colours.addContinuousColourRule(min+6*interval,   242,228,227);
-                colours.addContinuousColourRule(min+6.5f*interval,255,255,255);
-                colours.addContinuousColourRule(max,              255,255,255);
+                colours.addContinuousColourRule(validMin,              153,201,171);
+                colours.addContinuousColourRule(validMin+interval,     202,224,190);
+                colours.addContinuousColourRule(validMin+2*interval,   252,239,201);
+                colours.addContinuousColourRule(validMin+3*interval,   252,222,197);
+                colours.addContinuousColourRule(validMin+4*interval,   254,207,177);
+                colours.addContinuousColourRule(validMin+5*interval,   217,199,210);
+                colours.addContinuousColourRule(validMin+6*interval,   242,228,227);
+                colours.addContinuousColourRule(validMin+6.5f*interval,255,255,255);
+                colours.addContinuousColourRule(validMax,              255,255,255);
                 break;
                 
             case IMHOF_S1:
                 colours.name = "sea1";
                 interval = range/7.8f;
-                colours.addContinuousColourRule(min,              112,193,189);
-                colours.addContinuousColourRule(min+3*interval,   153,210,198);
-                colours.addContinuousColourRule(min+5*interval,   182,222,211);
-                colours.addContinuousColourRule(min+6.5f*interval,224,232,223);
-                colours.addContinuousColourRule(min+7.5f*interval,255,255,255);
-                colours.addContinuousColourRule(max,              255,255,255);
+                colours.addContinuousColourRule(validMin,              112,193,189);
+                colours.addContinuousColourRule(validMin+3*interval,   153,210,198);
+                colours.addContinuousColourRule(validMin+5*interval,   182,222,211);
+                colours.addContinuousColourRule(validMin+6.5f*interval,224,232,223);
+                colours.addContinuousColourRule(validMin+7.5f*interval,255,255,255);
+                colours.addContinuousColourRule(validMax,              255,255,255);
                 break;
                 
             case IMHOF_S2:
                 colours.name = "sea2";
                 interval = range/8f;
-                colours.addContinuousColourRule(min,               69,171,178);
-                colours.addContinuousColourRule(min+3*interval,   121,200,191);
-                colours.addContinuousColourRule(min+5*interval,   154,211,204);
-                colours.addContinuousColourRule(min+6.5f*interval,195,227,212);
-                colours.addContinuousColourRule(min+7.5f*interval,224,232,230);
-                colours.addContinuousColourRule(min+7.9f*interval,255,255,255);
-                colours.addContinuousColourRule(max,              255,255,255);
+                colours.addContinuousColourRule(validMin,               69,171,178);
+                colours.addContinuousColourRule(validMin+3*interval,   121,200,191);
+                colours.addContinuousColourRule(validMin+5*interval,   154,211,204);
+                colours.addContinuousColourRule(validMin+6.5f*interval,195,227,212);
+                colours.addContinuousColourRule(validMin+7.5f*interval,224,232,230);
+                colours.addContinuousColourRule(validMin+7.9f*interval,255,255,255);
+                colours.addContinuousColourRule(validMax,              255,255,255);
                 break;
                 
             case IMHOF_SL:
                 colours.name = "seaLand";
-                interval = (0-min)/6f;
+                interval = (0-validMin)/6f;
                 float minPos = 0.001f;
                 
                 if (interval >=0)
                 {
-                    colours.addContinuousColourRule(min,            40,153,162);
-                    colours.addContinuousColourRule(min+interval,   92,181,176);
-                    colours.addContinuousColourRule(min+2*interval,120,190,188);
-                    colours.addContinuousColourRule(min+3*interval,169,208,203);
-                    colours.addContinuousColourRule(min+4*interval,207,220,210);
-                    colours.addContinuousColourRule(min+5*interval,234,228,218);
+                    colours.addContinuousColourRule(validMin,            40,153,162);
+                    colours.addContinuousColourRule(validMin+interval,   92,181,176);
+                    colours.addContinuousColourRule(validMin+2*interval,120,190,188);
+                    colours.addContinuousColourRule(validMin+3*interval,169,208,203);
+                    colours.addContinuousColourRule(validMin+4*interval,207,220,210);
+                    colours.addContinuousColourRule(validMin+5*interval,234,228,218);
                     colours.addContinuousColourRule(0,             234,228,218);
                 }
                 
-                interval = (max-minPos)/6.5f;
+                interval = (validMax-minPos)/6.5f;
                 if (interval >0)
                 {
                     colours.addContinuousColourRule(minPos,           134,189,155);
@@ -1467,33 +1477,33 @@ public class ColourTable implements Serializable
                     colours.addContinuousColourRule(minPos+4*interval,217,198,166);
                     colours.addContinuousColourRule(minPos+5*interval,201,179,149);
                     colours.addContinuousColourRule(minPos+6*interval,189,152,123);
-                    colours.addContinuousColourRule(max,              189,152,123);
+                    colours.addContinuousColourRule(validMax,              189,152,123);
                 }
                 break;
                 
             case EXP_ORRED:
                 colours.name = "exp1";
-                colours.addContinuousColourRule(min,           255,247,236);
-                colours.addContinuousColourRule(min+range/500, 254,232,200);
-                colours.addContinuousColourRule(min+range/200, 253,212,158);
-                colours.addContinuousColourRule(min+range/100, 253,187,132);
-                colours.addContinuousColourRule(min+range/50,  252,141, 89);
-                colours.addContinuousColourRule(min+range/20,  239,101, 72);
-                colours.addContinuousColourRule(min+range/10,  215, 48, 31);
-                colours.addContinuousColourRule(min+range/5,   179,  0,  0);
-                colours.addContinuousColourRule(min+range/2,   127,  0,  0);
-                colours.addContinuousColourRule(max,           64,  0,  0);
+                colours.addContinuousColourRule(validMin,           255,247,236);
+                colours.addContinuousColourRule(validMin+range/500, 254,232,200);
+                colours.addContinuousColourRule(validMin+range/200, 253,212,158);
+                colours.addContinuousColourRule(validMin+range/100, 253,187,132);
+                colours.addContinuousColourRule(validMin+range/50,  252,141, 89);
+                colours.addContinuousColourRule(validMin+range/20,  239,101, 72);
+                colours.addContinuousColourRule(validMin+range/10,  215, 48, 31);
+                colours.addContinuousColourRule(validMin+range/5,   179,  0,  0);
+                colours.addContinuousColourRule(validMin+range/2,   127,  0,  0);
+                colours.addContinuousColourRule(validMax,           64,  0,  0);
                 break;
                 
             case RANDOM:
                 colours.name = "random";
-                if ((max-min)> 2)
+                if ((validMax-validMin)> 2)
                 {
                     interval = 1;
                 }
                 else
                 {
-                    interval = (max-min)/100f;
+                    interval = (validMax-validMin)/100f;
                 }
                     
                 int prevRed = -999;
@@ -1502,7 +1512,7 @@ public class ColourTable implements Serializable
                 int red,grn,blu;
                 int diff = 0;
                 
-                for (float i=min; i<max+interval; i+=interval)
+                for (float i=validMin; i<validMax+interval; i+=interval)
                 {
                     // Avoid the dark intensities and strong saturation and ensure 
                     // adjacent colours are not too similar.
@@ -1526,1049 +1536,1049 @@ public class ColourTable implements Serializable
                 
             case BLACK:
                 colours.name = "black";
-                colours.addContinuousColourRule(min,0,0,0);
-                colours.addContinuousColourRule(max,0,0,0);
+                colours.addContinuousColourRule(validMin,0,0,0);
+                colours.addContinuousColourRule(validMax,0,0,0);
                 break;
                 
             // ---- ColorBrewer colours
             case YL_GN:
                 colours.name = "YlGn";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,255,229);
-                colours.addContinuousColourRule(min+0.5f*interval,255,255,229);
-                colours.addContinuousColourRule(min+1.5f*interval,247,252,185);
-                colours.addContinuousColourRule(min+2.5f*interval,217,240,163);
-                colours.addContinuousColourRule(min+3.5f*interval,173,221,142);
-                colours.addContinuousColourRule(min+4.5f*interval,120,198,121);
-                colours.addContinuousColourRule(min+5.5f*interval,65,171,93);
-                colours.addContinuousColourRule(min+6.5f*interval,35,132,67);
-                colours.addContinuousColourRule(min+7.5f*interval,0,104,55);
-                colours.addContinuousColourRule(min+8.5f*interval,0,69,41);
-                colours.addContinuousColourRule(max,              0,69,41);
+                colours.addContinuousColourRule(validMin,              255,255,229);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,255,229);
+                colours.addContinuousColourRule(validMin+1.5f*interval,247,252,185);
+                colours.addContinuousColourRule(validMin+2.5f*interval,217,240,163);
+                colours.addContinuousColourRule(validMin+3.5f*interval,173,221,142);
+                colours.addContinuousColourRule(validMin+4.5f*interval,120,198,121);
+                colours.addContinuousColourRule(validMin+5.5f*interval,65,171,93);
+                colours.addContinuousColourRule(validMin+6.5f*interval,35,132,67);
+                colours.addContinuousColourRule(validMin+7.5f*interval,0,104,55);
+                colours.addContinuousColourRule(validMin+8.5f*interval,0,69,41);
+                colours.addContinuousColourRule(validMax,              0,69,41);
                 break;
             case YL_GN_BU:
                 colours.name = "YlGnBu";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,255,217);
-                colours.addContinuousColourRule(min+0.5f*interval,255,255,217);
-                colours.addContinuousColourRule(min+1.5f*interval,237,248,177);
-                colours.addContinuousColourRule(min+2.5f*interval,199,233,180);
-                colours.addContinuousColourRule(min+3.5f*interval,127,205,187);
-                colours.addContinuousColourRule(min+4.5f*interval,65,182,196);
-                colours.addContinuousColourRule(min+5.5f*interval,29,145,192);
-                colours.addContinuousColourRule(min+6.5f*interval,34,94,168);
-                colours.addContinuousColourRule(min+7.5f*interval,37,52,148);
-                colours.addContinuousColourRule(min+8.5f*interval,8,29,88);
-                colours.addContinuousColourRule(max,              8,29,88);
+                colours.addContinuousColourRule(validMin,              255,255,217);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,255,217);
+                colours.addContinuousColourRule(validMin+1.5f*interval,237,248,177);
+                colours.addContinuousColourRule(validMin+2.5f*interval,199,233,180);
+                colours.addContinuousColourRule(validMin+3.5f*interval,127,205,187);
+                colours.addContinuousColourRule(validMin+4.5f*interval,65,182,196);
+                colours.addContinuousColourRule(validMin+5.5f*interval,29,145,192);
+                colours.addContinuousColourRule(validMin+6.5f*interval,34,94,168);
+                colours.addContinuousColourRule(validMin+7.5f*interval,37,52,148);
+                colours.addContinuousColourRule(validMin+8.5f*interval,8,29,88);
+                colours.addContinuousColourRule(validMax,              8,29,88);
                 break;
             case GN_BU:
                 colours.name = "GnBu";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,252,240);
-                colours.addContinuousColourRule(min+0.5f*interval,247,252,240);
-                colours.addContinuousColourRule(min+1.5f*interval,224,243,219);
-                colours.addContinuousColourRule(min+2.5f*interval,204,235,197);
-                colours.addContinuousColourRule(min+3.5f*interval,168,221,181);
-                colours.addContinuousColourRule(min+4.5f*interval,123,204,196);
-                colours.addContinuousColourRule(min+5.5f*interval,78,179,211);
-                colours.addContinuousColourRule(min+6.5f*interval,43,140,190);
-                colours.addContinuousColourRule(min+7.5f*interval,8,104,172);
-                colours.addContinuousColourRule(min+8.5f*interval,8,64,129);
-                colours.addContinuousColourRule(max,              8,64,129);
+                colours.addContinuousColourRule(validMin,              247,252,240);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,252,240);
+                colours.addContinuousColourRule(validMin+1.5f*interval,224,243,219);
+                colours.addContinuousColourRule(validMin+2.5f*interval,204,235,197);
+                colours.addContinuousColourRule(validMin+3.5f*interval,168,221,181);
+                colours.addContinuousColourRule(validMin+4.5f*interval,123,204,196);
+                colours.addContinuousColourRule(validMin+5.5f*interval,78,179,211);
+                colours.addContinuousColourRule(validMin+6.5f*interval,43,140,190);
+                colours.addContinuousColourRule(validMin+7.5f*interval,8,104,172);
+                colours.addContinuousColourRule(validMin+8.5f*interval,8,64,129);
+                colours.addContinuousColourRule(validMax,              8,64,129);
                 break;
             case BU_GN:
                 colours.name = "BuGn";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,252,253);
-                colours.addContinuousColourRule(min+0.5f*interval,247,252,253);
-                colours.addContinuousColourRule(min+1.5f*interval,229,245,249);
-                colours.addContinuousColourRule(min+2.5f*interval,204,236,230);
-                colours.addContinuousColourRule(min+3.5f*interval,153,216,201);
-                colours.addContinuousColourRule(min+4.5f*interval,102,194,164);
-                colours.addContinuousColourRule(min+5.5f*interval,65,174,118);
-                colours.addContinuousColourRule(min+6.5f*interval,35,139,69);
-                colours.addContinuousColourRule(min+7.5f*interval,0,109,44);
-                colours.addContinuousColourRule(min+8.5f*interval,0,68,27);
-                colours.addContinuousColourRule(max,              0,68,27);
+                colours.addContinuousColourRule(validMin,              247,252,253);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,252,253);
+                colours.addContinuousColourRule(validMin+1.5f*interval,229,245,249);
+                colours.addContinuousColourRule(validMin+2.5f*interval,204,236,230);
+                colours.addContinuousColourRule(validMin+3.5f*interval,153,216,201);
+                colours.addContinuousColourRule(validMin+4.5f*interval,102,194,164);
+                colours.addContinuousColourRule(validMin+5.5f*interval,65,174,118);
+                colours.addContinuousColourRule(validMin+6.5f*interval,35,139,69);
+                colours.addContinuousColourRule(validMin+7.5f*interval,0,109,44);
+                colours.addContinuousColourRule(validMin+8.5f*interval,0,68,27);
+                colours.addContinuousColourRule(validMax,              0,68,27);
                 break;
             case PU_BU_GN:
                 colours.name = "PuBuGn";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,247,251);
-                colours.addContinuousColourRule(min+0.5f*interval,255,247,251);
-                colours.addContinuousColourRule(min+1.5f*interval,236,226,240);
-                colours.addContinuousColourRule(min+2.5f*interval,208,209,230);
-                colours.addContinuousColourRule(min+3.5f*interval,166,189,219);
-                colours.addContinuousColourRule(min+4.5f*interval,103,169,207);
-                colours.addContinuousColourRule(min+5.5f*interval,54,144,192);
-                colours.addContinuousColourRule(min+6.5f*interval,2,129,138);
-                colours.addContinuousColourRule(min+7.5f*interval,1,108,89);
-                colours.addContinuousColourRule(min+8.5f*interval,1,70,54);
-                colours.addContinuousColourRule(max,              1,70,54);
+                colours.addContinuousColourRule(validMin,              255,247,251);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,247,251);
+                colours.addContinuousColourRule(validMin+1.5f*interval,236,226,240);
+                colours.addContinuousColourRule(validMin+2.5f*interval,208,209,230);
+                colours.addContinuousColourRule(validMin+3.5f*interval,166,189,219);
+                colours.addContinuousColourRule(validMin+4.5f*interval,103,169,207);
+                colours.addContinuousColourRule(validMin+5.5f*interval,54,144,192);
+                colours.addContinuousColourRule(validMin+6.5f*interval,2,129,138);
+                colours.addContinuousColourRule(validMin+7.5f*interval,1,108,89);
+                colours.addContinuousColourRule(validMin+8.5f*interval,1,70,54);
+                colours.addContinuousColourRule(validMax,              1,70,54);
                 break;
             case PU_BU:
                 colours.name = "PuBu";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,247,251);
-                colours.addContinuousColourRule(min+0.5f*interval,255,247,251);
-                colours.addContinuousColourRule(min+1.5f*interval,236,231,242);
-                colours.addContinuousColourRule(min+2.5f*interval,208,209,230);
-                colours.addContinuousColourRule(min+3.5f*interval,166,189,219);
-                colours.addContinuousColourRule(min+4.5f*interval,116,169,207);
-                colours.addContinuousColourRule(min+5.5f*interval,54,144,192);
-                colours.addContinuousColourRule(min+6.5f*interval,5,112,176);
-                colours.addContinuousColourRule(min+7.5f*interval,4,90,141);
-                colours.addContinuousColourRule(min+8.5f*interval,2,56,88);
-                colours.addContinuousColourRule(max,              2,56,88);
+                colours.addContinuousColourRule(validMin,              255,247,251);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,247,251);
+                colours.addContinuousColourRule(validMin+1.5f*interval,236,231,242);
+                colours.addContinuousColourRule(validMin+2.5f*interval,208,209,230);
+                colours.addContinuousColourRule(validMin+3.5f*interval,166,189,219);
+                colours.addContinuousColourRule(validMin+4.5f*interval,116,169,207);
+                colours.addContinuousColourRule(validMin+5.5f*interval,54,144,192);
+                colours.addContinuousColourRule(validMin+6.5f*interval,5,112,176);
+                colours.addContinuousColourRule(validMin+7.5f*interval,4,90,141);
+                colours.addContinuousColourRule(validMin+8.5f*interval,2,56,88);
+                colours.addContinuousColourRule(validMax,              2,56,88);
                 break;
             case BU_PU:
                 colours.name = "BuPu";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,252,253);
-                colours.addContinuousColourRule(min+0.5f*interval,247,252,253);
-                colours.addContinuousColourRule(min+1.5f*interval,224,236,244);
-                colours.addContinuousColourRule(min+2.5f*interval,191,211,230);
-                colours.addContinuousColourRule(min+3.5f*interval,158,188,218);
-                colours.addContinuousColourRule(min+4.5f*interval,140,150,198);
-                colours.addContinuousColourRule(min+5.5f*interval,140,107,177);
-                colours.addContinuousColourRule(min+6.5f*interval,136,65,157);
-                colours.addContinuousColourRule(min+7.5f*interval,129,15,124);
-                colours.addContinuousColourRule(min+8.5f*interval,77,0,75);
-                colours.addContinuousColourRule(max,              77,0,75);
+                colours.addContinuousColourRule(validMin,              247,252,253);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,252,253);
+                colours.addContinuousColourRule(validMin+1.5f*interval,224,236,244);
+                colours.addContinuousColourRule(validMin+2.5f*interval,191,211,230);
+                colours.addContinuousColourRule(validMin+3.5f*interval,158,188,218);
+                colours.addContinuousColourRule(validMin+4.5f*interval,140,150,198);
+                colours.addContinuousColourRule(validMin+5.5f*interval,140,107,177);
+                colours.addContinuousColourRule(validMin+6.5f*interval,136,65,157);
+                colours.addContinuousColourRule(validMin+7.5f*interval,129,15,124);
+                colours.addContinuousColourRule(validMin+8.5f*interval,77,0,75);
+                colours.addContinuousColourRule(validMax,              77,0,75);
                 break;
             case RD_PU:
                 colours.name = "RdPu";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,247,243);
-                colours.addContinuousColourRule(min+0.5f*interval,255,247,243);
-                colours.addContinuousColourRule(min+1.5f*interval,253,224,221);
-                colours.addContinuousColourRule(min+2.5f*interval,252,197,192);
-                colours.addContinuousColourRule(min+3.5f*interval,250,159,181);
-                colours.addContinuousColourRule(min+4.5f*interval,247,104,161);
-                colours.addContinuousColourRule(min+5.5f*interval,221,52,151);
-                colours.addContinuousColourRule(min+6.5f*interval,174,1,126);
-                colours.addContinuousColourRule(min+7.5f*interval,122,1,119);
-                colours.addContinuousColourRule(min+8.5f*interval,73,0,106);
-                colours.addContinuousColourRule(max,              73,0,106);
+                colours.addContinuousColourRule(validMin,              255,247,243);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,247,243);
+                colours.addContinuousColourRule(validMin+1.5f*interval,253,224,221);
+                colours.addContinuousColourRule(validMin+2.5f*interval,252,197,192);
+                colours.addContinuousColourRule(validMin+3.5f*interval,250,159,181);
+                colours.addContinuousColourRule(validMin+4.5f*interval,247,104,161);
+                colours.addContinuousColourRule(validMin+5.5f*interval,221,52,151);
+                colours.addContinuousColourRule(validMin+6.5f*interval,174,1,126);
+                colours.addContinuousColourRule(validMin+7.5f*interval,122,1,119);
+                colours.addContinuousColourRule(validMin+8.5f*interval,73,0,106);
+                colours.addContinuousColourRule(validMax,              73,0,106);
                 break;
             case PU_RD:
                 colours.name = "PuRd";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,244,249);
-                colours.addContinuousColourRule(min+0.5f*interval,247,244,249);
-                colours.addContinuousColourRule(min+1.5f*interval,231,225,239);
-                colours.addContinuousColourRule(min+2.5f*interval,212,185,218);
-                colours.addContinuousColourRule(min+3.5f*interval,201,148,199);
-                colours.addContinuousColourRule(min+4.5f*interval,223,101,176);
-                colours.addContinuousColourRule(min+5.5f*interval,231,41,138);
-                colours.addContinuousColourRule(min+6.5f*interval,206,18,86);
-                colours.addContinuousColourRule(min+7.5f*interval,152,0,67);
-                colours.addContinuousColourRule(min+8.5f*interval,103,0,31);
-                colours.addContinuousColourRule(max,              103,0,31);
+                colours.addContinuousColourRule(validMin,              247,244,249);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,244,249);
+                colours.addContinuousColourRule(validMin+1.5f*interval,231,225,239);
+                colours.addContinuousColourRule(validMin+2.5f*interval,212,185,218);
+                colours.addContinuousColourRule(validMin+3.5f*interval,201,148,199);
+                colours.addContinuousColourRule(validMin+4.5f*interval,223,101,176);
+                colours.addContinuousColourRule(validMin+5.5f*interval,231,41,138);
+                colours.addContinuousColourRule(validMin+6.5f*interval,206,18,86);
+                colours.addContinuousColourRule(validMin+7.5f*interval,152,0,67);
+                colours.addContinuousColourRule(validMin+8.5f*interval,103,0,31);
+                colours.addContinuousColourRule(validMax,              103,0,31);
                 break;
             case OR_RD:
                 colours.name = "OrRd";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,247,236);
-                colours.addContinuousColourRule(min+0.5f*interval,255,247,236);
-                colours.addContinuousColourRule(min+1.5f*interval,254,232,200);
-                colours.addContinuousColourRule(min+2.5f*interval,253,212,158);
-                colours.addContinuousColourRule(min+3.5f*interval,253,187,132);
-                colours.addContinuousColourRule(min+4.5f*interval,252,141,89);
-                colours.addContinuousColourRule(min+5.5f*interval,239,101,72);
-                colours.addContinuousColourRule(min+6.5f*interval,215,48,31);
-                colours.addContinuousColourRule(min+7.5f*interval,179,0,0);
-                colours.addContinuousColourRule(min+8.5f*interval,127,0,0);
-                colours.addContinuousColourRule(max,              127,0,0);
+                colours.addContinuousColourRule(validMin,              255,247,236);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,247,236);
+                colours.addContinuousColourRule(validMin+1.5f*interval,254,232,200);
+                colours.addContinuousColourRule(validMin+2.5f*interval,253,212,158);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,187,132);
+                colours.addContinuousColourRule(validMin+4.5f*interval,252,141,89);
+                colours.addContinuousColourRule(validMin+5.5f*interval,239,101,72);
+                colours.addContinuousColourRule(validMin+6.5f*interval,215,48,31);
+                colours.addContinuousColourRule(validMin+7.5f*interval,179,0,0);
+                colours.addContinuousColourRule(validMin+8.5f*interval,127,0,0);
+                colours.addContinuousColourRule(validMax,              127,0,0);
                 break;
             case YL_OR_RD:
                 colours.name = "YlOrRd";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,255,204);
-                colours.addContinuousColourRule(min+0.5f*interval,255,255,204);
-                colours.addContinuousColourRule(min+1.5f*interval,255,237,160);
-                colours.addContinuousColourRule(min+2.5f*interval,254,217,118);
-                colours.addContinuousColourRule(min+3.5f*interval,254,178,76);
-                colours.addContinuousColourRule(min+4.5f*interval,253,141,60);
-                colours.addContinuousColourRule(min+5.5f*interval,252,78,42);
-                colours.addContinuousColourRule(min+6.5f*interval,227,26,28);
-                colours.addContinuousColourRule(min+7.5f*interval,189,0,38);
-                colours.addContinuousColourRule(min+8.5f*interval,128,0,38);
-                colours.addContinuousColourRule(max,              128,0,38);
+                colours.addContinuousColourRule(validMin,              255,255,204);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,255,204);
+                colours.addContinuousColourRule(validMin+1.5f*interval,255,237,160);
+                colours.addContinuousColourRule(validMin+2.5f*interval,254,217,118);
+                colours.addContinuousColourRule(validMin+3.5f*interval,254,178,76);
+                colours.addContinuousColourRule(validMin+4.5f*interval,253,141,60);
+                colours.addContinuousColourRule(validMin+5.5f*interval,252,78,42);
+                colours.addContinuousColourRule(validMin+6.5f*interval,227,26,28);
+                colours.addContinuousColourRule(validMin+7.5f*interval,189,0,38);
+                colours.addContinuousColourRule(validMin+8.5f*interval,128,0,38);
+                colours.addContinuousColourRule(validMax,              128,0,38);
                 break;
             case YL_OR_BR:
                 colours.name = "YlOrBr";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,255,229);
-                colours.addContinuousColourRule(min+0.5f*interval,255,255,229);
-                colours.addContinuousColourRule(min+1.5f*interval,255,247,188);
-                colours.addContinuousColourRule(min+2.5f*interval,254,227,145);
-                colours.addContinuousColourRule(min+3.5f*interval,254,196,79);
-                colours.addContinuousColourRule(min+4.5f*interval,254,153,41);
-                colours.addContinuousColourRule(min+5.5f*interval,236,112,20);
-                colours.addContinuousColourRule(min+6.5f*interval,204,76,2);
-                colours.addContinuousColourRule(min+7.5f*interval,153,52,4);
-                colours.addContinuousColourRule(min+8.5f*interval,102,37,6);
-                colours.addContinuousColourRule(max,              102,37,6);
+                colours.addContinuousColourRule(validMin,              255,255,229);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,255,229);
+                colours.addContinuousColourRule(validMin+1.5f*interval,255,247,188);
+                colours.addContinuousColourRule(validMin+2.5f*interval,254,227,145);
+                colours.addContinuousColourRule(validMin+3.5f*interval,254,196,79);
+                colours.addContinuousColourRule(validMin+4.5f*interval,254,153,41);
+                colours.addContinuousColourRule(validMin+5.5f*interval,236,112,20);
+                colours.addContinuousColourRule(validMin+6.5f*interval,204,76,2);
+                colours.addContinuousColourRule(validMin+7.5f*interval,153,52,4);
+                colours.addContinuousColourRule(validMin+8.5f*interval,102,37,6);
+                colours.addContinuousColourRule(validMax,              102,37,6);
                 break;
             case PURPLES:
                 colours.name = "purples";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              252,251,253);
-                colours.addContinuousColourRule(min+0.5f*interval,252,251,253);
-                colours.addContinuousColourRule(min+1.5f*interval,239,237,245);
-                colours.addContinuousColourRule(min+2.5f*interval,218,218,235);
-                colours.addContinuousColourRule(min+3.5f*interval,188,189,220);
-                colours.addContinuousColourRule(min+4.5f*interval,158,154,200);
-                colours.addContinuousColourRule(min+5.5f*interval,128,125,186);
-                colours.addContinuousColourRule(min+6.5f*interval,106,81,163);
-                colours.addContinuousColourRule(min+7.5f*interval,84,39,143);
-                colours.addContinuousColourRule(min+8.5f*interval,63,0,125);
-                colours.addContinuousColourRule(max,              63,0,125);
+                colours.addContinuousColourRule(validMin,              252,251,253);
+                colours.addContinuousColourRule(validMin+0.5f*interval,252,251,253);
+                colours.addContinuousColourRule(validMin+1.5f*interval,239,237,245);
+                colours.addContinuousColourRule(validMin+2.5f*interval,218,218,235);
+                colours.addContinuousColourRule(validMin+3.5f*interval,188,189,220);
+                colours.addContinuousColourRule(validMin+4.5f*interval,158,154,200);
+                colours.addContinuousColourRule(validMin+5.5f*interval,128,125,186);
+                colours.addContinuousColourRule(validMin+6.5f*interval,106,81,163);
+                colours.addContinuousColourRule(validMin+7.5f*interval,84,39,143);
+                colours.addContinuousColourRule(validMin+8.5f*interval,63,0,125);
+                colours.addContinuousColourRule(validMax,              63,0,125);
                 break;
             case BLUES:
                 colours.name = "blues";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,251,255);
-                colours.addContinuousColourRule(min+0.5f*interval,247,251,255);
-                colours.addContinuousColourRule(min+1.5f*interval,222,235,247);
-                colours.addContinuousColourRule(min+2.5f*interval,198,219,239);
-                colours.addContinuousColourRule(min+3.5f*interval,158,202,225);
-                colours.addContinuousColourRule(min+4.5f*interval,107,174,214);
-                colours.addContinuousColourRule(min+5.5f*interval,66,146,198);
-                colours.addContinuousColourRule(min+6.5f*interval,33,113,181);
-                colours.addContinuousColourRule(min+7.5f*interval,8,81,156);
-                colours.addContinuousColourRule(min+8.5f*interval,8,48,107);
-                colours.addContinuousColourRule(max,              8,48,107);
+                colours.addContinuousColourRule(validMin,              247,251,255);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,251,255);
+                colours.addContinuousColourRule(validMin+1.5f*interval,222,235,247);
+                colours.addContinuousColourRule(validMin+2.5f*interval,198,219,239);
+                colours.addContinuousColourRule(validMin+3.5f*interval,158,202,225);
+                colours.addContinuousColourRule(validMin+4.5f*interval,107,174,214);
+                colours.addContinuousColourRule(validMin+5.5f*interval,66,146,198);
+                colours.addContinuousColourRule(validMin+6.5f*interval,33,113,181);
+                colours.addContinuousColourRule(validMin+7.5f*interval,8,81,156);
+                colours.addContinuousColourRule(validMin+8.5f*interval,8,48,107);
+                colours.addContinuousColourRule(validMax,              8,48,107);
                 break;
             case GREENS:
                 colours.name = "greens";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              247,252,245);
-                colours.addContinuousColourRule(min+0.5f*interval,247,252,245);
-                colours.addContinuousColourRule(min+1.5f*interval,229,245,224);
-                colours.addContinuousColourRule(min+2.5f*interval,199,233,192);
-                colours.addContinuousColourRule(min+3.5f*interval,161,217,155);
-                colours.addContinuousColourRule(min+4.5f*interval,116,196,118);
-                colours.addContinuousColourRule(min+5.5f*interval,65,171,93);
-                colours.addContinuousColourRule(min+6.5f*interval,35,139,69);
-                colours.addContinuousColourRule(min+7.5f*interval,0,109,44);
-                colours.addContinuousColourRule(min+8.5f*interval,0,68,27);
-                colours.addContinuousColourRule(max,              0,68,27);
+                colours.addContinuousColourRule(validMin,              247,252,245);
+                colours.addContinuousColourRule(validMin+0.5f*interval,247,252,245);
+                colours.addContinuousColourRule(validMin+1.5f*interval,229,245,224);
+                colours.addContinuousColourRule(validMin+2.5f*interval,199,233,192);
+                colours.addContinuousColourRule(validMin+3.5f*interval,161,217,155);
+                colours.addContinuousColourRule(validMin+4.5f*interval,116,196,118);
+                colours.addContinuousColourRule(validMin+5.5f*interval,65,171,93);
+                colours.addContinuousColourRule(validMin+6.5f*interval,35,139,69);
+                colours.addContinuousColourRule(validMin+7.5f*interval,0,109,44);
+                colours.addContinuousColourRule(validMin+8.5f*interval,0,68,27);
+                colours.addContinuousColourRule(validMax,              0,68,27);
                 break;
             case ORANGES:
                 colours.name = "oranges";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,245,235);
-                colours.addContinuousColourRule(min+0.5f*interval,255,245,235);
-                colours.addContinuousColourRule(min+1.5f*interval,254,230,206);
-                colours.addContinuousColourRule(min+2.5f*interval,253,208,162);
-                colours.addContinuousColourRule(min+3.5f*interval,253,174,107);
-                colours.addContinuousColourRule(min+4.5f*interval,253,141,60);
-                colours.addContinuousColourRule(min+5.5f*interval,241,105,19);
-                colours.addContinuousColourRule(min+6.5f*interval,217,72,1);
-                colours.addContinuousColourRule(min+7.5f*interval,166,54,3);
-                colours.addContinuousColourRule(min+8.5f*interval,127,39,4);
-                colours.addContinuousColourRule(max,              127,39,4);
+                colours.addContinuousColourRule(validMin,              255,245,235);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,245,235);
+                colours.addContinuousColourRule(validMin+1.5f*interval,254,230,206);
+                colours.addContinuousColourRule(validMin+2.5f*interval,253,208,162);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,174,107);
+                colours.addContinuousColourRule(validMin+4.5f*interval,253,141,60);
+                colours.addContinuousColourRule(validMin+5.5f*interval,241,105,19);
+                colours.addContinuousColourRule(validMin+6.5f*interval,217,72,1);
+                colours.addContinuousColourRule(validMin+7.5f*interval,166,54,3);
+                colours.addContinuousColourRule(validMin+8.5f*interval,127,39,4);
+                colours.addContinuousColourRule(validMax,              127,39,4);
                 break;
             case REDS:
                 colours.name = "reds";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,245,240);
-                colours.addContinuousColourRule(min+0.5f*interval,255,245,240);
-                colours.addContinuousColourRule(min+1.5f*interval,254,224,210);
-                colours.addContinuousColourRule(min+2.5f*interval,252,187,161);
-                colours.addContinuousColourRule(min+3.5f*interval,252,146,114);
-                colours.addContinuousColourRule(min+4.5f*interval,251,106,74);
-                colours.addContinuousColourRule(min+5.5f*interval,239,59,44);
-                colours.addContinuousColourRule(min+6.5f*interval,203,24,29);
-                colours.addContinuousColourRule(min+7.5f*interval,165,15,21);
-                colours.addContinuousColourRule(min+8.5f*interval,103,0,13);
-                colours.addContinuousColourRule(max,              103,0,13);
+                colours.addContinuousColourRule(validMin,              255,245,240);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,245,240);
+                colours.addContinuousColourRule(validMin+1.5f*interval,254,224,210);
+                colours.addContinuousColourRule(validMin+2.5f*interval,252,187,161);
+                colours.addContinuousColourRule(validMin+3.5f*interval,252,146,114);
+                colours.addContinuousColourRule(validMin+4.5f*interval,251,106,74);
+                colours.addContinuousColourRule(validMin+5.5f*interval,239,59,44);
+                colours.addContinuousColourRule(validMin+6.5f*interval,203,24,29);
+                colours.addContinuousColourRule(validMin+7.5f*interval,165,15,21);
+                colours.addContinuousColourRule(validMin+8.5f*interval,103,0,13);
+                colours.addContinuousColourRule(validMax,              103,0,13);
                 break;
             case GREYS:
                 colours.name = "greys";
                 interval = range/9f;
-                colours.addContinuousColourRule(min,              255,255,255);
-                colours.addContinuousColourRule(min+0.5f*interval,255,255,255);
-                colours.addContinuousColourRule(min+1.5f*interval,240,240,240);
-                colours.addContinuousColourRule(min+2.5f*interval,217,217,217);
-                colours.addContinuousColourRule(min+3.5f*interval,189,189,189);
-                colours.addContinuousColourRule(min+4.5f*interval,150,150,150);
-                colours.addContinuousColourRule(min+5.5f*interval,115,115,115);
-                colours.addContinuousColourRule(min+6.5f*interval,82,82,82);
-                colours.addContinuousColourRule(min+7.5f*interval,37,37,37);
-                colours.addContinuousColourRule(min+8.5f*interval,0,0,0);
-                colours.addContinuousColourRule(max,              0,0,0);
+                colours.addContinuousColourRule(validMin,              255,255,255);
+                colours.addContinuousColourRule(validMin+0.5f*interval,255,255,255);
+                colours.addContinuousColourRule(validMin+1.5f*interval,240,240,240);
+                colours.addContinuousColourRule(validMin+2.5f*interval,217,217,217);
+                colours.addContinuousColourRule(validMin+3.5f*interval,189,189,189);
+                colours.addContinuousColourRule(validMin+4.5f*interval,150,150,150);
+                colours.addContinuousColourRule(validMin+5.5f*interval,115,115,115);
+                colours.addContinuousColourRule(validMin+6.5f*interval,82,82,82);
+                colours.addContinuousColourRule(validMin+7.5f*interval,37,37,37);
+                colours.addContinuousColourRule(validMin+8.5f*interval,0,0,0);
+                colours.addContinuousColourRule(validMax,              0,0,0);
                 break;
             case PU_OR:
                 colours.name = "PuOr";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              127,59,8);
-                colours.addContinuousColourRule(min+0.5f*interval,127,59,8);
-                colours.addContinuousColourRule(min+1.5f*interval,179,88,6);
-                colours.addContinuousColourRule(min+2.5f*interval,224,130,20);
-                colours.addContinuousColourRule(min+3.5f*interval,253,184,99);
-                colours.addContinuousColourRule(min+4.5f*interval,254,224,182);
-                colours.addContinuousColourRule(min+5.5f*interval,247,247,247);
-                colours.addContinuousColourRule(min+6.5f*interval,216,218,235);
-                colours.addContinuousColourRule(min+7.5f*interval,178,171,210);
-                colours.addContinuousColourRule(min+8.5f*interval,128,115,172);
-                colours.addContinuousColourRule(min+9.5f*interval,84,39,136);
-                colours.addContinuousColourRule(min+10.5f*interval,45,0,75);
-                colours.addContinuousColourRule(max,              45,0,75);
+                colours.addContinuousColourRule(validMin,              127,59,8);
+                colours.addContinuousColourRule(validMin+0.5f*interval,127,59,8);
+                colours.addContinuousColourRule(validMin+1.5f*interval,179,88,6);
+                colours.addContinuousColourRule(validMin+2.5f*interval,224,130,20);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,184,99);
+                colours.addContinuousColourRule(validMin+4.5f*interval,254,224,182);
+                colours.addContinuousColourRule(validMin+5.5f*interval,247,247,247);
+                colours.addContinuousColourRule(validMin+6.5f*interval,216,218,235);
+                colours.addContinuousColourRule(validMin+7.5f*interval,178,171,210);
+                colours.addContinuousColourRule(validMin+8.5f*interval,128,115,172);
+                colours.addContinuousColourRule(validMin+9.5f*interval,84,39,136);
+                colours.addContinuousColourRule(validMin+10.5f*interval,45,0,75);
+                colours.addContinuousColourRule(validMax,              45,0,75);
                 break;
             case BR_B_G:
                 colours.name = "BrBG";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              84,48,5);
-                colours.addContinuousColourRule(min+0.5f*interval,84,48,5);
-                colours.addContinuousColourRule(min+1.5f*interval,140,81,10);
-                colours.addContinuousColourRule(min+2.5f*interval,191,129,45);
-                colours.addContinuousColourRule(min+3.5f*interval,223,194,125);
-                colours.addContinuousColourRule(min+4.5f*interval,246,232,195);
-                colours.addContinuousColourRule(min+5.5f*interval,245,245,245);
-                colours.addContinuousColourRule(min+6.5f*interval,199,234,229);
-                colours.addContinuousColourRule(min+7.5f*interval,128,205,193);
-                colours.addContinuousColourRule(min+8.5f*interval,53,151,143);
-                colours.addContinuousColourRule(min+9.5f*interval,1,102,94);
-                colours.addContinuousColourRule(min+10.5f*interval,0,60,48);
-                colours.addContinuousColourRule(max,              0,60,48);
+                colours.addContinuousColourRule(validMin,              84,48,5);
+                colours.addContinuousColourRule(validMin+0.5f*interval,84,48,5);
+                colours.addContinuousColourRule(validMin+1.5f*interval,140,81,10);
+                colours.addContinuousColourRule(validMin+2.5f*interval,191,129,45);
+                colours.addContinuousColourRule(validMin+3.5f*interval,223,194,125);
+                colours.addContinuousColourRule(validMin+4.5f*interval,246,232,195);
+                colours.addContinuousColourRule(validMin+5.5f*interval,245,245,245);
+                colours.addContinuousColourRule(validMin+6.5f*interval,199,234,229);
+                colours.addContinuousColourRule(validMin+7.5f*interval,128,205,193);
+                colours.addContinuousColourRule(validMin+8.5f*interval,53,151,143);
+                colours.addContinuousColourRule(validMin+9.5f*interval,1,102,94);
+                colours.addContinuousColourRule(validMin+10.5f*interval,0,60,48);
+                colours.addContinuousColourRule(validMax,              0,60,48);
                 break;
             case P_R_GN:
                 colours.name = "PRGn";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              64,0,75);
-                colours.addContinuousColourRule(min+0.5f*interval,64,0,75);
-                colours.addContinuousColourRule(min+1.5f*interval,118,42,131);
-                colours.addContinuousColourRule(min+2.5f*interval,153,112,171);
-                colours.addContinuousColourRule(min+3.5f*interval,194,165,207);
-                colours.addContinuousColourRule(min+4.5f*interval,231,212,232);
-                colours.addContinuousColourRule(min+5.5f*interval,247,247,247);
-                colours.addContinuousColourRule(min+6.5f*interval,217,240,211);
-                colours.addContinuousColourRule(min+7.5f*interval,166,219,160);
-                colours.addContinuousColourRule(min+8.5f*interval,90,174,97);
-                colours.addContinuousColourRule(min+9.5f*interval,27,120,55);
-                colours.addContinuousColourRule(min+10.5f*interval,0,68,27);
-                colours.addContinuousColourRule(max,              0,68,27);
+                colours.addContinuousColourRule(validMin,              64,0,75);
+                colours.addContinuousColourRule(validMin+0.5f*interval,64,0,75);
+                colours.addContinuousColourRule(validMin+1.5f*interval,118,42,131);
+                colours.addContinuousColourRule(validMin+2.5f*interval,153,112,171);
+                colours.addContinuousColourRule(validMin+3.5f*interval,194,165,207);
+                colours.addContinuousColourRule(validMin+4.5f*interval,231,212,232);
+                colours.addContinuousColourRule(validMin+5.5f*interval,247,247,247);
+                colours.addContinuousColourRule(validMin+6.5f*interval,217,240,211);
+                colours.addContinuousColourRule(validMin+7.5f*interval,166,219,160);
+                colours.addContinuousColourRule(validMin+8.5f*interval,90,174,97);
+                colours.addContinuousColourRule(validMin+9.5f*interval,27,120,55);
+                colours.addContinuousColourRule(validMin+10.5f*interval,0,68,27);
+                colours.addContinuousColourRule(validMax,              0,68,27);
                 break;
             case PI_Y_G:
                 colours.name = "PiYG";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              142,1,82);
-                colours.addContinuousColourRule(min+0.5f*interval,142,1,82);
-                colours.addContinuousColourRule(min+1.5f*interval,197,27,125);
-                colours.addContinuousColourRule(min+2.5f*interval,222,119,174);
-                colours.addContinuousColourRule(min+3.5f*interval,241,182,218);
-                colours.addContinuousColourRule(min+4.5f*interval,253,224,239);
-                colours.addContinuousColourRule(min+5.5f*interval,247,247,247);
-                colours.addContinuousColourRule(min+6.5f*interval,230,245,208);
-                colours.addContinuousColourRule(min+7.5f*interval,184,225,134);
-                colours.addContinuousColourRule(min+8.5f*interval,127,188,65);
-                colours.addContinuousColourRule(min+9.5f*interval,77,146,33);
-                colours.addContinuousColourRule(min+10.5f*interval,39,100,25);
-                colours.addContinuousColourRule(max,              39,100,25);
+                colours.addContinuousColourRule(validMin,              142,1,82);
+                colours.addContinuousColourRule(validMin+0.5f*interval,142,1,82);
+                colours.addContinuousColourRule(validMin+1.5f*interval,197,27,125);
+                colours.addContinuousColourRule(validMin+2.5f*interval,222,119,174);
+                colours.addContinuousColourRule(validMin+3.5f*interval,241,182,218);
+                colours.addContinuousColourRule(validMin+4.5f*interval,253,224,239);
+                colours.addContinuousColourRule(validMin+5.5f*interval,247,247,247);
+                colours.addContinuousColourRule(validMin+6.5f*interval,230,245,208);
+                colours.addContinuousColourRule(validMin+7.5f*interval,184,225,134);
+                colours.addContinuousColourRule(validMin+8.5f*interval,127,188,65);
+                colours.addContinuousColourRule(validMin+9.5f*interval,77,146,33);
+                colours.addContinuousColourRule(validMin+10.5f*interval,39,100,25);
+                colours.addContinuousColourRule(validMax,              39,100,25);
                 break;
             case RD_BU:
                 colours.name = "RdBu";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              103,0,31);
-                colours.addContinuousColourRule(min+0.5f*interval,103,0,31);
-                colours.addContinuousColourRule(min+1.5f*interval,178,24,43);
-                colours.addContinuousColourRule(min+2.5f*interval,214,96,77);
-                colours.addContinuousColourRule(min+3.5f*interval,244,165,130);
-                colours.addContinuousColourRule(min+4.5f*interval,253,219,199);
-                colours.addContinuousColourRule(min+5.5f*interval,247,247,247);
-                colours.addContinuousColourRule(min+6.5f*interval,209,229,240);
-                colours.addContinuousColourRule(min+7.5f*interval,146,197,222);
-                colours.addContinuousColourRule(min+8.5f*interval,67,147,195);
-                colours.addContinuousColourRule(min+9.5f*interval,33,102,172);
-                colours.addContinuousColourRule(min+10.5f*interval,5,48,97);
-                colours.addContinuousColourRule(max,              5,48,97);
+                colours.addContinuousColourRule(validMin,              103,0,31);
+                colours.addContinuousColourRule(validMin+0.5f*interval,103,0,31);
+                colours.addContinuousColourRule(validMin+1.5f*interval,178,24,43);
+                colours.addContinuousColourRule(validMin+2.5f*interval,214,96,77);
+                colours.addContinuousColourRule(validMin+3.5f*interval,244,165,130);
+                colours.addContinuousColourRule(validMin+4.5f*interval,253,219,199);
+                colours.addContinuousColourRule(validMin+5.5f*interval,247,247,247);
+                colours.addContinuousColourRule(validMin+6.5f*interval,209,229,240);
+                colours.addContinuousColourRule(validMin+7.5f*interval,146,197,222);
+                colours.addContinuousColourRule(validMin+8.5f*interval,67,147,195);
+                colours.addContinuousColourRule(validMin+9.5f*interval,33,102,172);
+                colours.addContinuousColourRule(validMin+10.5f*interval,5,48,97);
+                colours.addContinuousColourRule(validMax,              5,48,97);
                 break;
             case RD_GY:
                 colours.name = "RdGy";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              103,0,31);
-                colours.addContinuousColourRule(min+0.5f*interval,103,0,31);
-                colours.addContinuousColourRule(min+1.5f*interval,178,24,43);
-                colours.addContinuousColourRule(min+2.5f*interval,214,96,77);
-                colours.addContinuousColourRule(min+3.5f*interval,244,165,130);
-                colours.addContinuousColourRule(min+4.5f*interval,253,219,199);
-                colours.addContinuousColourRule(min+5.5f*interval,255,255,255);
-                colours.addContinuousColourRule(min+6.5f*interval,224,224,224);
-                colours.addContinuousColourRule(min+7.5f*interval,186,186,186);
-                colours.addContinuousColourRule(min+8.5f*interval,135,135,135);
-                colours.addContinuousColourRule(min+9.5f*interval,77,77,77);
-                colours.addContinuousColourRule(min+10.5f*interval,26,26,26);
-                colours.addContinuousColourRule(max,              26,26,26);
+                colours.addContinuousColourRule(validMin,              103,0,31);
+                colours.addContinuousColourRule(validMin+0.5f*interval,103,0,31);
+                colours.addContinuousColourRule(validMin+1.5f*interval,178,24,43);
+                colours.addContinuousColourRule(validMin+2.5f*interval,214,96,77);
+                colours.addContinuousColourRule(validMin+3.5f*interval,244,165,130);
+                colours.addContinuousColourRule(validMin+4.5f*interval,253,219,199);
+                colours.addContinuousColourRule(validMin+5.5f*interval,255,255,255);
+                colours.addContinuousColourRule(validMin+6.5f*interval,224,224,224);
+                colours.addContinuousColourRule(validMin+7.5f*interval,186,186,186);
+                colours.addContinuousColourRule(validMin+8.5f*interval,135,135,135);
+                colours.addContinuousColourRule(validMin+9.5f*interval,77,77,77);
+                colours.addContinuousColourRule(validMin+10.5f*interval,26,26,26);
+                colours.addContinuousColourRule(validMax,              26,26,26);
                 break;
             case RD_YL_BU:
                 colours.name = "RdYlBu";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              165,0,38);
-                colours.addContinuousColourRule(min+0.5f*interval,165,0,38);
-                colours.addContinuousColourRule(min+1.5f*interval,215,48,39);
-                colours.addContinuousColourRule(min+2.5f*interval,244,109,67);
-                colours.addContinuousColourRule(min+3.5f*interval,253,174,97);
-                colours.addContinuousColourRule(min+4.5f*interval,254,224,144);
-                colours.addContinuousColourRule(min+5.5f*interval,255,255,191);
-                colours.addContinuousColourRule(min+6.5f*interval,224,243,248);
-                colours.addContinuousColourRule(min+7.5f*interval,171,217,233);
-                colours.addContinuousColourRule(min+8.5f*interval,116,173,209);
-                colours.addContinuousColourRule(min+9.5f*interval,69,117,180);
-                colours.addContinuousColourRule(min+10.5f*interval,49,54,149);
-                colours.addContinuousColourRule(max,              49,54,149);
+                colours.addContinuousColourRule(validMin,              165,0,38);
+                colours.addContinuousColourRule(validMin+0.5f*interval,165,0,38);
+                colours.addContinuousColourRule(validMin+1.5f*interval,215,48,39);
+                colours.addContinuousColourRule(validMin+2.5f*interval,244,109,67);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,174,97);
+                colours.addContinuousColourRule(validMin+4.5f*interval,254,224,144);
+                colours.addContinuousColourRule(validMin+5.5f*interval,255,255,191);
+                colours.addContinuousColourRule(validMin+6.5f*interval,224,243,248);
+                colours.addContinuousColourRule(validMin+7.5f*interval,171,217,233);
+                colours.addContinuousColourRule(validMin+8.5f*interval,116,173,209);
+                colours.addContinuousColourRule(validMin+9.5f*interval,69,117,180);
+                colours.addContinuousColourRule(validMin+10.5f*interval,49,54,149);
+                colours.addContinuousColourRule(validMax,              49,54,149);
                 break;
             case SPECTRAL:
                 colours.name = "spectral";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              158,1,66);
-                colours.addContinuousColourRule(min+0.5f*interval,158,1,66);
-                colours.addContinuousColourRule(min+1.5f*interval,213,62,79);
-                colours.addContinuousColourRule(min+2.5f*interval,244,109,67);
-                colours.addContinuousColourRule(min+3.5f*interval,253,174,97);
-                colours.addContinuousColourRule(min+4.5f*interval,254,224,139);
-                colours.addContinuousColourRule(min+5.5f*interval,255,255,191);
-                colours.addContinuousColourRule(min+6.5f*interval,230,245,152);
-                colours.addContinuousColourRule(min+7.5f*interval,171,221,164);
-                colours.addContinuousColourRule(min+8.5f*interval,102,194,165);
-                colours.addContinuousColourRule(min+9.5f*interval,50,136,189);
-                colours.addContinuousColourRule(min+10.5f*interval,94,79,162);
-                colours.addContinuousColourRule(max,              94,79,162);
+                colours.addContinuousColourRule(validMin,              158,1,66);
+                colours.addContinuousColourRule(validMin+0.5f*interval,158,1,66);
+                colours.addContinuousColourRule(validMin+1.5f*interval,213,62,79);
+                colours.addContinuousColourRule(validMin+2.5f*interval,244,109,67);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,174,97);
+                colours.addContinuousColourRule(validMin+4.5f*interval,254,224,139);
+                colours.addContinuousColourRule(validMin+5.5f*interval,255,255,191);
+                colours.addContinuousColourRule(validMin+6.5f*interval,230,245,152);
+                colours.addContinuousColourRule(validMin+7.5f*interval,171,221,164);
+                colours.addContinuousColourRule(validMin+8.5f*interval,102,194,165);
+                colours.addContinuousColourRule(validMin+9.5f*interval,50,136,189);
+                colours.addContinuousColourRule(validMin+10.5f*interval,94,79,162);
+                colours.addContinuousColourRule(validMax,              94,79,162);
                 break;
             case RD_YL_GN:
                 colours.name = "RdYlGn";
                 interval = range/11f;
-                colours.addContinuousColourRule(min,              165,0,38);
-                colours.addContinuousColourRule(min+0.5f*interval,165,0,38);
-                colours.addContinuousColourRule(min+1.5f*interval,215,48,39);
-                colours.addContinuousColourRule(min+2.5f*interval,244,109,67);
-                colours.addContinuousColourRule(min+3.5f*interval,253,174,97);
-                colours.addContinuousColourRule(min+4.5f*interval,254,224,139);
-                colours.addContinuousColourRule(min+5.5f*interval,255,255,191);
-                colours.addContinuousColourRule(min+6.5f*interval,217,239,139);
-                colours.addContinuousColourRule(min+7.5f*interval,166,217,106);
-                colours.addContinuousColourRule(min+8.5f*interval,102,189,99);
-                colours.addContinuousColourRule(min+9.5f*interval,26,152,80);
-                colours.addContinuousColourRule(min+10.5f*interval,0,104,55);
-                colours.addContinuousColourRule(max,              0,104,55);
+                colours.addContinuousColourRule(validMin,              165,0,38);
+                colours.addContinuousColourRule(validMin+0.5f*interval,165,0,38);
+                colours.addContinuousColourRule(validMin+1.5f*interval,215,48,39);
+                colours.addContinuousColourRule(validMin+2.5f*interval,244,109,67);
+                colours.addContinuousColourRule(validMin+3.5f*interval,253,174,97);
+                colours.addContinuousColourRule(validMin+4.5f*interval,254,224,139);
+                colours.addContinuousColourRule(validMin+5.5f*interval,255,255,191);
+                colours.addContinuousColourRule(validMin+6.5f*interval,217,239,139);
+                colours.addContinuousColourRule(validMin+7.5f*interval,166,217,106);
+                colours.addContinuousColourRule(validMin+8.5f*interval,102,189,99);
+                colours.addContinuousColourRule(validMin+9.5f*interval,26,152,80);
+                colours.addContinuousColourRule(validMin+10.5f*interval,0,104,55);
+                colours.addContinuousColourRule(validMax,              0,104,55);
                 break;
                 
             case SET1_3:
                 colours.name = "Set1_3";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_4:
                 colours.name = "Set1_4";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_5:    
                 colours.name = "Set1_5";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
-                colours.addDiscreteColourRule(min+4,255,127,0);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
+                colours.addDiscreteColourRule(validMin+4,255,127,0);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_6:    
                 colours.name = "Set1_6";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
-                colours.addDiscreteColourRule(min+4,255,127,0);
-                colours.addDiscreteColourRule(min+5,255,255,51);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
+                colours.addDiscreteColourRule(validMin+4,255,127,0);
+                colours.addDiscreteColourRule(validMin+5,255,255,51);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_7:
                 colours.name = "Set1_7";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
-                colours.addDiscreteColourRule(min+4,255,127,0);
-                colours.addDiscreteColourRule(min+5,255,255,51);
-                colours.addDiscreteColourRule(min+6,166,86,40);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
+                colours.addDiscreteColourRule(validMin+4,255,127,0);
+                colours.addDiscreteColourRule(validMin+5,255,255,51);
+                colours.addDiscreteColourRule(validMin+6,166,86,40);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_8:    
                 colours.name = "Set1_8";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
-                colours.addDiscreteColourRule(min+4,255,127,0);
-                colours.addDiscreteColourRule(min+5,255,255,51);
-                colours.addDiscreteColourRule(min+6,166,86,40);
-                colours.addDiscreteColourRule(min+7,247,129,191);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
+                colours.addDiscreteColourRule(validMin+4,255,127,0);
+                colours.addDiscreteColourRule(validMin+5,255,255,51);
+                colours.addDiscreteColourRule(validMin+6,166,86,40);
+                colours.addDiscreteColourRule(validMin+7,247,129,191);
                 colours.setIsDiscrete(true);
                 break;
             case SET1_9:    
                 colours.name = "Set1_9";
-                colours.addDiscreteColourRule(min,228,26,28);
-                colours.addDiscreteColourRule(min+1,55,126,184);
-                colours.addDiscreteColourRule(min+2,77,175,74);
-                colours.addDiscreteColourRule(min+3,152,78,163);
-                colours.addDiscreteColourRule(min+4,255,127,0);
-                colours.addDiscreteColourRule(min+5,255,255,51);
-                colours.addDiscreteColourRule(min+6,166,86,40);
-                colours.addDiscreteColourRule(min+7,247,129,191);
-                colours.addDiscreteColourRule(min+8,153,153,153);
+                colours.addDiscreteColourRule(validMin,228,26,28);
+                colours.addDiscreteColourRule(validMin+1,55,126,184);
+                colours.addDiscreteColourRule(validMin+2,77,175,74);
+                colours.addDiscreteColourRule(validMin+3,152,78,163);
+                colours.addDiscreteColourRule(validMin+4,255,127,0);
+                colours.addDiscreteColourRule(validMin+5,255,255,51);
+                colours.addDiscreteColourRule(validMin+6,166,86,40);
+                colours.addDiscreteColourRule(validMin+7,247,129,191);
+                colours.addDiscreteColourRule(validMin+8,153,153,153);
                 colours.setIsDiscrete(true);
                 break;
                 
             case SET2_3:
                 colours.name = "Set2_3";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
                 colours.setIsDiscrete(true);
                 break;
             case SET2_4:
                 colours.name = "Set2_4";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
-                colours.addDiscreteColourRule(min+3,231,138,195);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
+                colours.addDiscreteColourRule(validMin+3,231,138,195);
                 colours.setIsDiscrete(true);
                 break;
             case SET2_5:
                 colours.name = "Set2_5";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
-                colours.addDiscreteColourRule(min+3,231,138,195);
-                colours.addDiscreteColourRule(min+4,166,216,84);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
+                colours.addDiscreteColourRule(validMin+3,231,138,195);
+                colours.addDiscreteColourRule(validMin+4,166,216,84);
                 colours.setIsDiscrete(true);
                 break;
             case SET2_6:    
                 colours.name = "Set2_6";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
-                colours.addDiscreteColourRule(min+3,231,138,195);
-                colours.addDiscreteColourRule(min+4,166,216,84);
-                colours.addDiscreteColourRule(min+5,255,217,47);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
+                colours.addDiscreteColourRule(validMin+3,231,138,195);
+                colours.addDiscreteColourRule(validMin+4,166,216,84);
+                colours.addDiscreteColourRule(validMin+5,255,217,47);
                 colours.setIsDiscrete(true);
                 break;
             case SET2_7:
                 colours.name = "Set2_7";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
-                colours.addDiscreteColourRule(min+3,231,138,195);
-                colours.addDiscreteColourRule(min+4,166,216,84);
-                colours.addDiscreteColourRule(min+5,255,217,47);
-                colours.addDiscreteColourRule(min+6,229,196,148);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
+                colours.addDiscreteColourRule(validMin+3,231,138,195);
+                colours.addDiscreteColourRule(validMin+4,166,216,84);
+                colours.addDiscreteColourRule(validMin+5,255,217,47);
+                colours.addDiscreteColourRule(validMin+6,229,196,148);
                 colours.setIsDiscrete(true);
                 break;
             case SET2_8:
                 colours.name = "Set2_8";
-                colours.addDiscreteColourRule(min,102,194,165);
-                colours.addDiscreteColourRule(min+1,252,141,98);
-                colours.addDiscreteColourRule(min+2,141,160,203);
-                colours.addDiscreteColourRule(min+3,231,138,195);
-                colours.addDiscreteColourRule(min+4,166,216,84);
-                colours.addDiscreteColourRule(min+5,255,217,47);
-                colours.addDiscreteColourRule(min+6,229,196,148);
-                colours.addDiscreteColourRule(min+7,179,179,179);
+                colours.addDiscreteColourRule(validMin,102,194,165);
+                colours.addDiscreteColourRule(validMin+1,252,141,98);
+                colours.addDiscreteColourRule(validMin+2,141,160,203);
+                colours.addDiscreteColourRule(validMin+3,231,138,195);
+                colours.addDiscreteColourRule(validMin+4,166,216,84);
+                colours.addDiscreteColourRule(validMin+5,255,217,47);
+                colours.addDiscreteColourRule(validMin+6,229,196,148);
+                colours.addDiscreteColourRule(validMin+7,179,179,179);
                 colours.setIsDiscrete(true);
                 break;
             
             case SET3_3:
                 colours.name = "Set3_3";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_4:
                 colours.name = "Set3_4";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_5:    
                 colours.name = "Set3_5";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_6:    
                 colours.name = "Set3_6";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_7:    
                 colours.name = "Set3_7";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_8:    
                 colours.name = "Set3_8";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
-                colours.addDiscreteColourRule(min+7,252,205,229);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
+                colours.addDiscreteColourRule(validMin+7,252,205,229);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_9:
                 colours.name = "Set3_9";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
-                colours.addDiscreteColourRule(min+7,252,205,229);
-                colours.addDiscreteColourRule(min+8,217,217,217);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
+                colours.addDiscreteColourRule(validMin+7,252,205,229);
+                colours.addDiscreteColourRule(validMin+8,217,217,217);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_10:   
                 colours.name = "Set3_10";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
-                colours.addDiscreteColourRule(min+7,252,205,229);
-                colours.addDiscreteColourRule(min+8,217,217,217);
-                colours.addDiscreteColourRule(min+9,188,128,189);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
+                colours.addDiscreteColourRule(validMin+7,252,205,229);
+                colours.addDiscreteColourRule(validMin+8,217,217,217);
+                colours.addDiscreteColourRule(validMin+9,188,128,189);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_11:   
                 colours.name = "Set3_11";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
-                colours.addDiscreteColourRule(min+7,252,205,229);
-                colours.addDiscreteColourRule(min+8,217,217,217);
-                colours.addDiscreteColourRule(min+9,188,128,189);
-                colours.addDiscreteColourRule(min+10,204,235,197);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
+                colours.addDiscreteColourRule(validMin+7,252,205,229);
+                colours.addDiscreteColourRule(validMin+8,217,217,217);
+                colours.addDiscreteColourRule(validMin+9,188,128,189);
+                colours.addDiscreteColourRule(validMin+10,204,235,197);
                 colours.setIsDiscrete(true);
                 break;
             case SET3_12:
                 colours.name = "Set3_12";
-                colours.addDiscreteColourRule(min,141,211,199);
-                colours.addDiscreteColourRule(min+1,255,255,179);
-                colours.addDiscreteColourRule(min+2,190,186,218);
-                colours.addDiscreteColourRule(min+3,251,128,114);
-                colours.addDiscreteColourRule(min+4,128,177,211);
-                colours.addDiscreteColourRule(min+5,253,180,98);
-                colours.addDiscreteColourRule(min+6,179,222,105);
-                colours.addDiscreteColourRule(min+7,252,205,229);
-                colours.addDiscreteColourRule(min+8,217,217,217);
-                colours.addDiscreteColourRule(min+9,188,128,189);
-                colours.addDiscreteColourRule(min+10,204,235,197);
-                colours.addDiscreteColourRule(min+11,255,237,111);
+                colours.addDiscreteColourRule(validMin,141,211,199);
+                colours.addDiscreteColourRule(validMin+1,255,255,179);
+                colours.addDiscreteColourRule(validMin+2,190,186,218);
+                colours.addDiscreteColourRule(validMin+3,251,128,114);
+                colours.addDiscreteColourRule(validMin+4,128,177,211);
+                colours.addDiscreteColourRule(validMin+5,253,180,98);
+                colours.addDiscreteColourRule(validMin+6,179,222,105);
+                colours.addDiscreteColourRule(validMin+7,252,205,229);
+                colours.addDiscreteColourRule(validMin+8,217,217,217);
+                colours.addDiscreteColourRule(validMin+9,188,128,189);
+                colours.addDiscreteColourRule(validMin+10,204,235,197);
+                colours.addDiscreteColourRule(validMin+11,255,237,111);
                 colours.setIsDiscrete(true);
                 break;
         
             case PASTEL1_3:
                 colours.name = "Pastel1_3";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_4:
                 colours.name = "Pastel1_4";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_5:
                 colours.name = "Pastel1_5";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
-                colours.addDiscreteColourRule(min+4,254,217,166);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
+                colours.addDiscreteColourRule(validMin+4,254,217,166);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_6:
                 colours.name = "Pastel1_6";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
-                colours.addDiscreteColourRule(min+4,254,217,166);
-                colours.addDiscreteColourRule(min+5,255,255,204);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
+                colours.addDiscreteColourRule(validMin+4,254,217,166);
+                colours.addDiscreteColourRule(validMin+5,255,255,204);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_7:
                 colours.name = "Pastel1_7";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
-                colours.addDiscreteColourRule(min+4,254,217,166);
-                colours.addDiscreteColourRule(min+5,255,255,204);
-                colours.addDiscreteColourRule(min+6,229,216,189);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
+                colours.addDiscreteColourRule(validMin+4,254,217,166);
+                colours.addDiscreteColourRule(validMin+5,255,255,204);
+                colours.addDiscreteColourRule(validMin+6,229,216,189);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_8:
                 colours.name = "Pastel1_8";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
-                colours.addDiscreteColourRule(min+4,254,217,166);
-                colours.addDiscreteColourRule(min+5,255,255,204);
-                colours.addDiscreteColourRule(min+6,229,216,189);
-                colours.addDiscreteColourRule(min+7,253,218,236);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
+                colours.addDiscreteColourRule(validMin+4,254,217,166);
+                colours.addDiscreteColourRule(validMin+5,255,255,204);
+                colours.addDiscreteColourRule(validMin+6,229,216,189);
+                colours.addDiscreteColourRule(validMin+7,253,218,236);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL1_9:
                 colours.name = "Pastel1_9";
-                colours.addDiscreteColourRule(min,251,180,174);
-                colours.addDiscreteColourRule(min+1,179,205,227);
-                colours.addDiscreteColourRule(min+2,204,235,197);
-                colours.addDiscreteColourRule(min+3,222,203,228);
-                colours.addDiscreteColourRule(min+4,254,217,166);
-                colours.addDiscreteColourRule(min+5,255,255,204);
-                colours.addDiscreteColourRule(min+6,229,216,189);
-                colours.addDiscreteColourRule(min+7,253,218,236);
-                colours.addDiscreteColourRule(min+8,242,242,242);
+                colours.addDiscreteColourRule(validMin,251,180,174);
+                colours.addDiscreteColourRule(validMin+1,179,205,227);
+                colours.addDiscreteColourRule(validMin+2,204,235,197);
+                colours.addDiscreteColourRule(validMin+3,222,203,228);
+                colours.addDiscreteColourRule(validMin+4,254,217,166);
+                colours.addDiscreteColourRule(validMin+5,255,255,204);
+                colours.addDiscreteColourRule(validMin+6,229,216,189);
+                colours.addDiscreteColourRule(validMin+7,253,218,236);
+                colours.addDiscreteColourRule(validMin+8,242,242,242);
                 colours.setIsDiscrete(true);
                 break;
                 
             case PASTEL2_3:
                 colours.name = "Pastel2_3";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL2_4:
                 colours.name = "Pastel2_4";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
-                colours.addDiscreteColourRule(min+3,244,202,228);
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
+                colours.addDiscreteColourRule(validMin+3,244,202,228);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL2_5:
                 colours.name = "Pastel2_5";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
-                colours.addDiscreteColourRule(min+3,244,202,228);
-                colours.addDiscreteColourRule(min+4,230,245,201);
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
+                colours.addDiscreteColourRule(validMin+3,244,202,228);
+                colours.addDiscreteColourRule(validMin+4,230,245,201);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL2_6:
                 colours.name = "Pastel2_6";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
-                colours.addDiscreteColourRule(min+3,244,202,228);
-                colours.addDiscreteColourRule(min+4,230,245,201);
-                colours.addDiscreteColourRule(min+5,255,242,174);
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
+                colours.addDiscreteColourRule(validMin+3,244,202,228);
+                colours.addDiscreteColourRule(validMin+4,230,245,201);
+                colours.addDiscreteColourRule(validMin+5,255,242,174);
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL2_7:
                 colours.name = "Pastel2_7";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
-                colours.addDiscreteColourRule(min+3,244,202,228);
-                colours.addDiscreteColourRule(min+4,230,245,201);
-                colours.addDiscreteColourRule(min+5,255,242,174);
-                colours.addDiscreteColourRule(min+6,241,226,204);   
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
+                colours.addDiscreteColourRule(validMin+3,244,202,228);
+                colours.addDiscreteColourRule(validMin+4,230,245,201);
+                colours.addDiscreteColourRule(validMin+5,255,242,174);
+                colours.addDiscreteColourRule(validMin+6,241,226,204);   
                 colours.setIsDiscrete(true);
                 break;
             case PASTEL2_8:
                 colours.name = "Pastel2_8";
-                colours.addDiscreteColourRule(min,179,226,205);
-                colours.addDiscreteColourRule(min+1,253,205,172);
-                colours.addDiscreteColourRule(min+2,203,213,232);
-                colours.addDiscreteColourRule(min+3,244,202,228);
-                colours.addDiscreteColourRule(min+4,230,245,201);
-                colours.addDiscreteColourRule(min+5,255,242,174);
-                colours.addDiscreteColourRule(min+6,241,226,204);
-                colours.addDiscreteColourRule(min+7,204,204,204);
+                colours.addDiscreteColourRule(validMin,179,226,205);
+                colours.addDiscreteColourRule(validMin+1,253,205,172);
+                colours.addDiscreteColourRule(validMin+2,203,213,232);
+                colours.addDiscreteColourRule(validMin+3,244,202,228);
+                colours.addDiscreteColourRule(validMin+4,230,245,201);
+                colours.addDiscreteColourRule(validMin+5,255,242,174);
+                colours.addDiscreteColourRule(validMin+6,241,226,204);
+                colours.addDiscreteColourRule(validMin+7,204,204,204);
                 colours.setIsDiscrete(true);
                 break;  
                 
             case DARK2_3:
                 colours.name = "Dark2_3";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
                 colours.setIsDiscrete(true);
                 break;
             case DARK2_4:
                 colours.name = "Dark2_4";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
-                colours.addDiscreteColourRule(min+3,231,41,138);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
+                colours.addDiscreteColourRule(validMin+3,231,41,138);
                 colours.setIsDiscrete(true);
                 break;
             case DARK2_5:
                 colours.name = "Dark2_5";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
-                colours.addDiscreteColourRule(min+3,231,41,138);
-                colours.addDiscreteColourRule(min+4,102,166,30);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
+                colours.addDiscreteColourRule(validMin+3,231,41,138);
+                colours.addDiscreteColourRule(validMin+4,102,166,30);
                 colours.setIsDiscrete(true);
                 break;
             case DARK2_6:
                 colours.name = "Dark2_6";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
-                colours.addDiscreteColourRule(min+3,231,41,138);
-                colours.addDiscreteColourRule(min+4,102,166,30);
-                colours.addDiscreteColourRule(min+5,230,171,2);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
+                colours.addDiscreteColourRule(validMin+3,231,41,138);
+                colours.addDiscreteColourRule(validMin+4,102,166,30);
+                colours.addDiscreteColourRule(validMin+5,230,171,2);
                 colours.setIsDiscrete(true);
                 break;
             case DARK2_7:
                 colours.name = "Dark2_7";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
-                colours.addDiscreteColourRule(min+3,231,41,138);
-                colours.addDiscreteColourRule(min+4,102,166,30);
-                colours.addDiscreteColourRule(min+5,230,171,2);
-                colours.addDiscreteColourRule(min+6,166,118,29);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
+                colours.addDiscreteColourRule(validMin+3,231,41,138);
+                colours.addDiscreteColourRule(validMin+4,102,166,30);
+                colours.addDiscreteColourRule(validMin+5,230,171,2);
+                colours.addDiscreteColourRule(validMin+6,166,118,29);
                 colours.setIsDiscrete(true);
                 break;
             case DARK2_8:
                 colours.name = "Dark2_8";
-                colours.addDiscreteColourRule(min,27,158,119);
-                colours.addDiscreteColourRule(min+1,217,95,2);
-                colours.addDiscreteColourRule(min+2,117,112,179);
-                colours.addDiscreteColourRule(min+3,231,41,138);
-                colours.addDiscreteColourRule(min+4,102,166,30);
-                colours.addDiscreteColourRule(min+5,230,171,2);
-                colours.addDiscreteColourRule(min+6,166,118,29);
-                colours.addDiscreteColourRule(min+7,102,102,102);
+                colours.addDiscreteColourRule(validMin,27,158,119);
+                colours.addDiscreteColourRule(validMin+1,217,95,2);
+                colours.addDiscreteColourRule(validMin+2,117,112,179);
+                colours.addDiscreteColourRule(validMin+3,231,41,138);
+                colours.addDiscreteColourRule(validMin+4,102,166,30);
+                colours.addDiscreteColourRule(validMin+5,230,171,2);
+                colours.addDiscreteColourRule(validMin+6,166,118,29);
+                colours.addDiscreteColourRule(validMin+7,102,102,102);
                 colours.setIsDiscrete(true);
                 break;
             
             case PAIRED_3:
                 colours.name = "Paired_3";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);   
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);   
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_4:
                 colours.name = "Paired_4";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_5:
                 colours.name = "Paired_5";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_6:
                 colours.name = "Paired_6";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_7:
                 colours.name = "Paired_7";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_8:
                 colours.name = "Paired_8";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
-                colours.addDiscreteColourRule(min+7,255,127,0);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
+                colours.addDiscreteColourRule(validMin+7,255,127,0);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_9:
                 colours.name = "Paired_9";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
-                colours.addDiscreteColourRule(min+7,255,127,0);
-                colours.addDiscreteColourRule(min+8,202,178,214);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
+                colours.addDiscreteColourRule(validMin+7,255,127,0);
+                colours.addDiscreteColourRule(validMin+8,202,178,214);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_10:
                 colours.name = "Paired_10";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
-                colours.addDiscreteColourRule(min+7,255,127,0);
-                colours.addDiscreteColourRule(min+8,202,178,214);
-                colours.addDiscreteColourRule(min+9,106,61,154);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
+                colours.addDiscreteColourRule(validMin+7,255,127,0);
+                colours.addDiscreteColourRule(validMin+8,202,178,214);
+                colours.addDiscreteColourRule(validMin+9,106,61,154);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_11:
                 colours.name = "Paired_11";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
-                colours.addDiscreteColourRule(min+7,255,127,0);
-                colours.addDiscreteColourRule(min+8,202,178,214);
-                colours.addDiscreteColourRule(min+9,106,61,154);
-                colours.addDiscreteColourRule(min+10,255,255,153);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
+                colours.addDiscreteColourRule(validMin+7,255,127,0);
+                colours.addDiscreteColourRule(validMin+8,202,178,214);
+                colours.addDiscreteColourRule(validMin+9,106,61,154);
+                colours.addDiscreteColourRule(validMin+10,255,255,153);
                 colours.setIsDiscrete(true);
                 break;
             case PAIRED_12:
                 colours.name = "Paired_12";
-                colours.addDiscreteColourRule(min,166,206,227);
-                colours.addDiscreteColourRule(min+1,31,120,180);
-                colours.addDiscreteColourRule(min+2,178,223,138);
-                colours.addDiscreteColourRule(min+3,51,160,44);
-                colours.addDiscreteColourRule(min+4,251,154,153);
-                colours.addDiscreteColourRule(min+5,227,26,28);
-                colours.addDiscreteColourRule(min+6,253,191,111);
-                colours.addDiscreteColourRule(min+7,255,127,0);
-                colours.addDiscreteColourRule(min+8,202,178,214);
-                colours.addDiscreteColourRule(min+9,106,61,154);
-                colours.addDiscreteColourRule(min+10,255,255,153);
-                colours.addDiscreteColourRule(min+11,177,89,40);
+                colours.addDiscreteColourRule(validMin,166,206,227);
+                colours.addDiscreteColourRule(validMin+1,31,120,180);
+                colours.addDiscreteColourRule(validMin+2,178,223,138);
+                colours.addDiscreteColourRule(validMin+3,51,160,44);
+                colours.addDiscreteColourRule(validMin+4,251,154,153);
+                colours.addDiscreteColourRule(validMin+5,227,26,28);
+                colours.addDiscreteColourRule(validMin+6,253,191,111);
+                colours.addDiscreteColourRule(validMin+7,255,127,0);
+                colours.addDiscreteColourRule(validMin+8,202,178,214);
+                colours.addDiscreteColourRule(validMin+9,106,61,154);
+                colours.addDiscreteColourRule(validMin+10,255,255,153);
+                colours.addDiscreteColourRule(validMin+11,177,89,40);
                 colours.setIsDiscrete(true);
                 break;
                 
             case ACCENT_3:
                 colours.name = "Accent_3";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+1,190,174,212);
-                colours.addDiscreteColourRule(min+2,253,192,134);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+1,190,174,212);
+                colours.addDiscreteColourRule(validMin+2,253,192,134);
                 colours.setIsDiscrete(true);
                 break;
             case ACCENT_4:
                 colours.name = "Accent_4";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+1,190,174,212);
-                colours.addDiscreteColourRule(min+2,253,192,134);
-                colours.addDiscreteColourRule(min+3,255,255,153);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+1,190,174,212);
+                colours.addDiscreteColourRule(validMin+2,253,192,134);
+                colours.addDiscreteColourRule(validMin+3,255,255,153);
                 colours.setIsDiscrete(true);
                 break;
             case ACCENT_5:
                 colours.name = "Accent_5";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+1,190,174,212);
-                colours.addDiscreteColourRule(min+2,253,192,134);
-                colours.addDiscreteColourRule(min+3,255,255,153);
-                colours.addDiscreteColourRule(min+4,56,108,176);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+1,190,174,212);
+                colours.addDiscreteColourRule(validMin+2,253,192,134);
+                colours.addDiscreteColourRule(validMin+3,255,255,153);
+                colours.addDiscreteColourRule(validMin+4,56,108,176);
                 colours.setIsDiscrete(true);
                 break;
             case ACCENT_6:
                 colours.name = "Accent_6";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+2,190,174,212);
-                colours.addDiscreteColourRule(min+3,253,192,134);
-                colours.addDiscreteColourRule(min+4,255,255,153);
-                colours.addDiscreteColourRule(min+5,56,108,176);
-                colours.addDiscreteColourRule(min+6,240,2,127);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+2,190,174,212);
+                colours.addDiscreteColourRule(validMin+3,253,192,134);
+                colours.addDiscreteColourRule(validMin+4,255,255,153);
+                colours.addDiscreteColourRule(validMin+5,56,108,176);
+                colours.addDiscreteColourRule(validMin+6,240,2,127);
                 colours.setIsDiscrete(true);
                 break;
             case ACCENT_7:
                 colours.name = "Accent_7";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+1,190,174,212);
-                colours.addDiscreteColourRule(min+2,253,192,134);
-                colours.addDiscreteColourRule(min+3,255,255,153);
-                colours.addDiscreteColourRule(min+4,56,108,176);
-                colours.addDiscreteColourRule(min+5,240,2,127);
-                colours.addDiscreteColourRule(min+6,191,91,23);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+1,190,174,212);
+                colours.addDiscreteColourRule(validMin+2,253,192,134);
+                colours.addDiscreteColourRule(validMin+3,255,255,153);
+                colours.addDiscreteColourRule(validMin+4,56,108,176);
+                colours.addDiscreteColourRule(validMin+5,240,2,127);
+                colours.addDiscreteColourRule(validMin+6,191,91,23);
                 colours.setIsDiscrete(true);
                 break;
             case ACCENT_8:
                 colours.name = "Accent_8";
-                colours.addDiscreteColourRule(min,127,201,127);
-                colours.addDiscreteColourRule(min+1,190,174,212);
-                colours.addDiscreteColourRule(min+2,253,192,134);
-                colours.addDiscreteColourRule(min+3,255,255,153);
-                colours.addDiscreteColourRule(min+4,56,108,176);
-                colours.addDiscreteColourRule(min+5,240,2,127);
-                colours.addDiscreteColourRule(min+6,191,91,23);
-                colours.addDiscreteColourRule(min+7,102,102,102);
+                colours.addDiscreteColourRule(validMin,127,201,127);
+                colours.addDiscreteColourRule(validMin+1,190,174,212);
+                colours.addDiscreteColourRule(validMin+2,253,192,134);
+                colours.addDiscreteColourRule(validMin+3,255,255,153);
+                colours.addDiscreteColourRule(validMin+4,56,108,176);
+                colours.addDiscreteColourRule(validMin+5,240,2,127);
+                colours.addDiscreteColourRule(validMin+6,191,91,23);
+                colours.addDiscreteColourRule(validMin+7,102,102,102);
                 colours.setIsDiscrete(true);
                 break;
 
             default:
                 colours.name = "default";
                 interval = range/4f;
-                colours.addContinuousColourRule(min,             0, 50,  0);
-                colours.addContinuousColourRule(min+interval,    0,150,  0);
-                colours.addContinuousColourRule(min+2*interval,150,150,  0);
-                colours.addContinuousColourRule(min+3*interval,150,  0,160);
-                colours.addContinuousColourRule(max,           255,255,255);
+                colours.addContinuousColourRule(validMin,             0, 50,  0);
+                colours.addContinuousColourRule(validMin+interval,    0,150,  0);
+                colours.addContinuousColourRule(validMin+2*interval,150,150,  0);
+                colours.addContinuousColourRule(validMin+3*interval,150,  0,160);
+                colours.addContinuousColourRule(validMax,           255,255,255);
                 break;
         }
         return colours;  

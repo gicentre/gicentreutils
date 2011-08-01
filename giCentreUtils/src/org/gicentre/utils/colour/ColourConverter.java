@@ -201,7 +201,7 @@ public class ColourConverter
     
     /** Converts colours in Lab space to XYZ space.
      *  @param Lab CIELab L, a and b values with L scaled between 0 and 100, and a and b scaled between -100 and 100.
-     *  @param Whitepoint used to perform the transformation.
+     *  @param wp Whitepoint used to perform the transformation.
      *  @return Colour in XYZ space.
      */
     static double[] LABtoXYZ(double[] Lab, WhitePoint wp) 
@@ -259,7 +259,7 @@ public class ColourConverter
     }
     
     /** Converts the given rgb triplet into XYZ colour space.
-     *  @param colour RGB triplet to convert. Values should be scaled between 0-1. 
+     *  @param rgb RGB triplet to convert. Values should be scaled between 0-1. 
      *  @return Colour in XYZ space.
      */
     static double[] RGBtoXYZ(double[] rgb) 
