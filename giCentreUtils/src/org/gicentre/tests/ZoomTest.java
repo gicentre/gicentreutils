@@ -8,7 +8,8 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 //  ****************************************************************************************
-/** Tests zooming and panning in a simple Processing sketch. 
+/** Tests zooming and panning in a simple Processing sketch. Includes tests for high quality
+ *  zoomed text, for constraining zooming and panning, and for zoom-independent display.
  *  @author Jo Wood, giCentre, City University London.
  *  @version 3.2, 1st August, 2011.
  */ 
@@ -49,6 +50,7 @@ public class ZoomTest extends PApplet
     private float morphT;           // Controls morphing of the zoom display (0-1).
     private PVector panOffset;      // Pan offset used for morphed panning.
     private double zoomScale;       // Zoom level used for morphed zooming.
+    private boolean constrain;		// Determines if zooming and panning is constrained.
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -59,6 +61,7 @@ public class ZoomTest extends PApplet
         size(640,400);
         smooth(); 
         morphT = 1;                 // 1 indicates no morphing. 
+        constrain = false;
         zoomer = new ZoomPan(this);
         textFont(createFont("Serif",18),18);
     }
@@ -112,25 +115,43 @@ public class ZoomTest extends PApplet
         popMatrix();        // Retrieve the non zoomed display
         
         textAlign(PConstants.LEFT, PConstants.BOTTOM);
-        fill(80);
+        fill(0);
         textSize(18);
-        text("This text remains unaffected by zooming and panning.",10,height-3);
+        text("Zoom scale: "+nfc((float)zoomer.getZoomScale(),4)+
+        	 " Pan centre: "+nfc(zoomer.getPanOffset().x,3)+","+nfc(zoomer.getPanOffset().y,3)+
+        	 " Constraints are "+(constrain?"on.":"off."),10,height-3);
     }
     
     /** Responds to key presses by allowing the display to be reset.
      */
     public void keyPressed()
     {
-        if ((key == 'r') || (key == 'R'))
-        {
-            zoomer.reset();
-        }
-        else if ((key == 'b') || (key == 'b'))
+       
+        if ((key == 'b') || (key == 'b'))
         {
             // Resets the zoom/pan with a little bounce.
             panOffset = zoomer.getPanOffset();
             zoomScale = (float)zoomer.getZoomScale();
             morphT = 0;
+        }
+        else  if ((key == 'c') || (key == 'C'))
+        {
+            constrain = !constrain;
+            
+            if (constrain)
+            {
+            	zoomer.setMaxZoomScale(10);
+            	zoomer.setMinZoomScale(1);
+            }
+            else
+            {
+            	zoomer.setMaxZoomScale(Double.MAX_VALUE);
+            	zoomer.setMinZoomScale(Double.MIN_VALUE);
+            }
+        }
+        else  if ((key == 'r') || (key == 'R'))
+        {
+            zoomer.reset();
         }
                 
     }
