@@ -69,6 +69,11 @@ public class ZoomPan
 	double minZoomScale=Double.MIN_VALUE;
 	double maxZoomScale=Double.MAX_VALUE;
 	
+	/* TODO: Panning constraints not yet implemented.
+	private float maxPanXOffset = -1;				// Absolute maximum permitted panning offset in x direction, or negative if no maximum.
+	private float maxPanYOffset = -1;				// Absolute maximum permitted panning offset in y direction, or negative if no maximum.
+	*/
+	
 	// ------------------------------- Constructor ------------------------------- 
 
 	/** Initialises the zooming and panning transformations for the given applet context. 
@@ -376,9 +381,8 @@ public class ZoomPan
 
 		//Only interpret the mousepressed event if the mouse is within mouseBoundsMask
 		//(or there's no mouseBoundsMask)
-		if (e.getID() == MouseEvent.MOUSE_PRESSED
-				&& (mouseBoundsMask==null || (mouseBoundsMask!=null && mouseBoundsMask.contains(aContext.mouseX,aContext.mouseY))))
-
+		if ((e.getID() == MouseEvent.MOUSE_PRESSED)	&& 
+			((mouseBoundsMask==null) || (mouseBoundsMask.contains(aContext.mouseX,aContext.mouseY))))
 		{
 			isMouseCaptured   = true;
 			zoomStartPosition = new PVector(e.getX(),e.getY());
@@ -423,33 +427,96 @@ public class ZoomPan
 
 	/** Sets the screen area outside which mouse movements will have no effect on zooming and panning.
 	 *  Use null if there is to be no mask (the default).
-	 * @param mouseBoundsMask
-	 * @deprecated Greater flexibility can be achieved by setting a mouse mask at the sketch level.           
+	 *  @param mouseBoundsMask
+	 *  @deprecated Greater flexibility can be achieved by setting a mouse mask at the sketch level using
+	 *             <code>setMouseMask(-1)</code> to disable zooming/panning outside desired areas.           
 	 */
 	public void setMouseBoundsMask(Rectangle mouseBoundsMask)
 	{
 		this.mouseBoundsMask=mouseBoundsMask;
 	}
 
-	/** Sets the minimum permitted zoom scale (i.e. how far zoomed out a view is allowed to be).
-	 *  A value above zero but less than one means that the view will be smaller than its 'natural'
-	 *  size. A value greater than one means the view will be larger than its natural size.
+	/** Sets the minimum permitted zoom scale (i.e. how far zoomed out a view is allowed to be). If the
+	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
+	 *  minimum value. A value above zero but less than one means that the view will be smaller than
+	 *  its natural size. A value greater than one means the view will be larger than its natural size.
 	 *  @param minZoomScale
 	 */
 	public void setMinZoomScale(double minZoomScale)
 	{
 		this.minZoomScale=minZoomScale;
+		
+		if (zoomScale < minZoomScale)
+		{
+			setZoomScale(minZoomScale);
+		}
 	}
 	
-	/** Sets the maximum permitted zoom scale (i.e. how far zoomed in a view is allowed to be).
-	 *  A value above zero but less than one means that the view will be smaller than its 'natural'
-	 *  size. A value greater than one means the view will be larger than its natural size.
+	/** Sets the maximum permitted zoom scale (i.e. how far zoomed in a view is allowed to be). If the
+	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
+	 *  maximum value. A value above zero but less than one means that the view will be smaller than
+	 *  its natural size. A value greater than one means the view will be larger than its natural size.
 	 *  @param maxZoomScale
 	 */
 	public void setMaxZoomScale(double maxZoomScale)
 	{
 		this.maxZoomScale=maxZoomScale;
+		
+		if (zoomScale > maxZoomScale)
+		{
+			setZoomScale(maxZoomScale);
+		}
 	}
+	
+	// TODO: Panning constraints not yet implemented.
+	/* Sets the maximum permitted panning offsets. The coordinates provided should be the unzoomed ones.
+	 *  So to prevent panning past the 'edge' of the unzoomed display, values would be set to 0. Setting
+	 *  values of (10,40) would allow the display to be panned 10 unzoomed pixels to the left or right
+	 *  of the unzoomed display area and 40 pixels up or down.
+	 *  @param maxX Maximum number of unzoomed pixels by which the display can be panned in the x-direction.
+	 *  @param maxY Maximum number of unzoomed pixels by which the display can be panned in the y-direction.
+	 *
+	public void setMaxPanOffset(float maxX, float maxY)
+	{
+		this.maxPanXOffset = maxX;
+		this.maxPanYOffset = maxY;
+		
+		boolean panChanged = false;
+
+		if (panOffset.x >=0)
+		{
+			if (panOffset.x > maxPanXOffset)
+			{
+				panOffset.x = maxPanXOffset;
+				panChanged = true;
+			}
+			if (panOffset.x < -maxPanXOffset)
+			{
+				panOffset.x = -maxPanXOffset;
+				panChanged = true;
+			}
+		}
+
+		if (panOffset.y >=0)
+		{
+			if (panOffset.y > maxPanYOffset)
+			{
+				panOffset.y = maxPanYOffset;
+				panChanged = true;
+			}
+			if (panOffset.y < -maxPanYOffset)
+			{
+				panOffset.y = -maxPanYOffset;
+				panChanged = true;
+			}
+		}
+		
+		if (panChanged)
+		{
+			calcTransformation();
+		}
+	}
+	*/
 	
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
@@ -653,10 +720,10 @@ public class ZoomPan
 	 */
 	void setZoomScaleWithoutRecalculation(double zoomScale)
 	{
-		// This method is of package-wide scope to allow inner classes to have access to it.
-
+		// This method is of package-wide scope to allow inner classes to have access to it.*
 		//limit zoom to min/max
-		synchronized (this) {
+		synchronized (this) 
+		{
 			this.zoomScale = zoomScale;
 			this.zoomScale=Math.min(this.zoomScale,maxZoomScale);
 			this.zoomScale=Math.max(this.zoomScale,minZoomScale);
