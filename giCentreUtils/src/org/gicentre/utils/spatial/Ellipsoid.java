@@ -85,6 +85,8 @@ public class Ellipsoid implements Serializable
     public static final int WGS_72 = 22;
                                 /** WGS 84 ellipsoid. */  
     public static final int WGS_84 = 23;
+    							/** Standard sphere. */  
+    public static final int SPHERE = 99;
         
                       /** Used to ensure consistency when serializing and deserializing. */  
     static final long serialVersionUID = -4698774124137349325L;
@@ -166,6 +168,9 @@ public class Ellipsoid implements Serializable
                 break;
             case WGS_84:
                 store(id,6378137, 0.00669438);
+                break;
+            case SPHERE:
+                store(id,6378137, 0);
                 break;
             default:
                 store(-1,-1,-1);
@@ -359,6 +364,8 @@ public class Ellipsoid implements Serializable
                 return new String("WGS 72");
             case WGS_84:
                 return new String("WGS 84");
+            case SPHERE:
+                return new String("Sphere");
             default:
                 return new String("Undefined");
         }
@@ -376,6 +383,7 @@ public class Ellipsoid implements Serializable
     {
         this.id = eid;
         this.a  = radius;
+
         this.e2 = ee2;
         this.b  = Math.sqrt(a*a*(1-e2));
         this.n  = (a-b)/(a+b);
