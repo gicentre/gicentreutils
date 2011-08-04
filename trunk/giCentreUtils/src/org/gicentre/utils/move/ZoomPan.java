@@ -58,13 +58,13 @@ public class ZoomPan
 	private int mouseMask = 0;
 	private PApplet aContext;
 	private PGraphics graphics; 					// Don't reference this directly - always use getGraphics()
-	Vector<ZoomPanListener> listeners;
+	private Vector<ZoomPanListener> listeners;
 	private int zoomMouseButton=PConstants.LEFT; 	// Implies pan is the other button
 	
-	Rectangle mouseBoundsMask=null; 				// Zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning.
-	Long timeAtLastWheelZoom=null;					// The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
-	Timer timer; 									// Timer so that we have a delay before a zoom event is triggered with the timer
-	int millisecondsBeforeWheelZoomEvent=700; 		// Milliseconds before a zoom event is triggered by the mouse wheel - set to 0.7 of a second by default
+	private Rectangle mouseBoundsMask=null; 		// Zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning.
+	private Long timeAtLastWheelZoom=null;			// The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
+	private Timer timer; 							// Timer so that we have a delay before a zoom event is triggered with the timer
+	private int millisecondsBeforeWheelZoomEvent=700;// Milliseconds before a zoom event is triggered by the mouse wheel - set to 0.7 of a second by default
 	
 	double minZoomScale=Double.MIN_VALUE;
 	double maxZoomScale=Double.MAX_VALUE;
@@ -164,6 +164,12 @@ public class ZoomPan
 		isZooming       = false;
 		isPanning       = false;
 		isMouseCaptured = false;
+		
+		//inform listeners that zooming/panning has ended
+		for (ZoomPanListener zoomPanListener:listeners){
+			zoomPanListener.panEnded();
+			zoomPanListener.zoomEnded();
+		}
 	}
 
 	/** Adds a listener to be informed when some zooming or panning has finished.
@@ -803,7 +809,7 @@ public class ZoomPan
 				timeAtLastWheelZoom = new Long(new Date().getTime());
 				
 				// Schedule triggering a zoom event
-				timer.schedule(new CheckTiggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
+				timer.schedule(new CheckTriggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
 			}
 			else if (e.getWheelRotation() > 0)
 			{
@@ -814,7 +820,7 @@ public class ZoomPan
 				timeAtLastWheelZoom = new Long(new Date().getTime());
 				
 				// Schedule triggering a zoom event
-				timer.schedule(new CheckTiggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
+				timer.schedule(new CheckTriggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
 			}   
 		}
 	}
@@ -822,11 +828,11 @@ public class ZoomPan
 	/** Scheduled by the timer. If the last mouse wheel was used at least millisecondsBeforeWheelZoomEvent ago,
 	 *  the event is triggered
 	 */
-	private class CheckTiggerWheelZoomEvent extends TimerTask
+	private class CheckTriggerWheelZoomEvent extends TimerTask
 	{
-		/** Creates a new event when the zoom wheel is trigged.
+		/** Creates a new event when the zoom wheel is triggered.
 		 */
-		public CheckTiggerWheelZoomEvent() 
+		public CheckTriggerWheelZoomEvent() 
 		{
 			// Empty constructor to stop synthetic accessor method from having to be created.
 		}
