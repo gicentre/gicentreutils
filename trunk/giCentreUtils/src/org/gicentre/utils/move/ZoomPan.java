@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,14 +49,13 @@ public class ZoomPan
 {
 	// ---------------------------- Object variables -----------------------------
 
-	private PVector zoomStartPosition,oldPosition,panOffset;
-	private double zoomScale, zoomStep;
-	private AffineTransform trans,iTrans;
+	private ZoomPanState zoomPanState;              //zoomScale and panOffset is now stored in an instance of zoomPanState
+	                                                //All reporting of the zoom/offset and coordinate transformation in handled by this object
+	private PVector zoomStartPosition,oldPosition;
+	private double zoomStep;
 	private boolean isZooming, isPanning,isMouseCaptured;
 	private boolean allowZoomButton, allowPanButton;
 	private int mouseMask = 0;
-	private PApplet aContext;
-	private PGraphics graphics; 					// Don't reference this directly - always use getGraphics()
 	private Vector<ZoomPanListener> listeners;
 	private int zoomMouseButton=PConstants.LEFT; 	// Implies pan is the other button
 	
@@ -68,6 +66,14 @@ public class ZoomPan
 	
 	double minZoomScale=Double.MIN_VALUE;
 	double maxZoomScale=Double.MAX_VALUE;
+	
+	
+	public enum ZoomPanBehaviour{                         //Type of zoom/pan
+		BOTH_DIRECTIONS,
+		VERTICAL_ONLY,
+		HORIZONTAL_ONLY
+	}
+	private ZoomPanBehaviour zoomPanType=ZoomPanBehaviour.BOTH_DIRECTIONS; //By default, zooming/panning is in x and y
 	
 	/* TODO: Panning constraints not yet implemented.
 	private float maxPanXOffset = -1;				// Absolute maximum permitted panning offset in x direction, or negative if no maximum.
@@ -83,13 +89,12 @@ public class ZoomPan
 	 */
 	public ZoomPan(PApplet aContext)
 	{
-		this.aContext = aContext;
+		zoomPanState=new ZoomPanState(aContext,null);
 		if (aContext == null)
 		{
 			System.err.println("Warning: No applet context provided for ZoomPan.");
 			return;
 		}
-		graphics = null;
 		allowZoomButton = true;
 		allowPanButton = true;
 		listeners = new Vector<ZoomPanListener>();
@@ -109,8 +114,7 @@ public class ZoomPan
 	 */
 	public ZoomPan(PApplet aContext, PGraphics graphics)
 	{
-		this.aContext = aContext;
-		this.graphics = graphics;
+		zoomPanState=new ZoomPanState(aContext,graphics);
 
 		if (aContext == null)
 		{
@@ -137,8 +141,7 @@ public class ZoomPan
 	 */
 	public void transform()
 	{    
-		getGraphics().translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
-		getGraphics().scale((float)trans.getScaleX(),(float)trans.getScaleY());
+		zoomPanState.transform();
 	}
 	
 	/** Performs the zooming/panning transformation in the given graphics context. This version of transform()
@@ -148,22 +151,21 @@ public class ZoomPan
 	 */
 	public void transform(PGraphics offScreenBuffer)
 	{    
-		offScreenBuffer.translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
-		offScreenBuffer.scale((float)trans.getScaleX(),(float)trans.getScaleY());
+		zoomPanState.transform(offScreenBuffer);
 	}
 	
 	/** Resets the display to unzoomed and unpanned position.
 	 */
 	public void reset()
 	{
-		trans           = new AffineTransform();
-		iTrans          = new AffineTransform();
-		zoomScale       = 1;
-		panOffset       = new PVector(0,0);
-		zoomStep        = 1.05;
-		isZooming       = false;
-		isPanning       = false;
-		isMouseCaptured = false;
+		zoomPanState.trans		= new AffineTransform();
+		zoomPanState.iTrans		= new AffineTransform();
+		zoomPanState.zoomScale	= 1;
+		zoomPanState.panOffset	= new PVector(0,0);
+		zoomStep    	    	= 1.05;
+		isZooming       		= false;
+		isPanning       		= false;
+		isMouseCaptured 		= false;
 		
 		//inform listeners that zooming/panning has ended
 		for (ZoomPanListener zoomPanListener:listeners){
@@ -232,7 +234,7 @@ public class ZoomPan
 	 */
 	public PVector getMouseCoord()
 	{
-		return getDispToCoord(new PVector(aContext.mouseX,aContext.mouseY));
+		return getDispToCoord(new PVector(zoomPanState.aContext.mouseX,zoomPanState.aContext.mouseY));
 	}
 
 	/** Reports the current zoom scale. Can be used for drawing objects that maintain their
@@ -241,7 +243,7 @@ public class ZoomPan
 	 */
 	public double getZoomScale()
 	{
-		return zoomScale;
+		return zoomPanState.getZoomScale();
 	}
 
 	/** Sets a new zoom scale. Can be used for programmatic control of zoomer, such as
@@ -255,6 +257,23 @@ public class ZoomPan
 		setZoomScaleWithoutRecalculation(zoomScale);
 		calcTransformation();
 	}
+	
+	/**Sets the zoom/pan behaviour type
+	 * 
+	 * @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	 */
+	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType){
+		this.zoomPanType=zoomPanType;
+		calcTransformation();
+	}
+
+	/**Get the zoom/zan behaviour type
+	 * 
+	 * @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	 */
+	public ZoomPanBehaviour getZoomPanBehaviour(){
+		return zoomPanType;
+	}
 
 
 	/** Reports the current pan offset. Useful when wishing to use an interpolated panning
@@ -264,9 +283,10 @@ public class ZoomPan
 	 */
 	public PVector getPanOffset()
 	{
-		return new PVector(panOffset.x,panOffset.y);
+		return zoomPanState.getPanOffset();
 	}
 
+	
 	/** Sets a new pan offset. Can be used for programmatic control of panning, such as
 	 *  eased interpolated zooming and panning.
 	 *  @param panX X coordinate of new pan offset. A value of 0 indicates no translation
@@ -279,8 +299,8 @@ public class ZoomPan
 	 */
 	public void setPanOffset(float panX, float panY)
 	{
-		panOffset.x = panX;
-		panOffset.y = panY;
+		zoomPanState.panOffset.x = panX;
+		zoomPanState.panOffset.y = panY;
 		calcTransformation();
 	}
 
@@ -388,7 +408,7 @@ public class ZoomPan
 		//Only interpret the mousepressed event if the mouse is within mouseBoundsMask
 		//(or there's no mouseBoundsMask)
 		if ((e.getID() == MouseEvent.MOUSE_PRESSED)	&& 
-			((mouseBoundsMask==null) || (mouseBoundsMask.contains(aContext.mouseX,aContext.mouseY))))
+			((mouseBoundsMask==null) || (mouseBoundsMask.contains(zoomPanState.aContext.mouseX,zoomPanState.aContext.mouseY))))
 		{
 			isMouseCaptured   = true;
 			zoomStartPosition = new PVector(e.getX(),e.getY());
@@ -398,22 +418,22 @@ public class ZoomPan
  		else if (e.getID() == MouseEvent.MOUSE_DRAGGED) 
 		{
 			// Check in case applet has been destroyed.
-			if ((aContext == null) || (oldPosition == null))
+			if ((zoomPanState.aContext == null) || (oldPosition == null))
 			{
 				return;
 			}
 
-			if ((aContext.mouseButton==zoomMouseButton) && (allowZoomButton) && isMouseCaptured)
+			if ((zoomPanState.aContext.mouseButton==zoomMouseButton) && (allowZoomButton) && isMouseCaptured)
 			{
 				isZooming = true;
 
-				if (aContext.mouseY < oldPosition.y)
+				if (zoomPanState.aContext.mouseY < oldPosition.y)
 				{
-					setZoomScaleWithoutRecalculation(zoomScale*zoomStep);
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScale*zoomStep);
 				}
-				else if (aContext.mouseY > oldPosition.y)
+				else if (zoomPanState.aContext.mouseY > oldPosition.y)
 				{
-					setZoomScaleWithoutRecalculation(zoomScale/zoomStep);
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScale/zoomStep);
 				}
 				doZoom();
 				zoomStep += 0.005;    // Accelerate zooming with prolonged drag.
@@ -423,7 +443,7 @@ public class ZoomPan
 				isPanning = true;
 				//panOffset.setLocation((panOffset.y + e.getX() - oldPosition.y),
 				//                     panOffset.y+ e.getY() - oldPosition.y);
-				panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
+				zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
 				calcTransformation(); 
 			}
 
@@ -452,7 +472,7 @@ public class ZoomPan
 	{
 		this.minZoomScale=minZoomScale;
 		
-		if (zoomScale < minZoomScale)
+		if (zoomPanState.zoomScale < minZoomScale)
 		{
 			setZoomScale(minZoomScale);
 		}
@@ -468,7 +488,7 @@ public class ZoomPan
 	{
 		this.maxZoomScale=maxZoomScale;
 		
-		if (zoomScale > maxZoomScale)
+		if (zoomPanState.zoomScale > maxZoomScale)
 		{
 			setZoomScale(maxZoomScale);
 		}
@@ -534,10 +554,7 @@ public class ZoomPan
 	 */
 	public PVector getDispToCoord(PVector p)
 	{
-		Point2D.Float pCoord = new Point2D.Float();
-		Point2D.Float pDisp = new Point2D.Float(p.x,p.y);
-		iTrans.transform(pDisp,pCoord);
-		return new PVector(pCoord.x,pCoord.y);        
+		return zoomPanState.getDispToCoord(p);
 	}
 
 	
@@ -551,10 +568,7 @@ public class ZoomPan
 	 */
 	public PVector getCoordToDisp(PVector p)
 	{
-		Point2D.Float pDisp = new Point2D.Float();
-		Point2D.Float pCoord = new Point2D.Float(p.x,p.y);
-		trans.transform(pCoord,pDisp);
-		return new PVector(pDisp.x,pDisp.y); 
+		return zoomPanState.getCoordToDisp(p);
 	}
 
 	/** Sets mouse button for zooming. If this is set to either LEFT or RIGHT, the other button (RIGHT or LEFT)
@@ -586,7 +600,7 @@ public class ZoomPan
 	public void text2(String textToDisplay, float xPos, float yPos)
 	{
 		// Call the static version providing the applet context that was given to the constructor.
-		text(aContext,textToDisplay, xPos,yPos);
+		text(zoomPanState.aContext,textToDisplay, xPos,yPos);
 	}
 	
 	/** Replacement for Processing's <code>text()</code> method for faster and more accurate placement of 
@@ -600,7 +614,7 @@ public class ZoomPan
 	public void text(String textToDisplay, float xPos, float yPos)
 	{
 		// Call the static version providing the applet context that was given to the constructor.
-		text(aContext,textToDisplay, xPos,yPos);
+		text(zoomPanState.aContext,textToDisplay, xPos,yPos);
 	}
 
 	/** Replacement for Processing's <code>text()</code> method for faster and more accurate placement of 
@@ -663,21 +677,18 @@ public class ZoomPan
 		applet.textSize(origTextSize);
 		applet.popMatrix();
 	}
+	
+	/**Get a copy (snapshot) of the current ZoomPanState
+	 * You can assume that this will not change its state.
+	 * 
+	 * @return
+	 */
+	public ZoomPanState getZoomPanState(){
+		return (ZoomPanState)zoomPanState.clone();
+	}
 
 	// ----------------------------- Private and package methods -----------------------------
 
-	/** Supplies the graphics - either that supplied in the constructor or that from aContext
-	 *  (the reason for this method is that the latter may change).
-	 */
-	private PGraphics getGraphics()
-	{
-		if (graphics==null)
-		{
-			return aContext.g;
-		}
-
-		return graphics;
-	}
 
 	/** Zooms in or out depending on the current values of zoomStartPosition and zoomScale.
 	 */
@@ -695,7 +706,7 @@ public class ZoomPan
 		// Translate by change in click position.
 		//panOffset.setLocation(panOffset.x + zoomStartPosition.x - newZoomStartPosition.x,
 		//                    panOffset.y + zoomStartPosition.y - newZoomStartPosition.y);
-		panOffset.add(new PVector(zoomStartPosition.x-newZoomStartPosition.x,zoomStartPosition.y-newZoomStartPosition.y));
+		zoomPanState.panOffset.add(new PVector(zoomStartPosition.x-newZoomStartPosition.x,zoomStartPosition.y-newZoomStartPosition.y));
 
 		// Finish off transformation by incorporating shifted click position.
 		calcTransformation();
@@ -730,9 +741,9 @@ public class ZoomPan
 		//limit zoom to min/max
 		synchronized (this) 
 		{
-			this.zoomScale = zoomScale;
-			this.zoomScale=Math.min(this.zoomScale,maxZoomScale);
-			this.zoomScale=Math.max(this.zoomScale,minZoomScale);
+			zoomPanState.zoomScale = zoomScale;
+			zoomPanState.zoomScale=Math.min(zoomPanState.zoomScale,maxZoomScale);
+			zoomPanState.zoomScale=Math.max(zoomPanState.zoomScale,minZoomScale);
 		}
 	}
 
@@ -754,18 +765,32 @@ public class ZoomPan
 	private void calcTransformation()
 	{    
 
-		float centreX = (float)(getGraphics().width*(1-zoomScale))/2;
-		float centreY = (float)(getGraphics().height*(1-zoomScale))/2;
+		float centreX = (float)(zoomPanState.getGraphics().width*(1-zoomPanState.zoomScale))/2;
+		float centreY = (float)(zoomPanState.getGraphics().height*(1-zoomPanState.zoomScale))/2;
 
-		trans = new AffineTransform();
-		iTrans = new AffineTransform();
+		zoomPanState.trans = new AffineTransform();
+		zoomPanState.iTrans = new AffineTransform();
 
+		//scale depending on the type
+		if (zoomPanType==ZoomPanBehaviour.BOTH_DIRECTIONS){
+			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,centreY+zoomPanState.panOffset.y);
+			zoomPanState.trans.scale(zoomPanState.zoomScale,zoomPanState.zoomScale);
+			zoomPanState.iTrans.scale(1/zoomPanState.zoomScale,1/zoomPanState.zoomScale);
+			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x, -centreY-zoomPanState.panOffset.y);
+		}
+		else if (zoomPanType==ZoomPanBehaviour.VERTICAL_ONLY){
+			zoomPanState.trans.translate(0,centreY+zoomPanState.panOffset.y);
+			zoomPanState.trans.scale(1,zoomPanState.zoomScale);
+			zoomPanState.iTrans.scale(1,1/zoomPanState.zoomScale);
+			zoomPanState.iTrans.translate(0, -centreY-zoomPanState.panOffset.y);
+		}
+		else if (zoomPanType==ZoomPanBehaviour.HORIZONTAL_ONLY){
+			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,0);
+			zoomPanState.trans.scale(zoomPanState.zoomScale,1);
+			zoomPanState.iTrans.scale(1/zoomPanState.zoomScale,1);
+			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x,0);
+		}
 
-		trans.translate(centreX+panOffset.x,centreY+panOffset.y);
-		trans.scale(zoomScale,zoomScale);
-
-		iTrans.scale(1/zoomScale,1/zoomScale);
-		iTrans.translate(-centreX-panOffset.x, -centreY-panOffset.y);
 	}
 	
 
