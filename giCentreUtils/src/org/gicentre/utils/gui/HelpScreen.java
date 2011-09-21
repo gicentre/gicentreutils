@@ -163,6 +163,31 @@ public class HelpScreen {
         this.textSize = textSize;
     }
     
+    /**Sets header text colour
+     * 
+     * @param colour Colour of header text, expressed as a Processing integer colour.
+     */
+    public void setHeaderTextColour(int colour){
+    	this.headerTextColour=colour;
+    }
+
+    /**Sets footer text colour
+     * 
+     * @param colour Colour of footer text, expressed as a Processing integer colour.
+     */
+    public void setFooterTextColour(int colour){
+    	this.footerTextColour=colour;
+    }
+
+    /**Set main text colour
+     * 
+     * @param colour, expressed as a Processing integer colour.
+     */
+    public void setTextColour(int colour){
+    	this.textColour=colour;
+    }
+
+    
     /** Sets the background colour of the help window.
      *  @param bgColour Background colour expressed as a Processing integer colour.
      */
@@ -248,6 +273,7 @@ public class HelpScreen {
         }
         
         // Display the main entries in the help screen.
+        applet.fill(textColour);
         it = helpEntries.entrySet().iterator();
         while(it.hasNext()){
             Entry<String, String> entry=it.next();
