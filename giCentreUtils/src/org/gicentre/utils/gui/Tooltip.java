@@ -374,7 +374,7 @@ public class Tooltip implements MouseListener
      */
     public void mousePressed(MouseEvent e)
     {
-        if (showPointer)
+        if (showClose)
         {
             float cornerX = x+xOffset+displayWidth-closeSize-BORDER-textRightOffset;
             float cornerY = y+yOffset+BORDER+textTopOffset-textBottomOffset;
