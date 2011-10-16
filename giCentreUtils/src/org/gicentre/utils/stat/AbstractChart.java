@@ -12,7 +12,7 @@ import processing.core.PGraphics;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 16th October, 2011. 
+ *  @version 3.2.1, 16th October, 2011. 
  */ 
 // *****************************************************************************************
 
