@@ -64,7 +64,8 @@ public class HelpScreen {
      * @param applet Parent sketch to which this help screen is to be attached.
      * @param font Font used for text in help screen.
      */
-    public HelpScreen(PApplet applet,PFont font){
+    public HelpScreen(PApplet applet,PFont font)
+    {
         this(applet,font,12);
     }
     
@@ -73,7 +74,8 @@ public class HelpScreen {
      * @param font Font used for text in help screen.
      * @param textSize Size of text to use in help screen (pixels).
      */
-    public HelpScreen(PApplet applet,PFont font, int textSize){
+    public HelpScreen(PApplet applet,PFont font, int textSize)
+    {
         this.applet=applet;
         this.font=font;
         this.textSize = textSize;
@@ -97,12 +99,12 @@ public class HelpScreen {
      *  @param action The user interaction (e.g. key press) to be documented.
      *  @param instruction Description of the action.
      */
-    public void putEntry(String action, String instruction){
+    public void putEntry(String action, String instruction)
+    {
         helpEntries.put(action,instruction);
     }
     
     /** Adds a vertical space (of the current font height) to the help screen entries.
-     
      */
     public void addSpacer()
     {
@@ -113,11 +115,12 @@ public class HelpScreen {
     /** Provides the optional text to appear at the top of the help screen. Could be title or
      *  other introductory text.
      *  Wraps at top of help screen, centred horizontally. Text size should be set explicitly.
-     * @param text The text to appear in the header.
-     * @param verticalSpace The space between the header and the text in the help window.
-     * @param textSize Size of text in pixels.
+     *  @param text The text to appear in the header.
+     *  @param verticalSpace The space between the header and the text in the help window.
+     *  @param textSize Size of text in pixels.
      */
-    public void setHeader(String text,int verticalSpace, int textSize){
+    public void setHeader(String text,int verticalSpace, int textSize)
+    {
         this.headerText=text;
         this.headerVerticalSpace=verticalSpace;
         this.headerTextSize=textSize;
@@ -125,11 +128,12 @@ public class HelpScreen {
     
     /** Provides the optional text to appear at the foot of the help screen. Could be version, author etc
      *  Wraps at bottom of help screen, right-aligned. Text size should be set explicitly.
-     * @param text The text to appear in the footer.
-     * @param verticalSpace The space between the footer and the text in the help window.
-     * @param textSize Size of text in pixels.
+     *  @param text The text to appear in the footer.
+     *  @param verticalSpace The space between the footer and the text in the help window.
+     *  @param textSize Size of text in pixels.
      */
-    public void setFooter(String text,int verticalSpace, int textSize){
+    public void setFooter(String text,int verticalSpace, int textSize)
+    {
         this.footerText=text;
         this.footerVerticalSpace=verticalSpace;
         this.footerTextSize=textSize;
@@ -163,30 +167,29 @@ public class HelpScreen {
         this.textSize = textSize;
     }
     
-    /**Sets header text colour
-     * 
-     * @param colour Colour of header text, expressed as a Processing integer colour.
+    /** Sets header text colour.
+     *  @param colour Colour of header text, expressed as a Processing integer colour.
      */
-    public void setHeaderTextColour(int colour){
+    public void setHeaderTextColour(int colour)
+    {
     	this.headerTextColour=colour;
     }
 
-    /**Sets footer text colour
-     * 
-     * @param colour Colour of footer text, expressed as a Processing integer colour.
+    /** Sets footer text colour.
+     *  @param colour Colour of footer text, expressed as a Processing integer colour.
      */
-    public void setFooterTextColour(int colour){
+    public void setFooterTextColour(int colour)
+    {
     	this.footerTextColour=colour;
     }
 
-    /**Set main text colour
-     * 
-     * @param colour, expressed as a Processing integer colour.
+    /** Sets main text colour.
+     *  @param colour Main text colour expressed as a Processing integer colour.
      */
-    public void setTextColour(int colour){
+    public void setTextColour(int colour)
+    {
     	this.textColour=colour;
     }
-
     
     /** Sets the background colour of the help window.
      *  @param bgColour Background colour expressed as a Processing integer colour.
