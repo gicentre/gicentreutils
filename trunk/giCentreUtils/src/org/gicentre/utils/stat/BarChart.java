@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 16th October, 2011.
+ *  @version 3.2.1, 16th October, 2011.
  */ 
 // *****************************************************************************************
 
