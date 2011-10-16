@@ -809,6 +809,7 @@ public class ZoomPan
 		/** Responds to a mouse wheel change event by zooming in or out.
 		 *  @param e Mouse wheel event. 
 		 */
+		@SuppressWarnings("synthetic-access")
 		public void mouseWheelMoved(MouseWheelEvent e)
 		{     
 			// Test to see if mouse mask is specified and it is pressed.
@@ -862,6 +863,7 @@ public class ZoomPan
 			// Empty constructor to stop synthetic accessor method from having to be created.
 		}
 
+		@SuppressWarnings("synthetic-access")
 		@Override
 		/**
 		 * Checks if the last wheel zoom was at least millisecondsBeforeWheelZoomEvent ago.
