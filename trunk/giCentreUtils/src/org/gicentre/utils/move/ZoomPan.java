@@ -678,12 +678,12 @@ public class ZoomPan
 		applet.popMatrix();
 	}
 	
-	/**Get a copy (snapshot) of the current ZoomPanState
-	 * You can assume that this will not change its state.
-	 * 
-	 * @return
+	/** Provides a copy (cloned snapshot) of the current ZoomPanState.
+	 *  You can assume that this will not change its state.
+	 *  @return Copy of the current zoomPanState.
 	 */
-	public ZoomPanState getZoomPanState(){
+	public ZoomPanState getZoomPanState()
+	{
 		return (ZoomPanState)zoomPanState.clone();
 	}
 
