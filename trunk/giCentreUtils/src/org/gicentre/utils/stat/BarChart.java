@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.2, 16th October, 2011.
  */ 
 // *****************************************************************************************
 
@@ -56,10 +56,9 @@ public class BarChart extends AbstractChart
     public BarChart(PApplet parent)
     {
         super(parent);
-       
         barGap        = 1;
         barPad        = 0;
-        barColour     = parent.color(180);
+        barColour     = graphics.color(180);
         reverseCats   = false;
         cTable        = null;
         catLabels     = null;
@@ -111,7 +110,7 @@ public class BarChart extends AbstractChart
             return;
         }
         
-        parent.pushStyle();
+        graphics.pushStyle();
         
         // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
         // because not all charts label their axes in the same way.
@@ -133,25 +132,25 @@ public class BarChart extends AbstractChart
             {
                 lastLabel = axisFormatter[axis].format(tics[axis][tics[axis].length-1]);
             }
-            extraRightBorder += parent.textWidth(lastLabel)/2f;
+            extraRightBorder += graphics.textWidth(lastLabel)/2f;
         }
         
         // Allow space above the vertical axis to accommodate the top tic label.
         if ((getShowAxis(1)) || ((transposeAxes) && (getShowAxis(0))))
         {   
-            extraTopBorder += parent.textAscent()/2f+2;
+            extraTopBorder += graphics.textAscent()/2f+2;
         }
         
         // Allow space to the left of the vertical axis to accommodate its label.
         if (((valueLabel != null) && getShowAxis(1)) || ((transposeAxes) && (categoryLabel != null) && getShowAxis(0)))
         {
-            extraLeftBorder += parent.textAscent()+parent.textDescent();
+            extraLeftBorder += graphics.textAscent()+graphics.textDescent();
         }
         
         // Allow space below the horizontal axis to accommodate its label.
         if (((categoryLabel != null) && getShowAxis(0)) || ((transposeAxes) && (valueLabel != null) && getShowAxis(1)))
         {
-            extraBottomBorder +=parent.textAscent()+parent.textDescent();
+            extraBottomBorder +=graphics.textAscent()+graphics.textDescent();
         }  
         
         left   = xOrigin + getBorder(Side.LEFT) + extraLeftBorder;
@@ -183,11 +182,11 @@ public class BarChart extends AbstractChart
             barWidth = (hRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
         }
        
-        parent.noStroke();
+        graphics.noStroke();
         
         if (cTable == null)
         {
-            parent.fill(barColour);
+        	graphics.fill(barColour);
         }
         //TODO: Allow axis position to be set.
     
@@ -195,7 +194,7 @@ public class BarChart extends AbstractChart
         {
             if (cTable != null)
             {
-                parent.fill(cTable.findColour(data[2][i]));
+            	graphics.fill(cTable.findColour(data[2][i]));
             }
             
             int index = reverseCats?(data[0].length-1-i):i;
@@ -204,39 +203,39 @@ public class BarChart extends AbstractChart
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left, top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
+                	graphics.rect(left, top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
                 }
                 else
                 {
-                    parent.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
+                	graphics.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
                 }
             }
             else
             {
                 if (getIsLogScale(1))
                 {
-                    parent.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
+                	graphics.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
                 }
                 else
                 {
-                    parent.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
+                	graphics.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
                 }
             }
         }
         
         if (getShowAxis(1))  // Value axis.
         {
-            parent.strokeWeight(0.5f);
-            parent.stroke(120);
-            parent.fill(0,150);
+        	graphics.strokeWeight(0.5f);
+        	graphics.stroke(120);
+        	graphics.fill(0,150);
 
             if (transposeAxes)
             {
-                parent.line(left,bottom,right,bottom);
+            	graphics.line(left,bottom,right,bottom);
             }
             else
             {
-                parent.line(left,bottom,left,top);
+            	graphics.line(left,bottom,left,top);
             }
             
             if (getIsLogScale(1))
@@ -248,13 +247,13 @@ public class BarChart extends AbstractChart
                     {
                         if (transposeAxes)
                         {
-                            parent.textAlign(PConstants.CENTER, PConstants.TOP);
-                            parent.text(axisFormatter[1].format(tic),left +hRange*(logTic-getMinLog(1))/(getMaxLog(1)-getMinLog(1)),bottom+2);
+                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+                        	graphics.text(axisFormatter[1].format(tic),left +hRange*(logTic-getMinLog(1))/(getMaxLog(1)-getMinLog(1)),bottom+2);
                         }
                         else
                         {
-                            parent.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                            parent.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMaxLog(1)-logTic)/(getMaxLog(1)-getMinLog(1)));
+                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+                        	graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMaxLog(1)-logTic)/(getMaxLog(1)-getMinLog(1)));
                         }
                     }
                 }   
@@ -267,13 +266,13 @@ public class BarChart extends AbstractChart
                     {
                         if (transposeAxes)
                         {
-                            parent.textAlign(PConstants.CENTER, PConstants.TOP);
-                            parent.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),bottom+2);
+                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+                        	graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),bottom+2);
                         }
                         else
                         {
-                            parent.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                            parent.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
+                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+                        	graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
                         }
                     }
                 }
@@ -284,54 +283,54 @@ public class BarChart extends AbstractChart
             {
                 if (transposeAxes)
                 {
-                    parent.textAlign(PConstants.CENTER,PConstants.TOP);
-                    parent.text(valueLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
+                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+                	graphics.text(valueLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
                 }
                 else
                 {
-                    parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
                     // Rotate label.
-                    parent.pushMatrix();
-                     parent.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                     parent.rotate(-PConstants.HALF_PI);
-                     parent.text(valueLabel,0,0);
-                    parent.popMatrix();
+                	graphics.pushMatrix();
+                	graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+                	graphics.rotate(-PConstants.HALF_PI);
+                	graphics.text(valueLabel,0,0);
+                	graphics.popMatrix();
                 }
             }
         }
         
         if (getShowAxis(0))  // Category axis.
         {
-            parent.strokeWeight(0.5f);
-            parent.stroke(120);
-            parent.fill(0,150);
+        	graphics.strokeWeight(0.5f);
+        	graphics.stroke(120);
+        	graphics.fill(0,150);
                
             for (int i=0; i<data[0].length; i++)
             {
                 if (transposeAxes)
                 {
-                    parent.textAlign(PConstants.RIGHT, PConstants.CENTER); 
+                	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER); 
                     int index = reverseCats?(data[0].length-1-i):i;
                     if (showLabels == false)
                     {
-                        parent.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
+                    	graphics.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
                     }
                     else
                     {
-                        parent.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
+                    	graphics.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
                     }
                 }
                 else
                 {
-                    parent.textAlign(PConstants.CENTER, PConstants.TOP); 
+                	graphics.textAlign(PConstants.CENTER, PConstants.TOP); 
                     int index = reverseCats?(data[0].length-1-i):i;
                     if (showLabels == false)
                     {
-                        parent.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
+                    	graphics.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
                     }
                     else
                     {
-                        parent.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
+                    	graphics.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
                     }
                 }
             }
@@ -341,22 +340,22 @@ public class BarChart extends AbstractChart
             {
                 if (transposeAxes)
                 {
-                    parent.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
                     // Rotate label.
-                    parent.pushMatrix();
-                     parent.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                     parent.rotate(-PConstants.HALF_PI);
-                     parent.text(categoryLabel,0,0);
-                    parent.popMatrix();
+                	graphics.pushMatrix();
+                	graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+                	graphics.rotate(-PConstants.HALF_PI);
+                	graphics.text(categoryLabel,0,0);
+                	graphics.popMatrix();
                 }
                 else
                 {
-                    parent.textAlign(PConstants.CENTER,PConstants.TOP);
-                    parent.text(categoryLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
+                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+                	graphics.text(categoryLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
                 }
             }
         }
-        parent.popStyle();
+        graphics.popStyle();
     }
     
     /** Converts given data point into its screen location. The x value of the dataPoint should correspond
@@ -568,7 +567,7 @@ public class BarChart extends AbstractChart
             // Bar labels are up the side.
             for (String label : labels)
             {
-                border = Math.max(border, parent.textWidth(label));
+                border = Math.max(border, graphics.textWidth(label));
             }
             setMinBorder(border+2,Side.LEFT);
         } 
