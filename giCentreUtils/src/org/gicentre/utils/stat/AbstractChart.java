@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import processing.core.PApplet;
+import processing.core.PGraphics;
 
 //  ****************************************************************************************
 /** Abstract class for representing a statistical chart. This class provides the core 
@@ -11,7 +12,7 @@ import processing.core.PApplet;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2, 16th October, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -35,6 +36,9 @@ public abstract class AbstractChart
 
                         /** Parent sketch in which this chart is to be drawn.*/
     protected PApplet parent;
+    
+    					/** Graphics context in which to send output. */
+    protected PGraphics graphics;
                              
                         /** The datasets to be charted. */
     protected float[][] data;
@@ -77,6 +81,7 @@ public abstract class AbstractChart
     protected AbstractChart(PApplet parent)
     {
         this.parent = parent;
+        this.graphics = parent.g;
         
         data           = new float[MAX_DIMENSIONS][];
         tics           = new float[MAX_DIMENSIONS][];
@@ -128,6 +133,15 @@ public abstract class AbstractChart
      *  @param height Height in pixels of the area in which to draw the chart.
      */
     protected abstract void draw(float xOrigin, float yOrigin, float width, float height);
+    
+	/** Sets the the graphics context into which all output is directed. This method allows
+	 *  output to be redirected to print output, offscreen buffers etc.
+	 *  @param graphics New graphics context in which the chart is embedded.
+	 */
+	public void setGraphics(PGraphics graphics)
+	{
+		this.graphics = graphics;
+	}
   
     /** Sets the data to be displayed along the given axis of the chart. Updates the min and max ranges
      *  in response to the new data.
@@ -390,7 +404,7 @@ public abstract class AbstractChart
                 if (isVisible)
                 {
                     //  Update the border to accommodate labels assuming horizontal text.
-                    borderT = Math.max(borderT,parent.textAscent()+parent.textDescent());
+                    borderT = Math.max(borderT,graphics.textAscent()+graphics.textDescent());
                 }
             }
             else if (side == Side.BOTTOM)
@@ -400,7 +414,7 @@ public abstract class AbstractChart
                 if (isVisible)
                 {
                     //  Update the border to accommodate labels assuming horizontal text.
-                    borderB = Math.max(borderB,parent.textAscent()+parent.textDescent());
+                    borderB = Math.max(borderB,graphics.textAscent()+graphics.textDescent());
                 }
             }
             else if (side == Side.LEFT)
@@ -415,7 +429,7 @@ public abstract class AbstractChart
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
                     {
-                        borderL = Math.max(borderL, parent.textWidth(axisFormatter[dimension].format(tic)));
+                        borderL = Math.max(borderL, graphics.textWidth(axisFormatter[dimension].format(tic)));
                     }
                 }
             }
@@ -428,7 +442,7 @@ public abstract class AbstractChart
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
                     {
-                        borderR = Math.max(borderR, parent.textWidth(axisFormatter[dimension].format(tic)));
+                        borderR = Math.max(borderR, graphics.textWidth(axisFormatter[dimension].format(tic)));
                     }
                 }
             }
@@ -494,7 +508,7 @@ public abstract class AbstractChart
                 borderL = minBorderL;
                 for (float tic : tics[dimension])
                 {
-                    borderL = Math.max(borderL, parent.textWidth(axisFormatter[dimension].format(tic)));
+                    borderL = Math.max(borderL, graphics.textWidth(axisFormatter[dimension].format(tic)));
                 }
             }
             else if (axisPositions[dimension] == Side.RIGHT)
@@ -502,7 +516,7 @@ public abstract class AbstractChart
                 borderR = minBorderR;
                 for (float tic : tics[dimension])
                 {
-                    borderR = Math.max(borderR, parent.textWidth(axisFormatter[dimension].format(tic)));
+                    borderR = Math.max(borderR, graphics.textWidth(axisFormatter[dimension].format(tic)));
                 }
             }
         }
