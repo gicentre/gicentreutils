@@ -11,7 +11,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 16th October, 2011.
+ *  @version 3.2.1, 1st December, 2011.
  */ 
 // *****************************************************************************************
 
@@ -245,207 +245,210 @@ public class XYChart extends AbstractChart
             }
         }
         
-        float textHeight = graphics.textAscent();
-                
-        // Check to see if we have special case where x and y axes have the same origin, so only display it once.
-        boolean showSingleOriginValue = false;
-        if ((getShowAxis(0) && getShowAxis(1)) && (axisFormatter[0].format(tics[0][0]).equals(axisFormatter[1].format(tics[1][0]))))
+        if (drawDecorations)
         {
-            showSingleOriginValue = true;
-        }
-        int firstTic = showSingleOriginValue?1:0;
-             
-        // Draw axes if requested.
-        if (getShowAxis(0))
-        {
-        	graphics.strokeWeight(0.5f);
-        	graphics.stroke(120);
-        	graphics.fill(0,150);
-            
-            // Calculate position of axis.
-            float axisPosition;
-            if (transposeAxes)
-            {
-                axisPosition = left;
-                if (xAxisPosition != null)
-                {
-                    if (getIsLogScale(0))
-                    {
-                        axisPosition = (float)(left +hRange*(Math.log10(xAxisPosition.doubleValue())-getMinLog(1))/(getMaxLog(1)-getMinLog(1)));
-                    }
-                    else
-                    {
-                        axisPosition = (float)(left +hRange*(xAxisPosition.doubleValue()-getMin(1))/(getMax(1)-getMin(1))); 
-                    }
-                }
-                graphics.line(axisPosition,bottom,axisPosition,top);
-            }
-            else
-            {
-                axisPosition = bottom;
-                if (xAxisPosition != null)
-                {
-                    if (getIsLogScale(0))
-                    {
-                        axisPosition = (float)(top +vRange*(getMaxLog(1)-Math.log10(xAxisPosition.doubleValue()))/(getMaxLog(1)-getMinLog(1)));
-                    }
-                    else
-                    {
-                        axisPosition = (float)(top +vRange*(getMax(1)-xAxisPosition.doubleValue())/(getMax(1)-getMin(1))); 
-                    }
-                }
-                graphics.line(left,axisPosition,right,axisPosition);   
-            }
+        	float textHeight = graphics.textAscent();
 
-            // Draw axis labels.
-            if (getIsLogScale(0))
-            {                         
-                for (int i=firstTic; i<logTics[0].length; i++)
-                {
-                    float logTic = logTics[0][i];
-                    float tic = (float)Math.pow(10,logTic);
-                    
-                    if (tic <= getMax(0))
-                    {
-                        if (transposeAxes)
-                        {
-                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                        	graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMaxLog(0)-logTic)/(getMaxLog(0)-getMinLog(0)));
-                        }
-                        else
-                        {
-                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-                        	graphics.text(axisFormatter[0].format(tic),left +hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0)),axisPosition+2);
-                        }
-                    }
-                }   
-            }
-            else
-            {
-                for (int i=firstTic; i<tics[0].length; i++)
-                {
-                    float tic = tics[0][i];
-                    if (tic <= getMax(0))
-                    {
-                        if (transposeAxes)
-                        {
-                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                        	graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMax(0)-tic)/(getMax(0)-getMin(0)));
-                        }
-                        else
-                        {
-                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-                        	graphics.text(axisFormatter[0].format(tic),left +hRange*(tic-getMin(0))/(getMax(0)-getMin(0)),axisPosition+2);
-                        }
-                    }
-                }
-            }
-            
-            // Draw axis label if requested
-            if (xLabel != null)
-            {
-                if (transposeAxes)
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
-                    // Rotate label.
-                	graphics.pushMatrix();
-                	graphics.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                	graphics.rotate(-PConstants.HALF_PI);
-                	graphics.text(xLabel,0,0);
-                	graphics.popMatrix();
-                }
-                else
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
-                	graphics.text(xLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
-                }
-            }
-        }
-        
-        if (getShowAxis(1))
-        {
-        	graphics.strokeWeight(0.5f);
-        	graphics.stroke(120);
-        	graphics.fill(0,150);
-            
-            // Calculate position of axis.
-            float axisPosition;
-            if (transposeAxes)
-            {
-                axisPosition = bottom;
-                if (yAxisPosition != null)
-                {
-                    if (getIsLogScale(1))
-                    {
-                        axisPosition = (float)(top +vRange*(getMaxLog(0)-Math.log10(yAxisPosition.doubleValue()))/(getMaxLog(0)-getMinLog(0)));
-                    }
-                    else
-                    {
-                        axisPosition = (float)(top +vRange*(getMax(0)-yAxisPosition.doubleValue())/(getMax(0)-getMin(0))); 
-                    }
-                }
-                graphics.line(left,axisPosition,right,axisPosition);
-            }
-            else
-            {
-                axisPosition = left;
-                if (yAxisPosition != null)
-                {
-                    if (getIsLogScale(1))
-                    {
-                        axisPosition = (float)(left +hRange*(Math.log10(yAxisPosition.doubleValue())-getMinLog(0))/(getMaxLog(0)-getMinLog(0)));
-                    }
-                    else
-                    {
-                        axisPosition = (float)(left +hRange*(yAxisPosition.doubleValue()-getMin(0))/(getMax(0)-getMin(0))); 
-                    }
-                }
-                graphics.line(axisPosition,bottom,axisPosition,top);
-            }
-            
-            for (int i=firstTic; i<tics[1].length; i++)
-            {
-                float tic = tics[1][i];
-                if (tic <= getMax(1))
-                {
-                    if (transposeAxes)
-                    {
-                    	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-                    	graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),axisPosition+textHeight/2 -2);
-                    }
-                    else
-                    {
-                    	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                    	graphics.text(axisFormatter[1].format(tic),axisPosition-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
-                    }
-                }
-            }
-            
-            // Draw axis label if requested.
-            if (yLabel != null)
-            {
-                if (transposeAxes)
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
-                	graphics.text(yLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
-                }
-                else
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
-                    // Rotate label.
-                	graphics.pushMatrix();
-                	graphics.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                	graphics.rotate(-PConstants.HALF_PI);
-                	graphics.text(yLabel,0,0);
-                	graphics.popMatrix();
-                }
-            }
-        }
-        
-        if (showSingleOriginValue)
-        {
-        	graphics.textAlign(PConstants.RIGHT, PConstants.TOP);
-        	graphics.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
+        	// Check to see if we have special case where x and y axes have the same origin, so only display it once.
+        	boolean showSingleOriginValue = false;
+        	if ((getShowAxis(0) && getShowAxis(1)) && (axisFormatter[0].format(tics[0][0]).equals(axisFormatter[1].format(tics[1][0]))))
+        	{
+        		showSingleOriginValue = true;
+        	}
+        	int firstTic = showSingleOriginValue?1:0;
+
+        	// Draw axes if requested.
+        	if (getShowAxis(0))
+        	{
+        		graphics.strokeWeight(0.5f);
+        		graphics.stroke(120);
+        		graphics.fill(0,150);
+
+        		// Calculate position of axis.
+        		float axisPosition;
+        		if (transposeAxes)
+        		{
+        			axisPosition = left;
+        			if (xAxisPosition != null)
+        			{
+        				if (getIsLogScale(0))
+        				{
+        					axisPosition = (float)(left +hRange*(Math.log10(xAxisPosition.doubleValue())-getMinLog(1))/(getMaxLog(1)-getMinLog(1)));
+        				}
+        				else
+        				{
+        					axisPosition = (float)(left +hRange*(xAxisPosition.doubleValue()-getMin(1))/(getMax(1)-getMin(1))); 
+        				}
+        			}
+        			graphics.line(axisPosition,bottom,axisPosition,top);
+        		}
+        		else
+        		{
+        			axisPosition = bottom;
+        			if (xAxisPosition != null)
+        			{
+        				if (getIsLogScale(0))
+        				{
+        					axisPosition = (float)(top +vRange*(getMaxLog(1)-Math.log10(xAxisPosition.doubleValue()))/(getMaxLog(1)-getMinLog(1)));
+        				}
+        				else
+        				{
+        					axisPosition = (float)(top +vRange*(getMax(1)-xAxisPosition.doubleValue())/(getMax(1)-getMin(1))); 
+        				}
+        			}
+        			graphics.line(left,axisPosition,right,axisPosition);   
+        		}
+
+        		// Draw axis labels.
+        		if (getIsLogScale(0))
+        		{                         
+        			for (int i=firstTic; i<logTics[0].length; i++)
+        			{
+        				float logTic = logTics[0][i];
+        				float tic = (float)Math.pow(10,logTic);
+
+        				if (tic <= getMax(0))
+        				{
+        					if (transposeAxes)
+        					{
+        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        						graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMaxLog(0)-logTic)/(getMaxLog(0)-getMinLog(0)));
+        					}
+        					else
+        					{
+        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        						graphics.text(axisFormatter[0].format(tic),left +hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0)),axisPosition+2);
+        					}
+        				}
+        			}   
+        		}
+        		else
+        		{
+        			for (int i=firstTic; i<tics[0].length; i++)
+        			{
+        				float tic = tics[0][i];
+        				if (tic <= getMax(0))
+        				{
+        					if (transposeAxes)
+        					{
+        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        						graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMax(0)-tic)/(getMax(0)-getMin(0)));
+        					}
+        					else
+        					{
+        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        						graphics.text(axisFormatter[0].format(tic),left +hRange*(tic-getMin(0))/(getMax(0)-getMin(0)),axisPosition+2);
+        					}
+        				}
+        			}
+        		}
+
+        		// Draw axis label if requested
+        		if (xLabel != null)
+        		{
+        			if (transposeAxes)
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+        				// Rotate label.
+        				graphics.pushMatrix();
+        				graphics.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+        				graphics.rotate(-PConstants.HALF_PI);
+        				graphics.text(xLabel,0,0);
+        				graphics.popMatrix();
+        			}
+        			else
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+        				graphics.text(xLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
+        			}
+        		}
+        	}
+
+        	if (getShowAxis(1))
+        	{
+        		graphics.strokeWeight(0.5f);
+        		graphics.stroke(120);
+        		graphics.fill(0,150);
+
+        		// Calculate position of axis.
+        		float axisPosition;
+        		if (transposeAxes)
+        		{
+        			axisPosition = bottom;
+        			if (yAxisPosition != null)
+        			{
+        				if (getIsLogScale(1))
+        				{
+        					axisPosition = (float)(top +vRange*(getMaxLog(0)-Math.log10(yAxisPosition.doubleValue()))/(getMaxLog(0)-getMinLog(0)));
+        				}
+        				else
+        				{
+        					axisPosition = (float)(top +vRange*(getMax(0)-yAxisPosition.doubleValue())/(getMax(0)-getMin(0))); 
+        				}
+        			}
+        			graphics.line(left,axisPosition,right,axisPosition);
+        		}
+        		else
+        		{
+        			axisPosition = left;
+        			if (yAxisPosition != null)
+        			{
+        				if (getIsLogScale(1))
+        				{
+        					axisPosition = (float)(left +hRange*(Math.log10(yAxisPosition.doubleValue())-getMinLog(0))/(getMaxLog(0)-getMinLog(0)));
+        				}
+        				else
+        				{
+        					axisPosition = (float)(left +hRange*(yAxisPosition.doubleValue()-getMin(0))/(getMax(0)-getMin(0))); 
+        				}
+        			}
+        			graphics.line(axisPosition,bottom,axisPosition,top);
+        		}
+
+        		for (int i=firstTic; i<tics[1].length; i++)
+        		{
+        			float tic = tics[1][i];
+        			if (tic <= getMax(1))
+        			{
+        				if (transposeAxes)
+        				{
+        					graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        					graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),axisPosition+textHeight/2 -2);
+        				}
+        				else
+        				{
+        					graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        					graphics.text(axisFormatter[1].format(tic),axisPosition-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
+        				}
+        			}
+        		}
+
+        		// Draw axis label if requested.
+        		if (yLabel != null)
+        		{
+        			if (transposeAxes)
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+        				graphics.text(yLabel,(left+right)/2f,axisPosition+getBorder(Side.BOTTOM)+2);
+        			}
+        			else
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+        				// Rotate label.
+        				graphics.pushMatrix();
+        				graphics.translate(axisPosition-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+        				graphics.rotate(-PConstants.HALF_PI);
+        				graphics.text(yLabel,0,0);
+        				graphics.popMatrix();
+        			}
+        		}
+        	}
+
+        	if (showSingleOriginValue)
+        	{
+        		graphics.textAlign(PConstants.RIGHT, PConstants.TOP);
+        		graphics.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
+        	}
         }
                 
         graphics.popStyle();

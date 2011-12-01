@@ -12,7 +12,7 @@ import processing.core.PGraphics;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 16th October, 2011. 
+ *  @version 3.2.1, 1st December, 2011. 
  */ 
 // *****************************************************************************************
 
@@ -53,6 +53,8 @@ public abstract class AbstractChart
                         /** Indicates a side of the chart */
     protected enum Side { TOP, BOTTOM, LEFT, RIGHT, NO_SIDE}
     
+    protected boolean drawDecorations;		// If true, axes labels and title can be drawn; if false only data are drawn.
+    
     
     private float minBorder;    // Minimum internal border between bounds and chart.
     private float borderL,borderR,borderT,borderB;  // Actual internal borders between bounds and chart.
@@ -71,7 +73,7 @@ public abstract class AbstractChart
     private Side[] axisPositions;   // Position of axes.
     
     private static final int MAX_DIMENSIONS = 20; // Maximum number of dimensions represented by chart.
-
+    
     // ------------------------------- Constructors --------------------------------
 
     /** Initialises the chart settings. Subclasses should normally call this constructor as a 
@@ -100,6 +102,7 @@ public abstract class AbstractChart
         axisPositions  = new Side[MAX_DIMENSIONS];
         axisFormatter  = new DecimalFormat[MAX_DIMENSIONS];
         
+        drawDecorations = true;
         
         transposeAxes = false;
         minBorder      = 1;
@@ -141,6 +144,16 @@ public abstract class AbstractChart
 	public void setGraphics(PGraphics graphics)
 	{
 		this.graphics = graphics;
+	}
+	
+	/** Determines whether decorations such as title, axes, and labels are drawn or not. This can
+	 *  be useful when two or more graphs with the same decorations are to be overlain. Only one
+	 *  of the graphs need draw the decorations.
+	 *  @param drawDecorations If true, axes, labels and titles can be drawn.
+	 */
+	public void setDecorations(boolean drawDecorations)
+	{
+		this.drawDecorations = drawDecorations;
 	}
   
     /** Sets the data to be displayed along the given axis of the chart. Updates the min and max ranges
