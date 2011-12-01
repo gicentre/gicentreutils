@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 16th October, 2011.
+ *  @version 3.2.1, 1st December, 2011.
  */ 
 // *****************************************************************************************
 
@@ -170,7 +170,6 @@ public class BarChart extends AbstractChart
             axisValue = catAxisPosition.floatValue();
         }
         
-                
         float barWidth;
         
         if (transposeAxes)
@@ -223,137 +222,140 @@ public class BarChart extends AbstractChart
             }
         }
         
-        if (getShowAxis(1))  // Value axis.
+        if (drawDecorations)
         {
-        	graphics.strokeWeight(0.5f);
-        	graphics.stroke(120);
-        	graphics.fill(0,150);
+        	if (getShowAxis(1))  // Value axis.
+        	{
+        		graphics.strokeWeight(0.5f);
+        		graphics.stroke(120);
+        		graphics.fill(0,150);
 
-            if (transposeAxes)
-            {
-            	graphics.line(left,bottom,right,bottom);
-            }
-            else
-            {
-            	graphics.line(left,bottom,left,top);
-            }
-            
-            if (getIsLogScale(1))
-            {                         
-                for (float logTic : logTics[1])
-                {
-                    float tic = (float)Math.pow(10,logTic);
-                    if (tic <= getMax(1))
-                    {
-                        if (transposeAxes)
-                        {
-                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-                        	graphics.text(axisFormatter[1].format(tic),left +hRange*(logTic-getMinLog(1))/(getMaxLog(1)-getMinLog(1)),bottom+2);
-                        }
-                        else
-                        {
-                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                        	graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMaxLog(1)-logTic)/(getMaxLog(1)-getMinLog(1)));
-                        }
-                    }
-                }   
-            }
-            else
-            {
-                for (float tic : tics[1])
-                {
-                    if (tic <= getMax(1))
-                    {
-                        if (transposeAxes)
-                        {
-                        	graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-                        	graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),bottom+2);
-                        }
-                        else
-                        {
-                        	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-                        	graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
-                        }
-                    }
-                }
-            }
-            
-            // Draw axis label if requested.
-            if (valueLabel != null)
-            {
-                if (transposeAxes)
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
-                	graphics.text(valueLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
-                }
-                else
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
-                    // Rotate label.
-                	graphics.pushMatrix();
-                	graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                	graphics.rotate(-PConstants.HALF_PI);
-                	graphics.text(valueLabel,0,0);
-                	graphics.popMatrix();
-                }
-            }
-        }
-        
-        if (getShowAxis(0))  // Category axis.
-        {
-        	graphics.strokeWeight(0.5f);
-        	graphics.stroke(120);
-        	graphics.fill(0,150);
-               
-            for (int i=0; i<data[0].length; i++)
-            {
-                if (transposeAxes)
-                {
-                	graphics.textAlign(PConstants.RIGHT, PConstants.CENTER); 
-                    int index = reverseCats?(data[0].length-1-i):i;
-                    if (showLabels == false)
-                    {
-                    	graphics.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
-                    }
-                    else
-                    {
-                    	graphics.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
-                    }
-                }
-                else
-                {
-                	graphics.textAlign(PConstants.CENTER, PConstants.TOP); 
-                    int index = reverseCats?(data[0].length-1-i):i;
-                    if (showLabels == false)
-                    {
-                    	graphics.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
-                    }
-                    else
-                    {
-                    	graphics.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
-                    }
-                }
-            }
-            
-            // Draw axis label if requested
-            if (categoryLabel != null)
-            {
-                if (transposeAxes)
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
-                    // Rotate label.
-                	graphics.pushMatrix();
-                	graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
-                	graphics.rotate(-PConstants.HALF_PI);
-                	graphics.text(categoryLabel,0,0);
-                	graphics.popMatrix();
-                }
-                else
-                {
-                	graphics.textAlign(PConstants.CENTER,PConstants.TOP);
-                	graphics.text(categoryLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
-                }
-            }
+        		if (transposeAxes)
+        		{
+        			graphics.line(left,bottom,right,bottom);
+        		}
+        		else
+        		{
+        			graphics.line(left,bottom,left,top);
+        		}
+
+        		if (getIsLogScale(1))
+        		{                         
+        			for (float logTic : logTics[1])
+        			{
+        				float tic = (float)Math.pow(10,logTic);
+        				if (tic <= getMax(1))
+        				{
+        					if (transposeAxes)
+        					{
+        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        						graphics.text(axisFormatter[1].format(tic),left +hRange*(logTic-getMinLog(1))/(getMaxLog(1)-getMinLog(1)),bottom+2);
+        					}
+        					else
+        					{
+        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        						graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMaxLog(1)-logTic)/(getMaxLog(1)-getMinLog(1)));
+        					}
+        				}
+        			}   
+        		}
+        		else
+        		{
+        			for (float tic : tics[1])
+        			{
+        				if (tic <= getMax(1))
+        				{
+        					if (transposeAxes)
+        					{
+        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        						graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),bottom+2);
+        					}
+        					else
+        					{
+        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        						graphics.text(axisFormatter[1].format(tic),left-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
+        					}
+        				}
+        			}
+        		}
+
+        		// Draw axis label if requested.
+        		if (valueLabel != null)
+        		{
+        			if (transposeAxes)
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+        				graphics.text(valueLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
+        			}
+        			else
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+        				// Rotate label.
+        				graphics.pushMatrix();
+        				graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+        				graphics.rotate(-PConstants.HALF_PI);
+        				graphics.text(valueLabel,0,0);
+        				graphics.popMatrix();
+        			}
+        		}
+        	}
+
+        	if (getShowAxis(0))  // Category axis.
+        	{
+        		graphics.strokeWeight(0.5f);
+        		graphics.stroke(120);
+        		graphics.fill(0,150);
+
+        		for (int i=0; i<data[0].length; i++)
+        		{
+        			if (transposeAxes)
+        			{
+        				graphics.textAlign(PConstants.RIGHT, PConstants.CENTER); 
+        				int index = reverseCats?(data[0].length-1-i):i;
+        				if (showLabels == false)
+        				{
+        					graphics.text(axisFormatter[0].format(data[0][index]),left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
+        				}
+        				else
+        				{
+        					graphics.text(catLabels[index],left-2,top+barWidth/2f + i*(barWidth+barGap+barPad));
+        				}
+        			}
+        			else
+        			{
+        				graphics.textAlign(PConstants.CENTER, PConstants.TOP); 
+        				int index = reverseCats?(data[0].length-1-i):i;
+        				if (showLabels == false)
+        				{
+        					graphics.text(axisFormatter[0].format(data[0][index]),left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
+        				}
+        				else
+        				{
+        					graphics.text(catLabels[index],left+barWidth/2f + i*(barWidth+barGap+barPad),bottom+2);
+        				}
+        			}
+        		}
+
+        		// Draw axis label if requested
+        		if (categoryLabel != null)
+        		{
+        			if (transposeAxes)
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
+        				// Rotate label.
+        				graphics.pushMatrix();
+        				graphics.translate(left-(getBorder(Side.LEFT)+1),(top+bottom)/2f);
+        				graphics.rotate(-PConstants.HALF_PI);
+        				graphics.text(categoryLabel,0,0);
+        				graphics.popMatrix();
+        			}
+        			else
+        			{
+        				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
+        				graphics.text(categoryLabel,(left+right)/2f,bottom+getBorder(Side.BOTTOM)+2);
+        			}
+        		}
+        	}
         }
         graphics.popStyle();
     }

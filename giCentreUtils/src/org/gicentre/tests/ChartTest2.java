@@ -87,7 +87,7 @@ public class ChartTest2 extends PApplet
         barChart.showCategoryAxis(showXAxis);
         barChart.showValueAxis(showYAxis);
         barChart.setCategoryAxisAt(0);          // Allow bars to dip below axis when negative. 
-        
+                
         xyChart = new XYChart(this);
         xyChart.setData(new float[] {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}, chartData);
         
