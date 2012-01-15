@@ -38,8 +38,7 @@ public class BarChart extends AbstractChart
       
     private int barColour;
     private float barGap;                       // Gap between interior bars.
-    private float barPad;                       // Symmetrical padding around each bar
-    private boolean showBarEdge;				// Bars rendered with a boundary if true.
+    private float barPad;                       // Symmetrical padding around each bar;
     private boolean reverseCats;
     private ColourTable cTable;
     
@@ -60,7 +59,6 @@ public class BarChart extends AbstractChart
         barGap        = 1;
         barPad        = 0;
         barColour     = graphics.color(180);
-        showBarEdge   = false;
         reverseCats   = false;
         cTable        = null;
         catLabels     = null;
@@ -186,7 +184,7 @@ public class BarChart extends AbstractChart
             barWidth = (hRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
         }
        
-        if (showBarEdge)
+        if (showEdge)
         {
         	graphics.stroke(strokeColour);
         }
@@ -699,16 +697,7 @@ public class BarChart extends AbstractChart
         cTable = null;      // Ignore colour table and data-colour rules.
         data[2] = null;
     }
-    
-    /** Determines whether or not to draw lines around each bar. If true the current stroke colour
-     *  and weight will be used.
-     *  @param showEdge Bar edges drawn if true.
-     */
-    public void setShowBarEdge(boolean showEdge)
-    {
-        this.showBarEdge = showEdge;
-    }
-    
+        
     /** Provides the data and colour table from which to colour bars. Each data item
      *  should by in the same order as the data provided to <code>setData()</code>.
      *  @param colourData Data used to colour bars

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.gicentre.utils.gui.Drawable;
 
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 
 //  ****************************************************************************************
@@ -55,7 +56,9 @@ public abstract class AbstractChart
     					/** Colour of the values shown on a chart axis. */
     protected int axisValuesColour;
     					/** Colour of axis labels. */
-    protected int axisLabelColour;			
+    protected int axisLabelColour;	
+    					/** Determines if areal chart features are drawn with an edge or not. */
+    protected boolean showEdge;
     
                         /** Indicates a side of the chart */
     protected enum Side { TOP, BOTTOM, LEFT, RIGHT, NO_SIDE}
@@ -93,38 +96,40 @@ public abstract class AbstractChart
         this.graphics = parent.g;
         this.renderer = new RendererGraphics(graphics);
         
-        data           = new float[MAX_DIMENSIONS][];
-        tics           = new float[MAX_DIMENSIONS][];
-        logTics        = new float[MAX_DIMENSIONS][];
+        data             = new float[MAX_DIMENSIONS][];
+        tics             = new float[MAX_DIMENSIONS][];
+        logTics          = new float[MAX_DIMENSIONS][];
         
-        min            = new float[MAX_DIMENSIONS];
-        max            = new float[MAX_DIMENSIONS];
-        minLog         = new float[MAX_DIMENSIONS];
-        maxLog         = new float[MAX_DIMENSIONS];
-        isLogScale     = new boolean[MAX_DIMENSIONS];
+        min              = new float[MAX_DIMENSIONS];
+        max              = new float[MAX_DIMENSIONS];
+        minLog           = new float[MAX_DIMENSIONS];
+        maxLog           = new float[MAX_DIMENSIONS];
+        isLogScale       = new boolean[MAX_DIMENSIONS];
 
-        forceMin       = new boolean[MAX_DIMENSIONS];
-        forceMax       = new boolean[MAX_DIMENSIONS];
-        showAxis       = new boolean[MAX_DIMENSIONS];
+        forceMin         = new boolean[MAX_DIMENSIONS];
+        forceMax         = new boolean[MAX_DIMENSIONS];
+        showAxis         = new boolean[MAX_DIMENSIONS];
         
-        axisPositions  = new Side[MAX_DIMENSIONS];
-        axisFormatter  = new DecimalFormat[MAX_DIMENSIONS];
+        axisPositions    = new Side[MAX_DIMENSIONS];
+        axisFormatter    = new DecimalFormat[MAX_DIMENSIONS];
         
-        drawDecorations = true;
+        showEdge         = false;
+        
+        drawDecorations  = true;
         axisColour       = parent.color(120);
         axisLabelColour  = parent.color(120);
         axisValuesColour = parent.color(120);
         
-        transposeAxes = false;
-        minBorder      = 1;
-        borderL        = minBorder;
-        borderR        = minBorder;
-        borderT        = minBorder;
-        borderB        = minBorder;
-        minBorderL     = minBorder;
-        minBorderR     = minBorder;
-        minBorderT     = minBorder;
-        minBorderB     = minBorder;
+        transposeAxes    = false;
+        minBorder        = 1;
+        borderL          = minBorder;
+        borderR          = minBorder;
+        borderT          = minBorder;
+        borderB          = minBorder;
+        minBorderL       = minBorder;
+        minBorderR       = minBorder;
+        minBorderT       = minBorder;
+        minBorderB       = minBorder;
         
         for (int i=0; i<MAX_DIMENSIONS; i++)
         {
@@ -202,6 +207,15 @@ public abstract class AbstractChart
 	{
 		this.axisValuesColour = colour;
 	}
+	
+	/** Determines whether or not to draw lines around and areal chart features. If true the current 
+	 *  stroke colour and weight will be used.
+     *  @param showEdge Edges drawn if true.
+     */
+    public void setShowEdge(boolean showEdge)
+    {
+        this.showEdge = showEdge;
+    }
   
     /** Sets the data to be displayed along the given axis of the chart. Updates the min and max ranges
      *  in response to the new data.
@@ -845,11 +859,15 @@ public abstract class AbstractChart
     	{
     		this.gr = graphics;
     	}
+    	
+		public void point(float x, float y)
+		{
+			gr.point(x,y);
+		}
 
 		public void line(float x1, float y1, float x2, float y2) 
 		{
 			gr.line(x1,y1,x2,y2);
-			
 		}
 
 		public void rect(float x, float y, float w, float h) 
@@ -865,6 +883,29 @@ public abstract class AbstractChart
 		public void triangle(float x1, float y1, float x2, float y2, float x3,float y3) 
 		{
 			gr.triangle(x1,y1,x2,y2,x3,y3);
+		}
+		
+		public void shape(float[] xCoords, float[] yCoords)
+		{
+			gr.beginShape();
+			for (int i=0; i<xCoords.length; i++)
+			{
+				gr.vertex(xCoords[i],yCoords[i]);
+			}
+			gr.endShape(PConstants.CLOSE);
+		}
+		
+		public void polyLine(float[] xCoords, float[] yCoords)
+		{
+			gr.pushStyle();
+			gr.noFill();
+			gr.beginShape();
+			for (int i=0; i<xCoords.length; i++)
+			{
+				gr.vertex(xCoords[i],yCoords[i]);
+			}
+			gr.endShape();
+			gr.popStyle();
 		}
     }
 }

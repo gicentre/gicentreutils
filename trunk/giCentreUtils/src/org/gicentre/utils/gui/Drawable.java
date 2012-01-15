@@ -23,6 +23,12 @@ package org.gicentre.utils.gui;
 
 public interface Drawable 
 {
+	/** Should draw a 2D point at the given coordinates. 
+	 *  @param x x coordinate of the point.
+	 *  @param y y coordinate of the point.
+	 */
+	public abstract void point(float x, float y);
+	
 	/** Should draw a 2D line between the given coordinate pairs. 
 	 *  @param x1 x coordinate of the start of the line.
 	 *  @param y1 y coordinate of the start of the line.
@@ -60,4 +66,16 @@ public interface Drawable
 	 *  @param y3 y coordinate of the third triangle vertex.
 	 */
 	public abstract void triangle(float x1, float y1, float x2, float y2, float x3, float y3);
+	
+	/** Should draw a complex line that links the given coordinates. 
+	 *  @param xCoords x coordinates of the line.
+	 *  @param yCoords y coordinates of the line.
+	 */
+	public abstract void polyLine(float[] xCoords, float[] yCoords);
+	
+	/** Should draw a closed polygon shape based on the given arrays of vertices.
+	 *  @param xCoords x coordinates of the shape.
+	 *  @param yCoords y coordinates of the shape.
+	 */
+	public abstract void shape(float[] xCoords, float[] yCoords);
 }

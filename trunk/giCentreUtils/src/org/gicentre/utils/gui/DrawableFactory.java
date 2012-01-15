@@ -48,6 +48,15 @@ public class DrawableFactory
 			this.handy = handy;
 		}
 		
+		/** Draws a 2D point at the given coordinates. 
+		 *  @param x x coordinate of the point.
+		 *  @param y y coordinate of the point.
+		 */
+		public void point(float x, float y)
+		{
+			handy.point(x,y);
+		}
+		
 		/** Draws a 2D line between the given coordinate pairs. 
 		 *  @param x1 x coordinate of the start of the line.
 		 *  @param y1 y coordinate of the start of the line.
@@ -96,6 +105,24 @@ public class DrawableFactory
 		public  void triangle(float x1, float y1, float x2, float y2, float x3, float y3)
 		{
 			handy.triangle(x1, y1, x2, y2, x3, y3);
+		}
+		
+		/** Draws a complex line that links the given coordinates. 
+		 *  @param xCoords x coordinates of the line.
+		 *  @param yCoords y coordinates of the line.
+		 */
+		public void polyLine(float[] xCoords, float[] yCoords)
+		{
+			handy.polyLine(xCoords, yCoords);
+		}
+		
+		/** Draws a closed polygon shape based on the given arrays of vertices.
+		 *  @param xCoords x coordinates of the shape.
+		 *  @param yCoords y coordinates of the shape.
+		 */
+		public void shape(float[] xCoords, float[] yCoords)
+		{
+			handy.shape(xCoords, yCoords);
 		}
 	}
 }

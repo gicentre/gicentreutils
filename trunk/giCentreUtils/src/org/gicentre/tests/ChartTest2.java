@@ -82,7 +82,7 @@ public class ChartTest2 extends PApplet
         barChart.transposeAxes(false);
         barChart.setBarGap(barGap);
         barChart.setBarColour(color(200,150,150));
-        barChart.setShowBarEdge(true);
+        barChart.setShowEdge(true);
         barChart.setCategoryAxisLabel("This is the x axis");
         barChart.setValueAxisLabel("This is the y axis");
         barChart.showCategoryAxis(showXAxis);
