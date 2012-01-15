@@ -3,6 +3,8 @@ package org.gicentre.utils.stat;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
+import org.gicentre.utils.gui.Drawable;
+
 import processing.core.PApplet;
 import processing.core.PGraphics;
 
@@ -12,7 +14,7 @@ import processing.core.PGraphics;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 1st December, 2011. 
+ *  @version 3.2.2, 15th January, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -39,6 +41,9 @@ public abstract class AbstractChart
     
     					/** Graphics context in which to send output. */
     protected PGraphics graphics;
+    
+    					/** Alternative renderer for sketchy graphics and other styles. */
+    protected Drawable renderer;
                              
                         /** The datasets to be charted. */
     protected float[][] data;
@@ -84,6 +89,7 @@ public abstract class AbstractChart
     {
         this.parent = parent;
         this.graphics = parent.g;
+        this.renderer = new RendererGraphics(graphics);
         
         data           = new float[MAX_DIMENSIONS][];
         tics           = new float[MAX_DIMENSIONS][];
@@ -125,7 +131,7 @@ public abstract class AbstractChart
             axisFormatter[i] = new DecimalFormat("###,###,###.######");    
         }
     }
-
+    
     // ---------------------------------- Methods ----------------------------------
 
     /** Should draw the chart within the given bounds. All implementing classes must include
@@ -138,12 +144,24 @@ public abstract class AbstractChart
     protected abstract void draw(float xOrigin, float yOrigin, float width, float height);
     
 	/** Sets the the graphics context into which all output is directed. This method allows
-	 *  output to be redirected to print output, offscreen buffers etc.
+	 *  output to be redirected to print output, offscreen buffers etc. Note that changing
+	 *  the graphics context in this way will also reset the renderer used to draw the graphics.
 	 *  @param graphics New graphics context in which the chart is embedded.
 	 */
 	public void setGraphics(PGraphics graphics)
 	{
 		this.graphics = graphics;
+		this.renderer = new RendererGraphics(graphics);
+	}
+	
+	/** Sets the the renderer to be used for drawing graphics. This allows alternative renderers
+	 *  to be substituted for fine-grain control of graphical appearance. Note that if the graphics
+	 *  context is changed with <code>setGraphics()</code>, any custom renderers will be lost.
+	 *  @param renderer New renderer to be used for drawing graphics.
+	 */
+	public void setRenderer(Drawable renderer)
+	{
+		this.renderer = renderer;
 	}
 	
 	/** Determines whether decorations such as title, axes, and labels are drawn or not. This can
@@ -786,5 +804,38 @@ public abstract class AbstractChart
         }
         // Shouldn't get to this line.
         return (float)(newMaxVal-minVal);
+    }
+    
+    /** Drawable version of the PGraphics class. Used as a default renderer.
+     */
+    private class RendererGraphics implements Drawable
+    {
+    	private PGraphics gr;
+    	
+    	public RendererGraphics(PGraphics graphics)
+    	{
+    		this.gr = graphics;
+    	}
+
+		public void line(float x1, float y1, float x2, float y2) 
+		{
+			gr.line(x1,y1,x2,y2);
+			
+		}
+
+		public void rect(float x, float y, float w, float h) 
+		{
+			gr.rect(x,y,w,h);
+		}
+		
+		public void ellipse(float x, float y, float w, float h) 
+		{
+			gr.ellipse(x,y,w,h);
+		}
+
+		public void triangle(float x1, float y1, float x2, float y2, float x3,float y3) 
+		{
+			gr.triangle(x1,y1,x2,y2,x3,y3);
+		}
     }
 }

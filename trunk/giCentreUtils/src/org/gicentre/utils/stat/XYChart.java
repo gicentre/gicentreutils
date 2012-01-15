@@ -141,8 +141,8 @@ public class XYChart extends AbstractChart
         	graphics.noFill();
         	graphics.stroke(lineColour);
         	graphics.strokeWeight(lineWidth);
-            
-        	graphics.beginShape();
+                    	
+        	float prevX=0,prevY=0;
             
             for (int i=0; i<data[0].length; i++)
             {
@@ -169,14 +169,24 @@ public class XYChart extends AbstractChart
                 
                 if (transposeAxes)
                 {
-                	graphics.vertex(left + hRange*y, bottom-vRange*x);
+                	if (i>0)
+                	{
+                		renderer.line(prevX, prevY, left + hRange*y, bottom-vRange*x);
+                	}
+
+                	prevX = left + hRange*y;
+                	prevY =  bottom-vRange*x;
                 }
                 else
                 {
-                	graphics.vertex(left + hRange*x, bottom - vRange*y);
+                	if (i>0)
+                	{
+                		renderer.line(prevX, prevY, left + hRange*x, bottom - vRange*y);
+                	}
+                	prevX = left + hRange*x;
+                	prevY = bottom - vRange*y;
                 }
             }
-            graphics.endShape();
         }
         
         // Draw points if requested. 
@@ -223,11 +233,11 @@ public class XYChart extends AbstractChart
                     
                     if (transposeAxes)
                     {
-                    	graphics.ellipse(left + hRange*y, bottom-vRange*x,radius,radius);
+                    	renderer.ellipse(left + hRange*y, bottom-vRange*x,radius,radius);
                     }
                     else
                     {
-                    	graphics.ellipse(left + hRange*x, bottom - vRange*y,radius,radius);
+                    	renderer.ellipse(left + hRange*x, bottom - vRange*y,radius,radius);
                     }
                 }
                 else
@@ -235,11 +245,11 @@ public class XYChart extends AbstractChart
                     // Uniform size.
                     if (transposeAxes)
                     {
-                    	graphics.ellipse(left + hRange*y, bottom - vRange*x,pointSize,pointSize);
+                    	renderer.ellipse(left + hRange*y, bottom - vRange*x,pointSize,pointSize);
                     }
                     else
                     {
-                    	graphics.ellipse(left + hRange*x, bottom - vRange*y,pointSize,pointSize);
+                    	renderer.ellipse(left + hRange*x, bottom - vRange*y,pointSize,pointSize);
                     }
                 }
             }
@@ -280,7 +290,7 @@ public class XYChart extends AbstractChart
         					axisPosition = (float)(left +hRange*(xAxisPosition.doubleValue()-getMin(1))/(getMax(1)-getMin(1))); 
         				}
         			}
-        			graphics.line(axisPosition,bottom,axisPosition,top);
+        			renderer.line(axisPosition,bottom,axisPosition,top);
         		}
         		else
         		{
@@ -296,7 +306,7 @@ public class XYChart extends AbstractChart
         					axisPosition = (float)(top +vRange*(getMax(1)-xAxisPosition.doubleValue())/(getMax(1)-getMin(1))); 
         				}
         			}
-        			graphics.line(left,axisPosition,right,axisPosition);   
+        			renderer.line(left,axisPosition,right,axisPosition);   
         		}
 
         		// Draw axis labels.
@@ -386,7 +396,7 @@ public class XYChart extends AbstractChart
         					axisPosition = (float)(top +vRange*(getMax(0)-yAxisPosition.doubleValue())/(getMax(0)-getMin(0))); 
         				}
         			}
-        			graphics.line(left,axisPosition,right,axisPosition);
+        			renderer.line(left,axisPosition,right,axisPosition);
         		}
         		else
         		{
@@ -402,7 +412,7 @@ public class XYChart extends AbstractChart
         					axisPosition = (float)(left +hRange*(yAxisPosition.doubleValue()-getMin(0))/(getMax(0)-getMin(0))); 
         				}
         			}
-        			graphics.line(axisPosition,bottom,axisPosition,top);
+        			renderer.line(axisPosition,bottom,axisPosition,top);
         		}
 
         		for (int i=firstTic; i<tics[1].length; i++)

@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 1st December, 2011.
+ *  @version 3.2.1, 4th December, 2011.
  */ 
 // *****************************************************************************************
 
@@ -202,22 +202,22 @@ public class BarChart extends AbstractChart
             {
                 if (getIsLogScale(1))
                 {
-                	graphics.rect(left, top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
+                	renderer.rect(left, top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)),barWidth);                    
                 }
                 else
                 {
-                	graphics.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
+                	renderer.rect(left+(hRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), top + i*(barWidth+barGap+barPad)+barPad/2f, hRange*(dataValue-axisValue)/(getMax(1)-getMin(1)),barWidth);
                 }
             }
             else
             {
                 if (getIsLogScale(1))
                 {
-                	graphics.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
+                	renderer.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom, barWidth, -vRange*convertToLog(dataValue,getMinLog(1),getMaxLog(1)));   
                 }
                 else
                 {
-                	graphics.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
+                	renderer.rect(left + i*(barWidth+barGap+barPad)+barPad/2f, bottom-(vRange*(axisValue-getMin(1))/(getMax(1)-getMin(1))), barWidth, -vRange*(dataValue-axisValue)/(getMax(1)-getMin(1)));
                 }
             }
         }
@@ -232,11 +232,11 @@ public class BarChart extends AbstractChart
 
         		if (transposeAxes)
         		{
-        			graphics.line(left,bottom,right,bottom);
+        			renderer.line(left,bottom,right,bottom);
         		}
         		else
         		{
-        			graphics.line(left,bottom,left,top);
+        			renderer.line(left,bottom,left,top);
         		}
 
         		if (getIsLogScale(1))
