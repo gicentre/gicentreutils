@@ -6,13 +6,13 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PVector;
 
-//  ********************************************************************************
+//  ****************************************************************************************
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 4th December, 2011.
+ *  @version 3.2.2, 15th January, 2012.
  */ 
-// *****************************************************************************************
+//  ****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
@@ -39,6 +39,7 @@ public class BarChart extends AbstractChart
     private int barColour;
     private float barGap;                       // Gap between interior bars.
     private float barPad;                       // Symmetrical padding around each bar
+    private boolean showBarEdge;				// Bars rendered with a boundary if true.
     private boolean reverseCats;
     private ColourTable cTable;
     
@@ -59,6 +60,7 @@ public class BarChart extends AbstractChart
         barGap        = 1;
         barPad        = 0;
         barColour     = graphics.color(180);
+        showBarEdge   = false;
         reverseCats   = false;
         cTable        = null;
         catLabels     = null;
@@ -109,6 +111,9 @@ public class BarChart extends AbstractChart
         {
             return;
         }
+        
+        // Sore stroke colour in case it is needed for brawing edges around bars.
+        int strokeColour = graphics.strokeColor;
         
         graphics.pushStyle();
         
@@ -181,7 +186,14 @@ public class BarChart extends AbstractChart
             barWidth = (hRange - (data[0].length-1)*barGap - data[0].length*barPad) / data[0].length;    
         }
        
-        graphics.noStroke();
+        if (showBarEdge)
+        {
+        	graphics.stroke(strokeColour);
+        }
+        else
+        {
+        	graphics.noStroke();
+        }
         
         if (cTable == null)
         {
@@ -227,9 +239,8 @@ public class BarChart extends AbstractChart
         	if (getShowAxis(1))  // Value axis.
         	{
         		graphics.strokeWeight(0.5f);
-        		graphics.stroke(120);
-        		graphics.fill(0,150);
-
+        		graphics.stroke(axisColour);
+        		
         		if (transposeAxes)
         		{
         			renderer.line(left,bottom,right,bottom);
@@ -238,7 +249,9 @@ public class BarChart extends AbstractChart
         		{
         			renderer.line(left,bottom,left,top);
         		}
-
+        		
+        		// Draw axis values
+        		graphics.fill(axisValuesColour);
         		if (getIsLogScale(1))
         		{                         
         			for (float logTic : logTics[1])
@@ -282,6 +295,7 @@ public class BarChart extends AbstractChart
         		// Draw axis label if requested.
         		if (valueLabel != null)
         		{
+        			graphics.fill(axisLabelColour);
         			if (transposeAxes)
         			{
         				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
@@ -303,9 +317,8 @@ public class BarChart extends AbstractChart
         	if (getShowAxis(0))  // Category axis.
         	{
         		graphics.strokeWeight(0.5f);
-        		graphics.stroke(120);
-        		graphics.fill(0,150);
-
+        		graphics.stroke(axisColour);
+        		graphics.fill(axisValuesColour);
         		for (int i=0; i<data[0].length; i++)
         		{
         			if (transposeAxes)
@@ -339,6 +352,7 @@ public class BarChart extends AbstractChart
         		// Draw axis label if requested
         		if (categoryLabel != null)
         		{
+        			graphics.fill(axisLabelColour);
         			if (transposeAxes)
         			{
         				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
@@ -682,8 +696,17 @@ public class BarChart extends AbstractChart
     public void setBarColour(int colour)
     {
         this.barColour = colour;
-        cTable = null;      // Ignore and data-colour rules.
+        cTable = null;      // Ignore colour table and data-colour rules.
         data[2] = null;
+    }
+    
+    /** Determines whether or not to draw lines around each bar. If true the current stroke colour
+     *  and weight will be used.
+     *  @param showEdge Bar edges drawn if true.
+     */
+    public void setShowBarEdge(boolean showEdge)
+    {
+        this.showBarEdge = showEdge;
     }
     
     /** Provides the data and colour table from which to colour bars. Each data item

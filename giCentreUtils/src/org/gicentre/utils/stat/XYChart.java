@@ -11,7 +11,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 1st December, 2011.
+ *  @version 3.2.2, 15th January, 2012.
  */ 
 // *****************************************************************************************
 
@@ -271,9 +271,8 @@ public class XYChart extends AbstractChart
         	if (getShowAxis(0))
         	{
         		graphics.strokeWeight(0.5f);
-        		graphics.stroke(120);
-        		graphics.fill(0,150);
-
+        		graphics.stroke(axisColour);
+        		
         		// Calculate position of axis.
         		float axisPosition;
         		if (transposeAxes)
@@ -309,7 +308,8 @@ public class XYChart extends AbstractChart
         			renderer.line(left,axisPosition,right,axisPosition);   
         		}
 
-        		// Draw axis labels.
+        		// Draw axis values.
+        		graphics.fill(axisValuesColour);
         		if (getIsLogScale(0))
         		{                         
         			for (int i=firstTic; i<logTics[0].length; i++)
@@ -356,6 +356,7 @@ public class XYChart extends AbstractChart
         		// Draw axis label if requested
         		if (xLabel != null)
         		{
+        			graphics.fill(axisLabelColour);
         			if (transposeAxes)
         			{
         				graphics.textAlign(PConstants.CENTER,PConstants.BOTTOM);
@@ -377,9 +378,8 @@ public class XYChart extends AbstractChart
         	if (getShowAxis(1))
         	{
         		graphics.strokeWeight(0.5f);
-        		graphics.stroke(120);
-        		graphics.fill(0,150);
-
+        		graphics.stroke(axisColour);
+        		
         		// Calculate position of axis.
         		float axisPosition;
         		if (transposeAxes)
@@ -415,6 +415,8 @@ public class XYChart extends AbstractChart
         			renderer.line(axisPosition,bottom,axisPosition,top);
         		}
 
+        		// Draw axis values
+        		graphics.fill(axisValuesColour);
         		for (int i=firstTic; i<tics[1].length; i++)
         		{
         			float tic = tics[1][i];
@@ -436,6 +438,7 @@ public class XYChart extends AbstractChart
         		// Draw axis label if requested.
         		if (yLabel != null)
         		{
+        			graphics.fill(axisLabelColour);
         			if (transposeAxes)
         			{
         				graphics.textAlign(PConstants.CENTER,PConstants.TOP);
@@ -456,6 +459,7 @@ public class XYChart extends AbstractChart
 
         	if (showSingleOriginValue)
         	{
+        		graphics.fill(axisValuesColour);
         		graphics.textAlign(PConstants.RIGHT, PConstants.TOP);
         		graphics.text(axisFormatter[1].format(tics[0][0]),left-2,bottom+textHeight/2);
         	}

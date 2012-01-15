@@ -38,22 +38,24 @@ public abstract class AbstractChart
 
                         /** Parent sketch in which this chart is to be drawn.*/
     protected PApplet parent;
-    
     					/** Graphics context in which to send output. */
     protected PGraphics graphics;
-    
     					/** Alternative renderer for sketchy graphics and other styles. */
     protected Drawable renderer;
-                             
                         /** The datasets to be charted. */
     protected float[][] data;
                         /** Tic mark values for optional axis display. */
     protected float[][] tics,logTics;                     
-                                                  
                         /** Determines if the two primary axes should be transposed.*/
     protected boolean transposeAxes;              
                         /** For numerical formatting of axis labels. */
     protected DecimalFormat[] axisFormatter; 
+    					/** Colour of axis lines. */
+    protected int axisColour;
+    					/** Colour of the values shown on a chart axis. */
+    protected int axisValuesColour;
+    					/** Colour of axis labels. */
+    protected int axisLabelColour;			
     
                         /** Indicates a side of the chart */
     protected enum Side { TOP, BOTTOM, LEFT, RIGHT, NO_SIDE}
@@ -61,24 +63,24 @@ public abstract class AbstractChart
     protected boolean drawDecorations;		// If true, axes labels and title can be drawn; if false only data are drawn.
     
     
-    private float minBorder;    // Minimum internal border between bounds and chart.
+    private float minBorder;    			// Minimum internal border between bounds and chart.
     private float borderL,borderR,borderT,borderB;  // Actual internal borders between bounds and chart.
     private float minBorderL,minBorderR,minBorderT,minBorderB;
     
-    private boolean[] isLogScale;   // Indicates whether or not data are shown on log scale.
+    private boolean[] isLogScale;  		 	// Indicates whether or not data are shown on log scale.
         
-    private float[] min,max;    // Minimum and maximum values for data on each axis.
+    private float[] min,max;	    		// Minimum and maximum values for data on each axis.
     private float[] minLog,maxLog;
-        
-                                // Determines if minimum and maximum values are to be 
-                                // set explicitly (true) or by the data (false).
-    private boolean[] forceMin,forceMax;
+                                	
+    private boolean[] forceMin,forceMax;	// Determines if minimum and maximum values are to be
+    										// set explicitly (true) or by the data (false).
     
-    private boolean[] showAxis; // Determines whether a chart axis is to be shown.
-    private Side[] axisPositions;   // Position of axes.
+    private boolean[] showAxis; 			// Determines whether a chart axis is to be shown.
+    private Side[] axisPositions;   		// Position of axes.
+   
     
     private static final int MAX_DIMENSIONS = 20; // Maximum number of dimensions represented by chart.
-    
+      
     // ------------------------------- Constructors --------------------------------
 
     /** Initialises the chart settings. Subclasses should normally call this constructor as a 
@@ -109,6 +111,9 @@ public abstract class AbstractChart
         axisFormatter  = new DecimalFormat[MAX_DIMENSIONS];
         
         drawDecorations = true;
+        axisColour       = parent.color(120);
+        axisLabelColour  = parent.color(120);
+        axisValuesColour = parent.color(120);
         
         transposeAxes = false;
         minBorder      = 1;
@@ -172,6 +177,30 @@ public abstract class AbstractChart
 	public void setDecorations(boolean drawDecorations)
 	{
 		this.drawDecorations = drawDecorations;
+	}
+	
+	/** Determines the colour of the axis lines of the chart
+	 *  @param colour Colour of the axis lines of the chart.
+	 */
+	public void setAxisColour(int colour)
+	{
+		this.axisColour = colour;
+	}
+	
+	/** Determines the colour of the axis labels of the chart
+	 *  @param colour Colour of the axis labels of the chart.
+	 */
+	public void setAxisLabelColour(int colour)
+	{
+		this.axisLabelColour = colour;
+	}
+	
+	/** Determines the colour of the axis values of the chart
+	 *  @param colour Colour of the axis values of the chart.
+	 */
+	public void setAxisValuesColour(int colour)
+	{
+		this.axisValuesColour = colour;
 	}
   
     /** Sets the data to be displayed along the given axis of the chart. Updates the min and max ranges

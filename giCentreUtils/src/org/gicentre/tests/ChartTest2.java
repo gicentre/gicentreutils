@@ -82,12 +82,13 @@ public class ChartTest2 extends PApplet
         barChart.transposeAxes(false);
         barChart.setBarGap(barGap);
         barChart.setBarColour(color(200,150,150));
+        barChart.setShowBarEdge(true);
         barChart.setCategoryAxisLabel("This is the x axis");
         barChart.setValueAxisLabel("This is the y axis");
         barChart.showCategoryAxis(showXAxis);
         barChart.showValueAxis(showYAxis);
         barChart.setCategoryAxisAt(0);          // Allow bars to dip below axis when negative. 
-                
+               
         xyChart = new XYChart(this);
         xyChart.setData(new float[] {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20}, chartData);
         
@@ -109,6 +110,7 @@ public class ChartTest2 extends PApplet
         noLoop();
                 
         // Draw the bar chart first, then overlay the line chart.
+        stroke(150,100,100,200);
         barChart.draw(2,1,width-4,height-2);  
         
         PVector bottomLeft = barChart.getDataToScreen(new PVector(0,barChart.getMinValue()));
