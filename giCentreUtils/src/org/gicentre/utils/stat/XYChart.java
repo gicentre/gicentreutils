@@ -125,6 +125,8 @@ public class XYChart extends AbstractChart
             return;
         }
 
+        int strokeColour = graphics.strokeColor;
+        
         graphics.pushStyle();
         calcDataSpacing();
         
@@ -196,8 +198,16 @@ public class XYChart extends AbstractChart
             {
             	graphics.fill(pointColour);
             }
-            graphics.noStroke();
             
+            if (showEdge)
+            {
+            	graphics.stroke(strokeColour);
+            }
+            else
+            {
+            	graphics.noStroke();
+            }
+                       
             for (int i=0; i<data[0].length; i++)
             {
                 if (cTable != null)
