@@ -343,7 +343,7 @@ public class ParticleViewer
 	 *  is one that has been clicked with the mouse and can be dragged once selected. This
 	 *  method can be useful when you wish to display some extra characteristics associated
 	 *  with a user-chosen node. Note that a node can only be selected while the mouse button 
-	 *  is down.
+	 *  is down and isn't masked with a shift key used for zooming the display.
 	 *  @return The selected node or null if no node is currently selected.
 	 */
 	public Node getSelectedNode()

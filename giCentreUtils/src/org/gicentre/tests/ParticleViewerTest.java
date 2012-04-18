@@ -30,6 +30,7 @@ public class ParticleViewerTest extends PApplet
 	// ----------------------------- Object variables ------------------------------
 
 	private ParticleViewer viewer;
+	private MyNode selectedNode;
 
 	// ------------------------------ Starter method -------------------------------
 
@@ -50,13 +51,14 @@ public class ParticleViewerTest extends PApplet
 		size(800,600);
 		smooth();
 		strokeWeight(1);		// For thickness of edge lines.
+		selectedNode = null;
 		
 		viewer = new ParticleViewer(this, width, height);
 
-		Node[] nodes = new Node[100];
+		MyNode[] nodes = new MyNode[100];
 		for (int i=0; i<nodes.length; i++)
 		{
-			nodes[i] = new Node((float)Math.random()*1000,(float)Math.random()*1000);
+			nodes[i] = new MyNode((float)Math.random()*1000,(float)Math.random()*1000);
 			viewer.addNode(nodes[i]);
 		}
 		
@@ -81,6 +83,14 @@ public class ParticleViewerTest extends PApplet
 	public void mousePressed()
 	{
 		viewer.selectNearestWithMouse();
+		
+		// TODO: Replace Particle viewer with a generic option.
+		selectedNode = (MyNode)viewer.getSelectedNode();
+		
+		if (selectedNode != null)
+		{
+			selectedNode.setHighlight(true);	
+		}
 	}
 	
 	/** Responds to a mouse released event by releasing any selected node.
@@ -88,6 +98,12 @@ public class ParticleViewerTest extends PApplet
 	public void mouseReleased()
 	{
 		viewer.dropSelected();
+		
+		if (selectedNode != null)
+		{
+			selectedNode.setHighlight(false);
+			selectedNode = null;
+		}
 	}
 	
 	/** Allows the zoomed view to be reset.
@@ -98,5 +114,44 @@ public class ParticleViewerTest extends PApplet
 		{
 			viewer.resetView();
 		}
+	}
+	
+	
+	// --------------------------- Nested classes ---------------------------
+	
+	private class MyNode extends Node
+	{
+		private boolean isHighlighted;
+
+		public MyNode(float x, float y)
+		{
+			super(x,y);
+			isHighlighted = false;
+
+		}
+
+		@Override
+		public void draw(PApplet sketch, float x, float y)
+		{
+			if (isHighlighted)
+			{
+				fill(255,0,0);
+				stroke(0,200);
+				ellipse(x, y, 30, 20);
+			}
+			else
+			{
+				fill(43, 100, 107, 200);
+				noStroke();
+				ellipse(x, y, 15, 10);
+			}
+			
+		}
+
+		public void setHighlight(boolean isHighlighted)
+		{
+			this.isHighlighted = isHighlighted;
+		}
+
 	}
 }
