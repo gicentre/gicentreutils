@@ -29,7 +29,7 @@ public class ParticleViewerTest extends PApplet
 {
 	// ----------------------------- Object variables ------------------------------
 
-	private ParticleViewer viewer;
+	private ParticleViewer<MyNode,Edge> viewer;
 	private MyNode selectedNode;
 
 	// ------------------------------ Starter method -------------------------------
@@ -53,7 +53,7 @@ public class ParticleViewerTest extends PApplet
 		strokeWeight(1);		// For thickness of edge lines.
 		selectedNode = null;
 		
-		viewer = new ParticleViewer(this, width, height);
+		viewer = new ParticleViewer<MyNode,Edge>(this, width, height);
 
 		MyNode[] nodes = new MyNode[100];
 		for (int i=0; i<nodes.length; i++)
@@ -84,8 +84,7 @@ public class ParticleViewerTest extends PApplet
 	{
 		viewer.selectNearestWithMouse();
 		
-		// TODO: Replace Particle viewer with a generic option.
-		selectedNode = (MyNode)viewer.getSelectedNode();
+		selectedNode = viewer.getSelectedNode();
 		
 		if (selectedNode != null)
 		{
@@ -115,8 +114,7 @@ public class ParticleViewerTest extends PApplet
 			viewer.resetView();
 		}
 	}
-	
-	
+
 	// --------------------------- Nested classes ---------------------------
 	
 	private class MyNode extends Node
