@@ -22,6 +22,10 @@ import traer.physics.Vector3D;
  *  for particle management and the 
  *  <a href="http://classic-web.archive.org/web/20060911111322/http://www.cs.princeton.edu/~traer/animation/">
  *  traer animation library</a> for smooth camera movement. 
+ *  @param <N> Type of node to be stored in the particle viewer. This can be a <code>Node</code>
+ *             or any specialised subclass of it.
+ *  @param <E> Type of edge to be stored in the particle viewer. This can be an <code>Edge</code>
+ *             or any specialised subclass of it.
  *  @author Jo Wood, giCentre, City University London.
  *  @version 3.2, 18th April, 2012. 
  */ 
@@ -41,7 +45,7 @@ import traer.physics.Vector3D;
  * http://www.gnu.org/licenses/.
  */
 
-public class ParticleViewer
+public class ParticleViewer<N extends Node, E extends Edge>
 {
 	// ----------------------------- Object variables ------------------------------
 
@@ -50,12 +54,12 @@ public class ParticleViewer
 	private Smoother3D centroid;      		   // For smooth camera centring.
 	private int width,height;		  		   // Dimensions of the drawable area.
 	private boolean isPaused;		  		   // Controls whether or not the particles animate.
-	private HashMap<Node, Particle> nodes;	   // The graph nodes to be drawn.
-	private HashMap<Edge, Spring> edges;	   // The graph edges to be drawn.
-	private HashMap<Node, Particle> stakes;	   // Fixed particles for tethering a node to its location.
+	private HashMap<N, Particle> nodes;	   // The graph nodes to be drawn.
+	private HashMap<E, Spring> edges;	   // The graph edges to be drawn.
+	private HashMap<N, Particle> stakes;	   // Fixed particles for tethering a node to its location.
 	private HashMap<Particle, Spring> tethers; // Tethers between a node and its location.
 	private ZoomPan zoomer;           		   // For interactive zooming and panning.
-	private Node selectedNode;		 		   // Optionally selected node for query or interaction.
+	private N selectedNode;		 		   // Optionally selected node for query or interaction.
 
 								/** Default strength for all edges. */
 	public static final float EDGE_STRENGTH   = 1;
@@ -76,9 +80,9 @@ public class ParticleViewer
 		zoomer.setMouseMask(PConstants.SHIFT);
 		centroid = new Smoother3D(0.9f); 
 		physics  = new ParticleSystem(0, 0.75f);    // No gravity with .75 drag.
-		nodes = new HashMap<Node, Particle>();
-		edges = new HashMap<Edge, Spring>();
-		stakes = new HashMap<Node,Particle>();
+		nodes = new HashMap<N, Particle>();
+		edges = new HashMap<E, Spring>();
+		stakes = new HashMap<N,Particle>();
 		tethers = new HashMap<Particle,Spring>();
 		this.width = width;
 		this.height = height;
@@ -126,9 +130,9 @@ public class ParticleViewer
 			parent.stroke(0,180);
 			parent.noFill();
 
-			for (Map.Entry<Edge,Spring> row: edges.entrySet() )
+			for (Map.Entry<E,Spring> row: edges.entrySet() )
 			{
-				Edge edge = row.getKey();
+				E edge = row.getKey();
 				Spring spring = row.getValue();
 				Vector3D p1 = spring.getOneEnd().position();
 				Vector3D p2 = spring.getTheOtherEnd().position();
@@ -141,9 +145,9 @@ public class ParticleViewer
 		parent.noStroke();
 		parent.fill(120,50,50,180);
 
-		for (Map.Entry<Node,Particle> row: nodes.entrySet() )
+		for (Map.Entry<N,Particle> row: nodes.entrySet() )
 		{
-			Node node = row.getKey();
+			N node = row.getKey();
 			Vector3D p = row.getValue().position();
 			node.draw(parent, p.x(),p.y());
 		}
@@ -179,7 +183,7 @@ public class ParticleViewer
 	 *              each other, if negative they will repulse. The larger the magnitude the stronger the force.
 	 * @return True if the viewer contains the two nodes and a force between them has been created.
 	 */
-	public boolean addForce(Node node1, Node node2, float force)
+	public boolean addForce(N node1, N node2, float force)
 	{
 		return addForce(node1, node2, force, 0.1f);
 	}
@@ -193,7 +197,7 @@ public class ParticleViewer
 	 * @param minDistance Minimum distance within which no force is applied.
 	 * @return True if the viewer contains the two nodes and a force between them has been created.
 	 */
-	public boolean addForce(Node node1, Node node2, float force, float minDistance)
+	public boolean addForce(N node1, N node2, float force, float minDistance)
 	{
 		Particle p1 = nodes.get(node1);
 		if (p1 == null)
@@ -211,7 +215,7 @@ public class ParticleViewer
 		{
 			Attraction a = physics.getAttraction(i);
 			if (((a.getOneEnd() == p1) && (a.getTheOtherEnd() == p2)) ||
-					((a.getOneEnd() == p2) && (a.getTheOtherEnd() == p1)))
+				((a.getOneEnd() == p2) && (a.getTheOtherEnd() == p1)))
 			{
 				physics.removeAttraction(a);
 				break;
@@ -231,7 +235,7 @@ public class ParticleViewer
 	 * @param length The length of this spring (natural rest distance at which the two nodes would sit).
 	 * @return True if the viewer contains the two nodes and a spring between them has been created.
 	 */
-	public boolean addSpring(Node node1, Node node2, float length)
+	public boolean addSpring(N node1, N node2, float length)
 	{
 		return addSpring(node1,node2,length,SPRING_STRENGTH);
 	}
@@ -244,7 +248,7 @@ public class ParticleViewer
 	 * @param strength The strength of this new spring. 
 	 * @return True if the viewer contains the two nodes and a spring between them has been created.
 	 */
-	public boolean addSpring(Node node1, Node node2, float length, float strength)
+	public boolean addSpring(N node1, N node2, float length, float strength)
 	{
 		Particle p1 = nodes.get(node1);
 		if (p1 == null)
@@ -262,8 +266,8 @@ public class ParticleViewer
 		{
 			Spring spring = physics.getSpring(i);
 			if ((((spring.getOneEnd() == p1) && (spring.getTheOtherEnd() == p2)) ||
-					((spring.getOneEnd() == p2) && (spring.getTheOtherEnd() == p1))) &&
-					(spring.strength() != EDGE_STRENGTH))
+				((spring.getOneEnd() == p2) && (spring.getTheOtherEnd() == p1))) &&
+				(spring.strength() != EDGE_STRENGTH))
 			{
 				physics.removeSpring(spring);
 				break;
@@ -280,7 +284,7 @@ public class ParticleViewer
 	 *  @param strength Strength of the tether.
 	 *  @return True if the viewer contains the given node and it was tethered successfully.
 	 */
-	public boolean tether(Node node, float strength)
+	public boolean tether(N node, float strength)
 	{
 		Particle p1 = nodes.get(node);
     	if (p1 == null)
@@ -317,7 +321,7 @@ public class ParticleViewer
 	 * @param mass Mass to be given to the node.
 	 * @return True if the viewer contains the given node and its mass was set successfully.
 	 * /
-    public boolean setMass(Node node, float mass)
+    public boolean setMass(N node, float mass)
     {
     	Particle p = nodes.get(node);
     	if (p== null)
@@ -334,7 +338,7 @@ public class ParticleViewer
 	 * @param node The node for which the associated particle is to be retrieved. 
 	 * @return The particle representing the given node or null if it is not found.
 	 */
-	public Particle getParticle(Node node)
+	public Particle getParticle(N node)
 	{
 		return nodes.get(node);
 	}
@@ -346,7 +350,7 @@ public class ParticleViewer
 	 *  is down and isn't masked with a shift key used for zooming the display.
 	 *  @return The selected node or null if no node is currently selected.
 	 */
-	public Node getSelectedNode()
+	public N getSelectedNode()
 	{
 		return selectedNode;
 	}
@@ -356,7 +360,7 @@ public class ParticleViewer
 	 *  @param y y screen coordinate to query
 	 *  @return Node nearest to the given screen coordinates or null if no nodes in the particle viewer.
 	 */
-	public Node getNearest(float x, float y)
+	public N getNearest(float x, float y)
 	{
 		return getNearest(x,y,-1);
 	}
@@ -368,17 +372,17 @@ public class ParticleViewer
 	 *  @param radius Radius within which to search for nodes. If negative, all nodes are searched.
 	 *  @return Node nearest to the given screen coordinates or null if no nodes found within the given radius of the coordinates.
 	 */
-	public Node getNearest(float x, float y, float radius)
+	public N getNearest(float x, float y, float radius)
 	{
 		float mX = (x - width/2)/centroid.z() + centroid.x();
 		float mY = (y - height/2)/centroid.z() + centroid.y();
 
 		float nearestDSq = radius*radius;
-		Node nearestNode = null;
+		N nearestNode = null;
 
-		for (Map.Entry<Node,Particle> row: nodes.entrySet())
+		for (Map.Entry<N,Particle> row: nodes.entrySet())
 		{
-			Node node = row.getKey();
+			N node = row.getKey();
 			Particle p = row.getValue();
 
 			float px = p.position().x();
@@ -396,7 +400,7 @@ public class ParticleViewer
 	/** Adds a node to those to be displayed in the viewer.
 	 * @param node Node to add to the viewer.
 	 */
-	public void addNode(Node node)
+	public void addNode(N node)
 	{
 		Particle p = physics.makeParticle(1, node.getLocation().x, node.getLocation().y, 0);
 		nodes.put(node,p);
@@ -409,7 +413,7 @@ public class ParticleViewer
 	 *  @return True if edge was added successfully. False if edge contains nodes that have not been
 	 *               added to the viewer.
 	 */
-	public boolean addEdge(Edge edge)
+	public boolean addEdge(E edge)
 	{
 		Particle p1 = nodes.get(edge.getNode1());
 		if (p1 == null)
@@ -433,7 +437,7 @@ public class ParticleViewer
 			float y2 = p2.position().y();
 			// Strength, damping, reset length
 			edges.put(edge, physics.makeSpring(p1, p2, 
-					EDGE_STRENGTH, DAMPING, (float)Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))));
+					  EDGE_STRENGTH, DAMPING, (float)Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2))));
 		}
 		return true;
 	}
@@ -445,7 +449,7 @@ public class ParticleViewer
 	 *  @return True if edge was added successfully. False if edge contains nodes that have not been
 	 *               added to the viewer.
 	 */
-	public boolean addEdge(Edge edge, float distance)
+	public boolean addEdge(E edge, float distance)
 	{
 		Particle p1 = nodes.get(edge.getNode1());
 		if (p1 == null)
@@ -517,9 +521,9 @@ public class ParticleViewer
 			{
 				float nearestDSq = Float.MAX_VALUE;
 
-				for (Map.Entry<Node,Particle> row: nodes.entrySet())
+				for (Map.Entry<N,Particle> row: nodes.entrySet())
 				{
-					Node node = row.getKey();
+					N node = row.getKey();
 					Particle p = row.getValue();
 
 					float px = p.position().x();
