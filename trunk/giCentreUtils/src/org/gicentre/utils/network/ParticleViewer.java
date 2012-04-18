@@ -23,7 +23,7 @@ import traer.physics.Vector3D;
  *  <a href="http://classic-web.archive.org/web/20060911111322/http://www.cs.princeton.edu/~traer/animation/">
  *  traer animation library</a> for smooth camera movement. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2, 18th April, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -95,6 +95,7 @@ public class ParticleViewer
 	 */
 	public void draw()
 	{
+		parent.pushStyle();
 		parent.pushMatrix();
 		zoomer.transform();
 		updateCentroid();
@@ -148,6 +149,7 @@ public class ParticleViewer
 		}
 
 		parent.popMatrix();
+		parent.popStyle();
 	}
 
 	/** Updates the positions of nodes and edges in the viewer. This method does not normally need
@@ -335,6 +337,60 @@ public class ParticleViewer
 	public Particle getParticle(Node node)
 	{
 		return nodes.get(node);
+	}
+	
+	/** Reports the currently selected node of null if no nodes selected. A selected node
+	 *  is one that has been clicked with the mouse and can be dragged once selected. This
+	 *  method can be useful when you wish to display some extra characteristics associated
+	 *  with a user-chosen node. Note that a node can only be selected while the mouse button 
+	 *  is down.
+	 *  @return The selected node or null if no node is currently selected.
+	 */
+	public Node getSelectedNode()
+	{
+		return selectedNode;
+	}
+	
+	/** Reports the node nearest to the given screen coordinates.
+	 *  @param x x screen coordinate to query
+	 *  @param y y screen coordinate to query
+	 *  @return Node nearest to the given screen coordinates or null if no nodes in the particle viewer.
+	 */
+	public Node getNearest(float x, float y)
+	{
+		return getNearest(x,y,-1);
+	}
+	
+	
+	/** Reports the node nearest to the given screen coordinates but within the given radius.
+	 *  @param x x screen coordinate to query
+	 *  @param y y screen coordinate to query
+	 *  @param radius Radius within which to search for nodes. If negative, all nodes are searched.
+	 *  @return Node nearest to the given screen coordinates or null if no nodes found within the given radius of the coordinates.
+	 */
+	public Node getNearest(float x, float y, float radius)
+	{
+		float mX = (x - width/2)/centroid.z() + centroid.x();
+		float mY = (y - height/2)/centroid.z() + centroid.y();
+
+		float nearestDSq = radius*radius;
+		Node nearestNode = null;
+
+		for (Map.Entry<Node,Particle> row: nodes.entrySet())
+		{
+			Node node = row.getKey();
+			Particle p = row.getValue();
+
+			float px = p.position().x();
+			float py = p.position().y();
+			float dSq = (px-mX)*(px-mX) + (py-mY)*(py-mY);
+			if (dSq < nearestDSq)
+			{
+				nearestDSq = dSq;
+				nearestNode = node;
+			}
+		}
+		return nearestNode;
 	}
 
 	/** Adds a node to those to be displayed in the viewer.
