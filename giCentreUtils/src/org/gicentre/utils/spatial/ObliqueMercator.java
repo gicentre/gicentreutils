@@ -9,7 +9,7 @@ import processing.core.PVector;
  *  <a href="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html target="new">
  *  Hotine Oblique Mercator</a> page. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2.2, 27th June, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -27,7 +27,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class ObliqueMercator
+public class ObliqueMercator implements MapProjection
 {
     // ---------------- Object and class variables ----------------
     
@@ -63,8 +63,7 @@ public class ObliqueMercator
           
     // ------------------------ Constructor -----------------------
 
-    /** Initialises the Oblique Mercator converter with the given ellipsoid and
-      * projection parameters. The forward transformation will be from Lat/long 
+    /** Initialises the Oblique Mercator converter with the given ellipsoid. The forward transformation will be from Lat/long 
       * to Oblique Merctor.  
       * @param ellipsoid to use in projection.
       */
@@ -192,9 +191,9 @@ public class ObliqueMercator
     {
         if (direction== FROM_LAT_LONG)
         {
-            return new String("Lat/long to Oblique Mercator transformation.");
+            return "Lat/long to Oblique Mercator transformation.";
         }
-        return new String("Oblique Mercator to lat/long transformation.");
+        return "Oblique Mercator to lat/long transformation.";
     }
     
     /** Indicates whether the transformation should use nearest neighbour (false)

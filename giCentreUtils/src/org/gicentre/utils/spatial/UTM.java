@@ -11,7 +11,7 @@ import processing.core.PVector;
  *  direction. This can be determined by passing a reasonably central longitude/latitude
  *  coordinate pair to the constructor.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.  
+ *  @version 3.2.2, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 
@@ -29,7 +29,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class UTM
+public class UTM implements MapProjection
 {
     // ---------------- Object and class variables ----------------
     
@@ -50,13 +50,12 @@ public class UTM
 
     // ------------------------ Constructor -----------------------
     
-    /** Initialises the UTM converter with the given ellipsoid and zone. It is
-      * assumed that if this constructor is called, the forward transformation 
-      * will be from UTM to longitude/latitude. 
-      * @param ellipsoid to use in projection.
-      * @param zoneNumber Zone number of UTM projection.
-      * @param zoneLetter Zone letter of UTM projection.
-      */
+    /** Initialises the UTM converter with the given ellipsoid and zone. The
+     *  forward transformation will be from UTM to longitude/latitude. 
+     *  @param ellipsoid to use in projection.
+     *  @param zoneNumber Zone number of UTM projection.
+     *  @param zoneLetter Zone letter of UTM projection.
+     */
     public UTM(Ellipsoid ellipsoid, int zoneNumber, char zoneLetter)
     {
         this.ellipsoid = ellipsoid;
@@ -67,8 +66,8 @@ public class UTM
     
     /** Initialises the UTM converter with the given ellipsoid. The initial
       * longitude/latitude location sets the default UTM zone. This can be changed by 
-      * calling the setZone() method. It is assumed that if this constructor
-      * is called, the forward transformation will be from longitude/latitude to UTM.  
+      * calling the setZone() method. The forward transformation will be from
+      * longitude/latitude to UTM.  
       * @param ellipsoid to use in projection.
       * @param lat Initial latitude coordinate.
       * @param lng Initial longitude coordinate.
@@ -83,9 +82,7 @@ public class UTM
     
     // ------------------------- Methods --------------------------
     
-    /** Performs a forward transform on the given location. The direction of the
-      * transformation (UTM to longitude/latitude or longitude/latitude to UTM) will
-      * depend on the constructor that was called. 
+    /** Performs a forward transform on the given location.
       * @param p Point coordinates to transform.
       * @return Transformed footprint.
       */     
@@ -98,9 +95,7 @@ public class UTM
         return UTMToLatLong(p);
     }
     
-    /** Performs an inverse UTM transform on the given location.  The direction of the
-      * transformation (UTM to Lat/long or lat/long to UTM) will depend on the
-      * constructor that was called. 
+    /** Performs an inverse UTM transform on the given location.
       * @param p Point coordinates to transform.
       * @return Transformed footprint.
       */     

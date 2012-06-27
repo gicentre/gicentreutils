@@ -9,7 +9,7 @@ import processing.core.PVector;
  *  <a href="http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c" target="_new">
  *  http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c</a>.
  *  @author Jo Wood, giCentre, City University London and T. Mittan.
- *  @version 3.2, 1st August, 2011.  
+ *  @version 3.2.2, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 
@@ -27,7 +27,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class AlbersEqualAreaConic
+public class AlbersEqualAreaConic implements MapProjection
 {
     // ---------------- Object and class variables ----------------
     
@@ -179,9 +179,9 @@ public class AlbersEqualAreaConic
     {
         if (direction== FROM_LAT_LONG)
         {
-            return new String("Lat/long to Albers conic equal area transformation.");
+            return "Lat/long to Albers conic equal area transformation.";
         }
-        return new String("Albers conic equal area to lat/long transformation."); 
+        return "Albers conic equal area to lat/long transformation."; 
     }
     
     /** Indicates whether the transformation should use nearest neighbour (false)

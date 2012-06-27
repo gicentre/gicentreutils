@@ -10,7 +10,7 @@ import processing.core.PVector;
  *  target="_new">www.ordnancesurvey.co.uk/oswebsite/gps/information/coordinatesystemsinfo/guidecontents</a>
  *  for details of the transformation.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2.2, 27th June, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -112,9 +112,9 @@ public class OSGB extends UTM
     {
         if (direction == FROM_LAT_LONG)
         {
-            return new String("Lat/long to Ordnance Survey GB National Grid transformation.");
+            return "Lat/long to Ordnance Survey GB National Grid transformation.";
         }
-        return new String("Ordnance Survey GB National Grid to lat/long transformation.");
+        return "Ordnance Survey GB National Grid to lat/long transformation.";
     }
     
     
