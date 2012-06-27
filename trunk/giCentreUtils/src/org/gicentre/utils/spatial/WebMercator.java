@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  assuming a spherical rather than ellipsoidal figure of the earth. Used for transforming
  *  to/from projected GoogleMaps, OpenStreetMaps and BingMaps.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2.2, 27th June, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -25,7 +25,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class WebMercator
+public class WebMercator implements MapProjection
 {
     // --------------------- Object and class variables ---------------------
     

@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  conic projection divided into one of 4 zones, plus a modified zone II projection for 
  *  national maps. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.  
+ *  @version 3.2.2, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 
@@ -25,7 +25,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class FrenchNTF
+public class FrenchNTF implements MapProjection
 {
     // --------------------- Object and class variables ---------------------
     
@@ -298,9 +298,9 @@ public class FrenchNTF
     {
         if (direction == FROM_LAT_LONG)
         {
-            return new String("Lat/long to French NTF National Grid transformation.");
+            return "Lat/long to French NTF National Grid transformation.";
         }
-        return new String("French NTF National Grid to lat/long transformation.");
+        return "French NTF National Grid to lat/long transformation.";
     }
     
     /** Indicates whether the transformation should use nearest neighbour (false)

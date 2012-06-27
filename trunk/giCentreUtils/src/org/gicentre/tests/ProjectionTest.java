@@ -1,15 +1,14 @@
 package org.gicentre.tests;
 
-import org.gicentre.utils.spatial.WebMercator;
-
+import java.util.ArrayList;
+import org.gicentre.utils.spatial.*;			// For Map projections.
 import processing.core.PVector;
-
 import junit.framework.TestCase;
 
 //  ****************************************************************************************
 /** Set of unit tests for projection conversion.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.2.2, 27th June, 2012.
  */ 
 // *****************************************************************************************
 
@@ -30,8 +29,6 @@ import junit.framework.TestCase;
 public class ProjectionTest extends TestCase
 {    
 
-	private PVector[] geoCoords;
-	
 	private PVector[] oubGeoCoords;		// Out of bounds geographic coordinates.
 
 	// ---------------------------------- Methods ----------------------------------
@@ -40,9 +37,6 @@ public class ProjectionTest extends TestCase
 	 */
 	protected void setUp()
 	{
-		geoCoords = new PVector[] {new PVector(0,0),     new PVector(0,52),                    new PVector(180,80), 
-				                   new PVector(-180,80), new PVector(-0.0377655f, 51.528625f), new PVector(-100.33333f, 24.381787f)};
-		
 		oubGeoCoords = new PVector[] { new PVector(0,-91), new PVector(0,91), new PVector(-180.001f,0), new PVector(180.00001f,0)};
 	}
 
@@ -55,18 +49,107 @@ public class ProjectionTest extends TestCase
 
 	// --------------------------------- Test methods -------------------------------
 
-	/** Checks that forward and inverse transformations of the Web Mercator conversion
+	/** Checks that forward and inverse transformations for the various Albers projection
+	 *  round trips (start and end coordinates are equal).
+	 */
+	public void testAlbers()
+	{
+		PVector[] geoCoords = new PVector[] {new PVector(-165,65),		// Western Alaska.
+											 new PVector(-180,52),		// Bering Straights.
+											 new PVector(-127,59),		// Northern BC.
+											 new PVector(-157,20),		// Hawaii
+											 new PVector(-98,26),		// Southern Texas
+											 new PVector(-68,45),		// NE US
+											 new PVector(-99,39)};		// Kansas
+
+		ArrayList<MapProjection> projs = new ArrayList<MapProjection>();
+		projs.add(new AlbersBC());
+		projs.add(new AlbersUS());
+		projs.add(new AlbersUSCont());
+
+		for (MapProjection proj : projs)
+		{
+			System.out.println("\n"+proj.getDescription());
+			for (PVector geo : geoCoords)
+			{
+				roundTrip(proj, geo);
+			}
+		}
+	}
+
+	/** Checks that forward and inverse transformations for European projections
+	 *  complete a round trip (start and end coordinates are equal).
+	 */
+	public void testEuropean()
+	{
+		PVector[] geoCoords = new PVector[] {new PVector(2.5f,51), 			// Northern France
+											 new PVector(-4.8f,48.3f), 		// NW France
+											 new PVector(8,49), 			// Eastern France
+											 new PVector(2.9f,42),			// Southern France
+											 new PVector(8.5f,47.4f),		// Zurich
+											 new PVector(6,46.1f),			// Geneva
+											 new PVector(10.5f,46.9f)};		// Eastern Switzerland
+
+		ArrayList<MapProjection> projs = new ArrayList<MapProjection>();
+		projs.add(new FrenchNTF());
+		projs.add(new OSGB());
+		projs.add(new Swiss());
+
+		for (MapProjection proj : projs)
+		{
+			System.out.println("\n"+proj.getDescription());
+			for (PVector geo : geoCoords)
+			{
+				roundTrip(proj, geo);
+			}
+		}
+	}
+	
+	/** Checks that forward and inverse transformations for OSGB projections
+	 *  complete a round trip (start and end coordinates are equal).
+	 */
+	public void testOSGB()
+	{
+		PVector[] geoCoords = new PVector[] {new PVector(2.5f,51), 			// Northern France
+											 new PVector(-4.8f,48.3f), 		// NW France
+											 new PVector(8,49), 			// Eastern France
+											 new PVector(2.9f,42),			// Southern France
+											 new PVector(-5.3f,50),			// Cornwall
+											 new PVector(1.7f,52.7f),		// Norfolk
+											 new PVector(-4.8f,53.4f),		// Anglesey
+											 new PVector(-7.5f,57.6f),		// Western Isles
+											 new PVector(-0.9f,60.8f),		// Shetland
+											 new PVector(8.5f,47.4f),		// Zurich
+											 new PVector(6,46.1f),			// Geneva
+											 new PVector(10.5f,46.9f)};		// Eastern Switzerland
+
+		ArrayList<MapProjection> projs = new ArrayList<MapProjection>();
+		projs.add(new OSGB());
+	
+		for (MapProjection proj : projs)
+		{
+			System.out.println("\n"+proj.getDescription());
+			for (PVector geo : geoCoords)
+			{
+				roundTrip(proj, geo);
+			}
+		}
+	}
+
+	/** Checks that forward and inverse transformations for the Web mercator projection
 	 *  complete a round trip (start and end coordinates are equal).
 	 */
 	public void testWebMercator()
 	{
-		WebMercator webMerc = new WebMercator();
+		MapProjection proj = new WebMercator();
+		System.out.println("\n"+proj.getDescription());
+
+		PVector[] geoCoords = new PVector[] {new PVector(0,0),     new PVector(0,52),                    new PVector(170,80), 
+											 new PVector(-170,80), new PVector(-170,-80),				 new PVector(170,-80),
+											 new PVector(-180,80), new PVector(-0.0377655f, 51.528625f), new PVector(-100.33333f, 24.381787f)};
 		for (PVector geo : geoCoords)
 		{
-			PVector scr = webMerc.transformCoords(geo);
-			PVector end = webMerc.invTransformCoords(scr);
-			System.out.println("lng="+geo.x+" lat="+geo.y+ "\t x="+(int)scr.x+" y="+(int)scr.y);
-			assertEquals(geo,end);
+			roundTrip(proj, geo);
 		}
 	}
 
@@ -79,5 +162,23 @@ public class ProjectionTest extends TestCase
 		{
 			assertNull(webMerc.transformCoords(geo));
 		}
+	}
+
+	/** Performs a round-trip test to check that an inverse transformation applied to 
+	 *  its forward equivalent takes the location back to the start.
+	 * @param proj Pojection to test.
+	 * @param geo Lat/long coordinate to test.
+	 */
+	private void roundTrip(MapProjection proj, PVector geo)
+	{
+		PVector scr = proj.transformCoords(geo);
+		PVector end = proj.invTransformCoords(scr);
+		float diffX = Math.abs(geo.x-end.x);
+		float diffY = Math.abs(geo.y-end.y);
+
+		System.out.println("    lng="+geo.x+" lat="+geo.y+ "\t x="+(int)scr.x+" y="+(int)scr.y+"\t [inv: lng="+end.x+" lat="+end.y+"]");
+
+		assertTrue(diffX < 0.001);
+		assertTrue(diffY < 0.001);
 	}
 }

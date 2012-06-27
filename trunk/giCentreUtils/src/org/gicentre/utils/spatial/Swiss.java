@@ -6,7 +6,7 @@ import processing.core.PVector;
 /** Class for representing the Swiss coordinate system. This is an oblique Mercator projection
  *  with a 90 degree azimuth, centre at the the old observatory at Bern and scale factor of 1.0. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2.2, 27th June, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -24,7 +24,7 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-public class Swiss
+public class Swiss implements MapProjection
 {
     // --------------------- Object and class variables ---------------------
     
@@ -179,9 +179,9 @@ public class Swiss
     {
         if (direction == FROM_LAT_LONG)
         {
-            return new String("Lat/long to Swiss National Grid transformation.");
+            return "Lat/long to Swiss National Grid transformation.";
         }
-        return new String("Swiss National Grid to lat/long transformation.");
+        return "Swiss National Grid to lat/long transformation.";
     }
     
     /** Indicates whether the transformation should use nearest neighbour (false)
