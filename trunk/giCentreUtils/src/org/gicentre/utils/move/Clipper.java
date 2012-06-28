@@ -56,6 +56,14 @@ public class Clipper
 	protected boolean enabled = true;
 	
 	// ------------------------------- Constructors --------------------------------
+	
+	/** Creates a new clipper that defaults to the bounds of the given sketch.
+	 *  @param applet Sketch in which to enable clipping.
+	 */
+	public Clipper(PApplet applet)
+	{
+		this(applet,0,0,applet.width,applet.height);
+	}
 
 	/** Creates a new Clipper instance capable of limiting all drawing to within the given rectangular bounds.
 	 *  Clipping is enabled by default, but not active.
@@ -98,7 +106,7 @@ public class Clipper
 
 	/** Starts clipping all drawn content to the screen bounds of the current clip area.
 	 *  If startClipping for the current clipper is called before stopClipping somewhere else,
-	 *  an exception is thrown in order to force the developer keeping the code clear.
+	 *  an exception is thrown.
 	 */
 	public void startClipping() 
 	{
@@ -200,7 +208,7 @@ public class Clipper
 
 	/** Determines whether or not clipping is enabled.
 	 *  If enabled is false, no clipping happens between startClipping() and stopClipping() (startClipping is ignored).
-	 *  If called during clipping, clipping stops automatically.
+	 *  If called with enabled=false during clipping, clipping is stopped.
 	 */
 	public void setEnabled(boolean enabled) 
 	{
