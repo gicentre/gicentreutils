@@ -90,17 +90,20 @@ public class ChartTest extends PApplet
         
         chart2 = new XYChart(this);
         
-        float[] xData = new float[]{2,4,6,8,12,14,15,16,23};
-        float[] yData = new float[]{6.0f,7.2f,5.8f,4.3f,2.1f,3.5f,6.8f,6.2f,5.8f};
+        //float[] xData = new float[]{2,4,6,8,12,14,15,16,23};
+        //float[] yData = new float[]{6.0f,7.2f,5.8f,4.3f,2.1f,3.5f,6.8f,6.2f,5.8f};
+        
+        float[] xData = new float[]{-130,-120,-110,-100,-90,-80,-70,-60,-50};
+        float[] yData = new float[]{0.01f,0.02f,0.03f,0.05f,0.04f,0.035f,0.02f,0.015f,0.01f};
         float[] sizeData = new float[]{1,10,4,20,13,6,2,8,6};
         chart2.setData(xData, yData);
         chart2.showXAxis(showXAxis);
         chart2.showYAxis(showYAxis);
-        chart2.setMinX(0);
+        //chart2.setMinX(0);
         chart2.setMinY(0);
         chart2.setXFormat("###,###.###");
         chart2.setPointSize(10);
-        chart2.setYFormat("0.0");
+        //chart2.setYFormat("0.0");
         //chart2.setPointColour(color(40,50,160));
         chart2.setPointColour(xData, ColourTable.getPresetColourTable(ColourTable.BLUES,0,23));
         chart2.setPointSize(sizeData, 16);

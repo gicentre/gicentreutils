@@ -61,12 +61,19 @@ public class ParticleViewerTest extends PApplet
 			nodes[i] = new MyNode((float)Math.random()*1000,(float)Math.random()*1000);
 			viewer.addNode(nodes[i]);
 		}
-		
+				
 		// Add some random edges.
 		for (int i=0; i<nodes.length; i++)
 		{
-			int index2 = (int)(Math.random()*nodes.length/10);
+			int index2;
+			do
+			{
+				index2 = (int)(Math.random()*nodes.length/10);
+			}
+			while (index2 == i);
+					
 			viewer.addEdge(new Edge(nodes[i],nodes[index2]));
+			
 		}
 	}
 

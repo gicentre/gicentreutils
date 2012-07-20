@@ -5,21 +5,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gicentre.utils.move.ZoomPan;
+//import org.gicentre.utils.network.traer.physics.Attraction;
+//import org.gicentre.utils.network.traer.physics.Particle;
+//import org.gicentre.utils.network.traer.physics.ParticleSystem;
+//import org.gicentre.utils.network.traer.physics.Spring;
+//import org.gicentre.utils.network.traer.physics.Vector3D;
 
-import processing.core.PApplet;
-import processing.core.PConstants;
-import traer.animation.Smoother3D;
 import traer.physics.Attraction;
 import traer.physics.Particle;
 import traer.physics.ParticleSystem;
 import traer.physics.Spring;
 import traer.physics.Vector3D;
 
+import processing.core.PApplet;
+import processing.core.PConstants;
+import traer.animation.Smoother3D;
+
 // *****************************************************************************************
 /** Allows particles to be viewed and animated. Suitable for spring embedded / force directed
  *  layouts for arranging networks and other collections of interacting objects. Note this
- *  class relies on the <a href="http://murderandcreate.com/physics/">traer physics library</a>
- *  for particle management and the 
+ *  class relies on the 
  *  <a href="http://classic-web.archive.org/web/20060911111322/http://www.cs.princeton.edu/~traer/animation/">
  *  traer animation library</a> for smooth camera movement. 
  *  @param <N> Type of node to be stored in the particle viewer. This can be a <code>Node</code>
@@ -27,7 +32,7 @@ import traer.physics.Vector3D;
  *  @param <E> Type of edge to be stored in the particle viewer. This can be an <code>Edge</code>
  *             or any specialised subclass of it.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 18th April, 2012. 
+ *  @version 3.2, 10th June, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -54,12 +59,12 @@ public class ParticleViewer<N extends Node, E extends Edge>
 	private Smoother3D centroid;      		   // For smooth camera centring.
 	private int width,height;		  		   // Dimensions of the drawable area.
 	private boolean isPaused;		  		   // Controls whether or not the particles animate.
-	private HashMap<N, Particle> nodes;	   // The graph nodes to be drawn.
-	private HashMap<E, Spring> edges;	   // The graph edges to be drawn.
+	private HashMap<N, Particle> nodes;	   	   // The graph nodes to be drawn.
+	private HashMap<E, Spring> edges;	   	   // The graph edges to be drawn.
 	private HashMap<N, Particle> stakes;	   // Fixed particles for tethering a node to its location.
 	private HashMap<Particle, Spring> tethers; // Tethers between a node and its location.
 	private ZoomPan zoomer;           		   // For interactive zooming and panning.
-	private N selectedNode;		 		   // Optionally selected node for query or interaction.
+	private N selectedNode;		 		   	   // Optionally selected node for query or interaction.
 
 								/** Default strength for all edges. */
 	public static final float EDGE_STRENGTH   = 1;
@@ -335,8 +340,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 
 	/** Provides the particle associated with the given node. This can be used for advanced 
 	 *  configuration of the node's behaviour in a force-directed layout.
-	 * @param node The node for which the associated particle is to be retrieved. 
-	 * @return The particle representing the given node or null if it is not found.
+	 *  @param node The node for which the associated particle is to be retrieved. 
+	 *  @return The particle representing the given node or null if it is not found.
 	 */
 	public Particle getParticle(N node)
 	{

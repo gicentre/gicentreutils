@@ -6,7 +6,7 @@ import processing.core.PApplet;
 import processing.core.PVector;
 
 
-//*****************************************************************************************
+// *****************************************************************************************
 /** Represents a node in a network graph structure. This class has a default drawing 
  *  behaviour, but by inheriting it and overriding its draw() method, visual appearance of
  *  the node can be customised.

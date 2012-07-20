@@ -57,7 +57,7 @@ public class Clipper
 	
 	// ------------------------------- Constructors --------------------------------
 	
-	/** Creates a new clipper that defaults to the bounds of the given sketch.
+	/** Creates a new clipper set to the bounds of the given sketch.
 	 *  @param applet Sketch in which to enable clipping.
 	 */
 	public Clipper(PApplet applet)
