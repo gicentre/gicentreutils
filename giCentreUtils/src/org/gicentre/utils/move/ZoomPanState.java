@@ -94,6 +94,14 @@ public class ZoomPanState implements Cloneable{
 		return new PVector(pDisp.x,pDisp.y); 
 	}
 	
+	public PVector getCoordToDisp(double x, double y)
+	{
+		Point2D.Double pDisp = new Point2D.Double();
+		Point2D.Double pCoord = new Point2D.Double(x,y);
+		trans.transform(pCoord,pDisp);
+		return new PVector((float)pDisp.x,(float)pDisp.y); 
+	}
+	
 	/** Performs the zooming/panning transformation. This method should be called in the
 	 *  draw() method before any drawing that is to be zoomed or panned. 
 	 */	public void transform()
