@@ -33,19 +33,14 @@ public class WordWrapper {
 
 	
 	/** Works out where a string of text needs to wrap to fit into a given width
-	 * in pixels and returns as a list of string, each of which will not exceed
-	 * the given width.
-	 * 
-	 * The advantage over using Processing's draw(text,x,y,w,h) is that the number of
-	 * lines that result is known.
-	 * 
+	 *  in pixels and returns as a list of string, each of which will not exceed
+	 *  the given width. The advantage over using Processing's draw(text,x,y,w,h)
+	 *  is that the number of lines that result is known.
+	 * <br />
 	 * \t characters are converted to single spaces
 	 * \n are honoured
-	 * 
-	 * Uses the sketch's current textFont and textSize
-	 * 
-	 * Wraps on ' ' and '-'
-	 * 
+	 * <br />
+	 * Uses the sketch's current textFont and textSize. Wraps on ' ' and '-'.
 	 * @param text Text to wrap
 	 * @param width Width to wrap text to
 	 * @param sketch The sketch (uses current font)
@@ -58,27 +53,22 @@ public class WordWrapper {
 	
 	/** Works out where a string of text needs to wrap to fit into a given width
 	 * in pixels and returns as a list of string, each of which will not exceed
-	 * the given width.
-	 * 
-	 * The advantage over using Processing's draw(text,x,y,w,h) is that the number of
-	 * lines that result is known.
-	 * 
+	 * the given width. The advantage over using Processing's draw(text,x,y,w,h) is that 
+	 * the number of lines that result is known.
+	 * <br />
 	 * \t characters are converted to single spaces
 	 * \n are honoured
-	 * 
-	 * Uses pGraphics' current textFont and textSize
-	 * 
-	 * Wraps on ' ' and '-'
-	 * 
-	 * @param text Text to wrap
-	 * @param width Width to wrap text to
-	 * @param pGraphics The sketch
-	 * @return List of lines that will not exceed width
+	 * <br />
+	 * Uses pGraphics' current textFont and textSize. Wraps on ' ' and '-'.
+	 * @param textToWrap Text to wrap.
+	 * @param width Width to wrap text to.
+	 * @param pGraphics The graphic context doing the text drawing.
+	 * @return List of lines that will not exceed width.
 	 */
-	public static List<String> wordWrap(String text, int width, PGraphics pGraphics) {
+	public static List<String> wordWrap(String textToWrap, int width, PGraphics pGraphics) {
 
 		//Add a new line char to the end
-		text+='\n';
+		String text = textToWrap +'\n';
 		
 		ArrayList<String> wrappedLines=new ArrayList<String>();
 		int idxInOriginalString=0;
@@ -143,90 +133,84 @@ public class WordWrapper {
 
 			idxInOriginalString++;
 		}
-		
 		return wrappedLines;
 	}
 	
-
 	/** Tokenises the input string and return a list of these tokens and where they should be
 	 * drawn. Wraps text to the given width and tokenises the string according to the token
 	 * information embedded and so that tokens do not run over multiple lines. 
-	 * 
+	 * <br />
 	 * Designed for:
 	 *   - colouring different words/phrases in a paragraph in different colours
 	 *   - facilitating mouse interaction with words/phrase inline in a paragraph
-	 *   
+	 *  <br /> 
 	 * Embedded token information takes the form of a string in curly brackets inline in the
 	 * supplied text. The string identifies the token in the return WrappedTokens.
-	 * 
+	 * <br />
 	 * For example:
-	 * 
-	 *        "{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
-	 *         {adjective}lazy{other} dog";
-	 *         
-     * ...results in a series of tokens that do not straddle lines and are identified as "other"
+	 * <br />
+	 * <code>       "{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
+	 *         {adjective}lazy{other} dog";</code>
+	 * <br /> 
+     * results in a series of tokens that do not straddle lines and are identified as "other"
      * or "adjective". Any strings can be used.
-     *
+     * <br />
      * The WrappedTokens returned contain the required information to draw them in the
      * correct place on the screen.
-     * 
-	 * Wraps on ' ' and '-'
+     * <br />
+	 * Wraps on ' ' and '-'.
      * Uses the sketch's current textFont, textSize, lextLeading (line spacing) and textAlign
      * The token positions returned can be used directly in the PApplet's text(text,x,y) method.
-     * 
-	 * @param text The text to tokenise
-	 * @param x x
-	 * @param y y
-	 * @param width with to wrap text to
-	 * @param sketch The sketch
-	 * @return List of WrappedTokens that contain the information required to display these on screen
+	 * @param text The text to tokenise.
+	 * @param x The x position of the text block placement.
+	 * @param y The y position of the text block placement.
+	 * @param width The width of the area within which to wrap text.
+	 * @param sketch The sketch doing the text drawing.
+	 * @return List of WrappedTokens that contain the information required to display these on screen.
 	 */
 	public static List<WrappedToken> wordWrapAndTokenise(String text, float x, float y, float width, PApplet sketch) {
 		return wordWrapAndTokenise(text, x, y, width, sketch.g);
 	}
 	
-	
-
 	/** Tokenises the input string and return a list of these tokens and where they should be
 	 * drawn. Wraps text to the given width and tokenises the string according to the token
 	 * information embedded and so that tokens do not run over multiple lines. 
-	 * 
+	 * <br />
 	 * Designed for:
 	 *   - colouring different words/phrases in a paragraph in different colours
 	 *   - facilitating mouse interaction with words/phrase inline in a paragraph
-	 *   
+	 * <br />
 	 * Embedded token information takes the form of a string in curly brackets inline in the
 	 * supplied text. The string identifies the token in the return WrappedTokens.
-	 * 
+	 * <br />
 	 * For example:
-	 * 
-	 *        "{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
-	 *         {adjective}lazy{other} dog";
-	 *         
-     * ...results in a series of tokens that do not straddle lines and are identified as "other"
+	 * <br />
+	 * <code>       "{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
+	 *         {adjective}lazy{other} dog";</code>
+	 * <br />
+     * results in a series of tokens that do not straddle lines and are identified as "other"
      * or "adjective". Any strings can be used.
-     *
+     * <br />
      * The WrappedTokens returned contain the required information to draw them in the
      * correct place on the screen.
-     * 
-  	 * Wraps on ' ' and '-'
-     * Uses the pGraphics's current textFont, textSize, lextLeading (line spacing) and textAlign
+     * <br />
+  	 * Wraps on ' ' and '-'.
+     * Uses the pGraphics's current textFont, textSize, textLeading (line spacing) and textAlign
      * The token positions returned can be used directly in the PApplet's text(text,x,y) method.
-     * 
-	 * @param text The text to tokenise
-	 * @param x x
-	 * @param y y
-	 * @param maxX with to wrap text to
-	 * @param pGraphics A pGraphics
+	 * @param textToTokenize The text to tokenise.
+	 * @param x x position of the text placement.
+	 * @param y y position of the text placement.
+	 * @param width Width within to wrap text.
+	 * @param pGraphics Graphics context doing the text drawing.
 	 * @return List of WrappedTokens that contain the information required to display these on screen
 	 */
-	public static List<WrappedToken> wordWrapAndTokenise(String s, float x, float y, float width, PGraphics pGraphics) {
+	public static List<WrappedToken> wordWrapAndTokenise(String textToTokenize, float x, float y, float width, PGraphics pGraphics) {
 		float maxX=x+width;
 		
-		s+='\n';//add new line char to end
+		String text = textToTokenize+'\n';		//add new line char to end
 		ArrayList<WrappedToken> wrappedTokens=new ArrayList<WrappedToken>();
 		int idxInOriginalString=0;
-		int lengthOriginalString=s.length();
+		int lengthOriginalString=text.length();
 		StringBuffer currentLine=new StringBuffer();
 		StringBuffer currentWord=new StringBuffer();
 		float curX=x;
@@ -240,7 +224,7 @@ public class WordWrapper {
 		
 		//keep going, char by char, until whole string done
 		while(idxInOriginalString<lengthOriginalString){
-			char ch=s.charAt(idxInOriginalString);
+			char ch=text.charAt(idxInOriginalString);
 			boolean wrapIfNeeded=false;
 			boolean forceNewLine=false;
 
@@ -248,16 +232,16 @@ public class WordWrapper {
 			if (ch=='{'){
 				nextStringID="";
 				idxInOriginalString++;
-				ch=s.charAt(idxInOriginalString);
+				ch=text.charAt(idxInOriginalString);
 				while (ch!='}' && idxInOriginalString<lengthOriginalString){
 					nextStringID+=ch;
 					idxInOriginalString++;
 					if (idxInOriginalString<lengthOriginalString)
-						ch=s.charAt(idxInOriginalString);
+						ch=text.charAt(idxInOriginalString);
 				}
 				idxInOriginalString++;
 				if (idxInOriginalString<lengthOriginalString)
-					ch=s.charAt(idxInOriginalString);
+					ch=text.charAt(idxInOriginalString);
 
 				//Create new token, using previous id
 				//But first check whether the most recent word needs to wrap

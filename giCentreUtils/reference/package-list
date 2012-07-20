@@ -1,4 +1,3 @@
-org.gicentre.tests
 org.gicentre.utils
 org.gicentre.utils.colour
 org.gicentre.utils.geom
@@ -9,3 +8,4 @@ org.gicentre.utils.multisketch
 org.gicentre.utils.network
 org.gicentre.utils.spatial
 org.gicentre.utils.stat
+org.gicentre.utils.text
