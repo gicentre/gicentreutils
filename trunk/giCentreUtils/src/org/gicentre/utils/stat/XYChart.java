@@ -275,6 +275,7 @@ public class XYChart extends AbstractChart
         	{
         		showSingleOriginValue = true;
         	}
+  
         	int firstTic = showSingleOriginValue?1:0;
 
         	// Draw axes if requested.
@@ -327,17 +328,25 @@ public class XYChart extends AbstractChart
         				float logTic = logTics[0][i];
         				float tic = (float)Math.pow(10,logTic);
 
-        				if (tic <= getMax(0))
+        				if ((tic >= getMin(0)) && (tic <= getMax(0)))
         				{
         					if (transposeAxes)
         					{
-        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-        						graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMaxLog(0)-logTic)/(getMaxLog(0)-getMinLog(0)));
+        						float ticOffset = vRange*(getMaxLog(0)-logTic)/(getMaxLog(0)-getMinLog(0));
+        						if (ticOffset >= 0)
+        						{
+        							graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        							graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +ticOffset);
+        						}
         					}
         					else
         					{
-        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-        						graphics.text(axisFormatter[0].format(tic),left +hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0)),axisPosition+2);
+        						float ticOffset = hRange*(logTic-getMinLog(0))/(getMaxLog(0)-getMinLog(0));
+        						if (ticOffset >=0)
+        						{
+        							graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        							graphics.text(axisFormatter[0].format(tic),left+ticOffset,axisPosition+2);
+        						}
         					}
         				}
         			}   
@@ -347,17 +356,25 @@ public class XYChart extends AbstractChart
         			for (int i=firstTic; i<tics[0].length; i++)
         			{
         				float tic = tics[0][i];
-        				if (tic <= getMax(0))
+        				if ((tic >= getMin(0)) && (tic <= getMax(0)))
         				{
         					if (transposeAxes)
         					{
-        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-        						graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +vRange*(getMax(0)-tic)/(getMax(0)-getMin(0)));
+        						float ticOffset = vRange*(getMax(0)-tic)/(getMax(0)-getMin(0));
+        						if (ticOffset >=0)
+        						{
+        							graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        							graphics.text(axisFormatter[0].format(tic),axisPosition-2,top +ticOffset);
+        						}
         					}
         					else
         					{
-        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-        						graphics.text(axisFormatter[0].format(tic),left +hRange*(tic-getMin(0))/(getMax(0)-getMin(0)),axisPosition+2);
+        						float ticOffset = hRange*(tic-getMin(0))/(getMax(0)-getMin(0));
+        						if (ticOffset >=0)
+        						{
+        							graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        							graphics.text(axisFormatter[0].format(tic),left +ticOffset,axisPosition+2);
+        						}
         					}
         				}
         			}
@@ -430,17 +447,25 @@ public class XYChart extends AbstractChart
         		for (int i=firstTic; i<tics[1].length; i++)
         		{
         			float tic = tics[1][i];
-        			if (tic <= getMax(1))
+        			if ((tic >= getMin(1)) && (tic <= getMax(1)))
         			{
         				if (transposeAxes)
         				{
-        					graphics.textAlign(PConstants.CENTER, PConstants.TOP);
-        					graphics.text(axisFormatter[1].format(tic),left +hRange*(tic-getMin(1))/(getMax(1)-getMin(1)),axisPosition+textHeight/2 -2);
+        					float ticOffset = hRange*(tic-getMin(1))/(getMax(1)-getMin(1));
+        					if (ticOffset >= 0)
+        					{
+        						graphics.textAlign(PConstants.CENTER, PConstants.TOP);
+        						graphics.text(axisFormatter[1].format(tic),left +ticOffset,axisPosition+textHeight/2 -2);
+        					}
         				}
         				else
         				{
-        					graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
-        					graphics.text(axisFormatter[1].format(tic),axisPosition-2,top +vRange*(getMax(1)-tic)/(getMax(1)-getMin(1)));
+        					float ticOffset = vRange*(getMax(1)-tic)/(getMax(1)-getMin(1));
+        					if (ticOffset >=0)
+        					{
+        						graphics.textAlign(PConstants.RIGHT, PConstants.CENTER);
+        						graphics.text(axisFormatter[1].format(tic),axisPosition-2,top +ticOffset);
+        					}
         				}
         			}
         		}
