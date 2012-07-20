@@ -94,7 +94,7 @@ public class TextInput
 
         // Draw caret.
         parent.strokeWeight(0.5f);
-        parent.stroke(200);
+        parent.stroke(parent.g.fillColor);
         float caretX = x + parent.textWidth(activeLine.substring(0,caretPos));
         parent.line(caretX,yPos,caretX,yPos+lineHeight);
 

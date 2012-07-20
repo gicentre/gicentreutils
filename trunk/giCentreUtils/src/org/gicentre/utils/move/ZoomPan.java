@@ -765,8 +765,8 @@ public class ZoomPan
 	private void calcTransformation()
 	{    
 
-		float centreX = (float)(zoomPanState.getGraphics().width*(1-zoomPanState.zoomScale))/2;
-		float centreY = (float)(zoomPanState.getGraphics().height*(1-zoomPanState.zoomScale))/2;
+		double centreX = (zoomPanState.getGraphics().width*(1-zoomPanState.zoomScale))/2;
+		double centreY = (zoomPanState.getGraphics().height*(1-zoomPanState.zoomScale))/2;
 
 		zoomPanState.trans = new AffineTransform();
 		zoomPanState.iTrans = new AffineTransform();
