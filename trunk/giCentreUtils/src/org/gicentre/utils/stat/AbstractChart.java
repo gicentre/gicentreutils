@@ -493,12 +493,9 @@ public abstract class AbstractChart
             }
             else if (side == Side.LEFT)
             {
-                
-                //System.err.println("Finding left border using dimension "+dimension);
-                
                 borderL    = minBorder;
                 minBorderL = minBorder;
-                if (isVisible)
+                if ((isVisible) && (tics != null))
                 {
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
@@ -511,7 +508,7 @@ public abstract class AbstractChart
             {
                 borderR    = minBorder;
                 minBorderR = minBorder;
-                if (isVisible)
+                if ((isVisible) && (tics != null))
                 {
                     //  Update the border to accommodate largest label assuming horizontal text.
                     for (float tic : tics[dimension])
