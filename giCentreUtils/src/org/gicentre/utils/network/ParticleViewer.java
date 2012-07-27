@@ -5,17 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gicentre.utils.move.ZoomPan;
-//import org.gicentre.utils.network.traer.physics.Attraction;
+import org.gicentre.utils.network.traer.physics.*;
+
 //import org.gicentre.utils.network.traer.physics.Particle;
 //import org.gicentre.utils.network.traer.physics.ParticleSystem;
 //import org.gicentre.utils.network.traer.physics.Spring;
 //import org.gicentre.utils.network.traer.physics.Vector3D;
 
-import traer.physics.Attraction;
-import traer.physics.Particle;
-import traer.physics.ParticleSystem;
-import traer.physics.Spring;
-import traer.physics.Vector3D;
+//import traer.physics.Attraction;
+//import traer.physics.Particle;
+//import traer.physics.ParticleSystem;
+//import traer.physics.Spring;
+//import traer.physics.Vector3D;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
