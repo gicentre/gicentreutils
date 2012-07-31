@@ -1,5 +1,9 @@
 package org.gicentre.utils.network.traer.physics;
 
+import org.gicentre.utils.geom.Locatable;
+
+import processing.core.PVector;
+
 
 //  *****************************************************************************************
 /** Represents 3D vectors and the operations on them.  Most operations change the underlying
@@ -35,13 +39,14 @@ package org.gicentre.utils.network.traer.physics;
  * Artistic Licence: http://dev.perl.org/licenses/
  */
 
-public class Vector3D 
+public class Vector3D implements Locatable
 {
 	// -------------------------------- Object variables ----------------------------------
 	
 	private float x;			// The x component of the vector.
 	private float y;			// The y component of the vector.
 	private float z;			// The z component of the vector.
+	private PVector location;	// PVector representation for compatibility with Processing.
 
 	// ---------------------------------- Constructors -------------------------------------
 	
@@ -50,6 +55,17 @@ public class Vector3D
 	public Vector3D()
 	{ 
 		this(0,0,0); 
+	}
+	
+	/** Creates a 3D vector from the location defined in the given pVector.
+	 *  @param location Location information used to create this 3d vector.
+	 */
+	public Vector3D(final PVector location)
+	{ 
+		this.x = location.x;
+		this.y = location.y;
+		this.z = location.z; 
+		this.location = new PVector(x,y,z);
 	}
 	
 	/** Creates a 3D vector with the given x, y, z components.
@@ -62,6 +78,7 @@ public class Vector3D
 		this.x = x;
 		this.y = y;
 		this.z = z; 
+		location = new PVector(x,y,z);
 	}
 
 	/** Creates a new cloned 3D vector copied from the components of the given vector.
@@ -72,6 +89,7 @@ public class Vector3D
 	{
 		if (p!=null)
 		{ 
+			location = new PVector();
 			set(p.x, p.y, p.z); 
 		}
 		else 
@@ -278,7 +296,14 @@ public class Vector3D
 	{ 
 		return z; 
 	}
-
+	
+	/** Reports the location represented by this vector.
+	 *  @return Location represented by this vector.
+	 */
+	public PVector getLocation() 
+	{
+		return location;
+	}
 
 	/** Sets the x component and return this Vector3D after modification.
 	 *  @param x the new x component of this vector.
@@ -287,6 +312,7 @@ public class Vector3D
 	public final Vector3D setX(float x)
 	{ 
 		this.x = x; 
+		location.x = x;
 		return this; 
 	}
 	
@@ -297,6 +323,7 @@ public class Vector3D
 	public final Vector3D setY(float y)
 	{ 
 		this.y = y; 
+		location.y = y;
 		return this; 
 	}
 	
@@ -306,7 +333,8 @@ public class Vector3D
 	 */
 	public final Vector3D setZ(float z)
 	{
-		this.z = z; 
+		this.z = z;
+		location.z = z;
 		return this; 
 	}
 	
@@ -316,7 +344,7 @@ public class Vector3D
 	 * @param z the desired z component of this vector.
 	 * @return this Vector3D, after modification.
 	 */
-	public final Vector3D set( float x, float y, float z)
+	public final Vector3D set(float x, float y, float z)
 	{ 
 		return setX(x).setY(y).setZ(z); 
 	}
@@ -491,6 +519,9 @@ public class Vector3D
 		x = 0; 
 		y = 0; 
 		z = 0;
+		location.x = 0;
+		location.y = 0;
+		location.z = 0;
 	}
 
 	/** Provides a textual representation of this vector.
@@ -498,7 +529,7 @@ public class Vector3D
 	 */
 	public final String toString() 
 	{ 
-		return new String( "(" + x + ", " + y + ", " + z + ")" ); 
+		return new String("(" + x + ", " + y + ", " + z + ")"); 
 	}
 
 	/** Creates a new Vector3D from this and the cross product with the given vector.
@@ -566,5 +597,4 @@ public class Vector3D
 		}
 		return true;
 	}
-
 }

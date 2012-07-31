@@ -1,6 +1,5 @@
 package org.gicentre.tests.network;
 
-//import traer.physics.*;
 import org.gicentre.utils.network.traer.physics.Particle;
 import org.gicentre.utils.network.traer.physics.ParticleSystem;
 

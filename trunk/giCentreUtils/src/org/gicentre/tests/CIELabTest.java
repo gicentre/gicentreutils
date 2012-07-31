@@ -7,12 +7,12 @@ import org.gicentre.utils.colour.ColourConverter.WhitePoint;
 
 import processing.core.PVector;
 
-//  ****************************************************************************************
+//  *****************************************************************************************
 /** Tests the conversion to and from CIELab colour space.
  *  @author Jo Wood, giCentre, City University London.
  *  @version 3.2, 1st August, 2011.. 
  */ 
-// *****************************************************************************************
+//  *****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License

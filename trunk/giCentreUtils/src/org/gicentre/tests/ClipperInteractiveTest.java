@@ -32,9 +32,7 @@ public class ClipperInteractiveTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
 
-	/** Creates a simple application to test the zooming and panning in Processing.
-	 *  Can be controlled with the left and right mouse buttons and 'R' to reset 
-	 *  quickly, and 'B' to do an animated reset with a small bounce.
+	/** Creates a simple application to test multiple clipping regions in a single sketch.
 	 *  @param args Command line arguments (ignored). 
 	 */
 	public static void main(String[] args)
@@ -50,7 +48,6 @@ public class ClipperInteractiveTest extends PApplet
 	private Tooltip tooltip;
 	private boolean showTooltip;
 
-	
 	// ---------------------------- Processing methods -----------------------------
 
     /** Sets up the sketch.

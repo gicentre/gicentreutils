@@ -265,15 +265,15 @@ public class ParticleSystem
 	 *  how strong this force can get close up.
 	 *  @param a First particle to be associated with the attraction.
 	 *  @param b Second particle to be associated with the attraction.
-	 *  @param k Strength of the attraction, postive to bring particles together, negative to repulse.
-	 *  @param minDistance Mininum distance below which the attraction is not applied.
+	 *  @param k Strength of the attraction, positive to bring particles together, negative to repulse.
+	 *  @param minDistance Minimum distance below which the attraction is not applied.
 	 *  @return The new attractive force.
 	 *  @throws NullPointerException if either of the particles is null.
 	 */
 	public final Attraction	makeAttraction(Particle a, Particle b, float k, float minDistance) throws NullPointerException 
 	{
-		Attraction m = new Attraction( a, b, k, minDistance );
-		attractions.add( m );
+		Attraction m = new Attraction(a, b, k, minDistance);
+		attractions.add(m);
 		return m;
 	}
 	
@@ -543,14 +543,14 @@ public class ParticleSystem
 	{
 		if (!gravity.isZero())
 		{
-			for (final Particle p : particles())
+			for (final Particle p : getParticles())
 			{
 				p.addForce(gravity).addForce(Vector3D.multiplyBy(p.velocity(), -drag));
 			}
 		} 
 		else 
 		{
-			for (final Particle p : particles()) 
+			for (final Particle p : getParticles()) 
 			{
 				p.addForce(Vector3D.multiplyBy(p.velocity(), -drag));
 			}
@@ -565,14 +565,17 @@ public class ParticleSystem
 		{
 			f.apply();
 		}
-		for (final AbstractForce f : customForces()) 
+		
+		for (final AbstractForce f : getCustomForces()) 
 		{
 			f.apply();
 		}
 	
 	}
 
-	/** Removes all forces from this particle system.
+	/** Removes all forces from this particle system. Unlike <code>clearAllForces()</code>, this
+	 *  will maintain the internal collections of springs, attractions and custom forces, but these
+	 *  remain unattached to any particular particles.
 	 */
 	protected final void clearForces() 
 	{ 
@@ -580,7 +583,17 @@ public class ParticleSystem
 		{
 			p.clearForce(); 
 		}
-	}	
+	}
+	
+	/** Removes all forces, springs and attractions from the particle system.
+	 */
+	public final void clearAllForces()
+	{
+		clearForces();
+		springs.clear();
+		attractions.clear();
+		customForces.clear();
+	}
 	
 	// -------------------------------- Private methods -----------------------------------
 	

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -19,7 +20,7 @@ import processing.core.PVector;
  *  a spatial query. Generally, the smaller the radius the quicker the retrieval.
  *  @param <E> Type of locatable objects stored in the hash grid.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2.1, 30th July, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -107,7 +108,8 @@ public class HashGrid<E extends Locatable> implements Set<E>
         this.numCols = (int)((maxX-minX)/(radius*2));
         this.numRows = (int)((maxY-minY)/(radius*2));
         hashMap = new HashMap<Integer,Collection<E>>();
-        set = new HashSet<E>();
+        //set = new HashSet<E>();
+        set = new LinkedHashSet<E>();
     }
 
     // --------------------------------- Methods ---------------------------------
@@ -509,5 +511,17 @@ public class HashGrid<E extends Locatable> implements Set<E>
 
         // Convert (col,row) coordinate into single unique hash number.
         return row*numCols + col;
+    }
+    
+    /** Provides the hqshgrid coordinates of the given location. This is not normally needed when using a hashgrid,
+     *  but is provided for debugging purposes.
+     * @param location The location to query.
+     * @return Hash grid coordinates in (column, row) order in which the given location sits.
+     */
+    public PVector getGridCoord(PVector location)
+    {
+    	int col = (int)(location.x*numCols/(maxX+1));
+        int row = (int)(location.y*numRows/(maxY+1));
+        return new PVector(col,row);
     }
 }
