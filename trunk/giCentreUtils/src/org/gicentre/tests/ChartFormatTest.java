@@ -1,18 +1,16 @@
 package org.gicentre.tests;
 
-import org.gicentre.utils.colour.ColourTable;
 import org.gicentre.utils.stat.BarChart;
 import org.gicentre.utils.stat.XYChart;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 
-//  ****************************************************************************************
+//  *****************************************************************************************
 /** Tests the formatting of chart values and categories.
  *  @author Jo Wood, giCentre, City University London.
  *  @version 3.2 29th April, 2012. 
  */ 
-// *****************************************************************************************
+//  *****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
