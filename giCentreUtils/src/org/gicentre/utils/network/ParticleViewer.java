@@ -217,7 +217,7 @@ public class ParticleViewer<N extends Node, E extends Edge>
 		}
 
 		// We may have to remove existing force if it exists between these two nodes.
-		for (int i=0; i<physics.numberOfAttractions(); i++)
+		for (int i=0; i<physics.getNumAttractions(); i++)
 		{
 			Attraction a = physics.getAttraction(i);
 			if (((a.getOneEnd() == p1) && (a.getTheOtherEnd() == p2)) ||
@@ -268,7 +268,7 @@ public class ParticleViewer<N extends Node, E extends Edge>
 		}
 
 		// We may have to remove existing spring if it exists between these two nodes.
-		for (int i=0; i<physics.numberOfSprings(); i++)
+		for (int i=0; i<physics.getNumSprings(); i++)
 		{
 			Spring spring = physics.getSpring(i);
 			if ((((spring.getOneEnd() == p1) && (spring.getTheOtherEnd() == p2)) ||
@@ -577,7 +577,7 @@ public class ParticleViewer<N extends Node, E extends Edge>
 		yMin = Float.POSITIVE_INFINITY, 
 		yMax = Float.NEGATIVE_INFINITY;
 
-		for (int i=0; i<physics.numberOfParticles(); ++i)
+		for (int i=0; i<physics.getNumParticles(); ++i)
 		{
 			Particle p = physics.getParticle(i);
 			xMax = Math.max(xMax, p.position().x());
