@@ -135,10 +135,10 @@ public abstract class TwoBodyForce extends TargetedForce
 	}  
 	
 	/** Creates a {@link ForcePair} from two not necessarily equal and opposite forces.
-	 * @param forceOnOneEnd the force to be applied to {@link #oneEnd}
-	 * @param forceOnTheOtherEnd the force to be applied to {@link #theOtherEnd}
-	 * @return the appropriate ForcePair
-	 * @throws NullPointerException if either {@link Vector3D}<code>==null</code>
+	 *  @param forceOnOneEnd the force to be applied to {@link #oneEnd}
+	 *  @param forceOnTheOtherEnd the force to be applied to {@link #theOtherEnd}
+	 *  @return the appropriate ForcePair
+	 *  @throws NullPointerException if either {@link Vector3D}<code>==null</code>
 	 */
 	@SuppressWarnings("synthetic-access")
 	protected static ForcePair specifyBoth(final Vector3D forceOnOneEnd, final Vector3D forceOnTheOtherEnd) throws NullPointerException 
@@ -164,11 +164,11 @@ public abstract class TwoBodyForce extends TargetedForce
 	}
 	
 	
-	/**Applies the force to the pair of particles. This is the method which must be overridden by
-	 * implementing classes allowing the force to be customised. Static methods for constructing a 
-	 * {@link ForcePair} are provided within this class: {@link #equalAndOpposite(Vector3D)}
-	 * or {@link #specifyBoth(Vector3D, Vector3D)}.
-	 * @return a {@link ForcePair} specifying the forces to apply to {@link #oneEnd} and {@link #theOtherEnd}.
+	/** Should apply the force to the pair of particles. This is the method which must be overridden by
+	 *  implementing classes allowing the force to be customised. Static methods for constructing a 
+	 *  {@link ForcePair} are provided within this class: {@link #equalAndOpposite(Vector3D)}
+	 *  or {@link #specifyBoth(Vector3D, Vector3D)}.
+	 *  @return a {@link ForcePair} specifying the forces to apply to {@link #oneEnd} and {@link #theOtherEnd}.
 	 */
 	protected abstract ForcePair forcePair();
 	

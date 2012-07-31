@@ -1,5 +1,9 @@
 package org.gicentre.utils.network.traer.physics;
 
+import org.gicentre.utils.geom.Locatable;
+
+import processing.core.PVector;
+
 // *****************************************************************************************
 /** Class for representing a Particle. It contains the Particle's position, velocity, and
  *  the force on the Particle. The particle also has a mass, and a fixed vs free state.
@@ -13,7 +17,7 @@ package org.gicentre.utils.network.traer.physics;
  * Artistic Licence: http://dev.perl.org/licenses/
  */
 
-public class Particle 
+public class Particle implements Locatable
 {
 
 	// --------------------------- Class and object variables -----------------------------
@@ -120,15 +124,20 @@ public class Particle
 		return !isFixed(); 
 	}
 
-	
-	//TODO: provide the Vector3D mutators directly ala addForce()?
-
 	/** Reports the position of the particle.
 	 *  @return Position of this particle.
 	 */
 	public final Vector3D position() 
 	{ 
 		return position; 
+	}
+	
+	/** Reports the location of this particle.
+	 *  @return Location represented of this particle.
+	 */
+	public PVector getLocation() 
+	{
+		return position.getLocation();
 	}
 
 	/** Reports the velocity of the particle.
