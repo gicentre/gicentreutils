@@ -6,34 +6,21 @@ import java.util.Map;
 
 import org.gicentre.utils.move.ZoomPan;
 import org.gicentre.utils.network.traer.physics.*;
-
-//import org.gicentre.utils.network.traer.physics.Particle;
-//import org.gicentre.utils.network.traer.physics.ParticleSystem;
-//import org.gicentre.utils.network.traer.physics.Spring;
-//import org.gicentre.utils.network.traer.physics.Vector3D;
-
-//import traer.physics.Attraction;
-//import traer.physics.Particle;
-//import traer.physics.ParticleSystem;
-//import traer.physics.Spring;
-//import traer.physics.Vector3D;
+import org.gicentre.utils.network.traer.animation.*;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import traer.animation.Smoother3D;
 
 // *****************************************************************************************
 /** Allows particles to be viewed and animated. Suitable for spring embedded / force directed
- *  layouts for arranging networks and other collections of interacting objects. Note this
- *  class relies on the 
- *  <a href="http://classic-web.archive.org/web/20060911111322/http://www.cs.princeton.edu/~traer/animation/">
- *  traer animation library</a> for smooth camera movement. 
+ *  layouts for arranging networks and other collections of interacting objects. Uses the 
+ *  physics engine and animation smoothers developed by Jeffrey Traer Bernstein.
  *  @param <N> Type of node to be stored in the particle viewer. This can be a <code>Node</code>
  *             or any specialised subclass of it.
  *  @param <E> Type of edge to be stored in the particle viewer. This can be an <code>Edge</code>
  *             or any specialised subclass of it.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 10th June, 2012. 
+ *  @version 3.2, 31st July, 2012. 
  */ 
 // *****************************************************************************************
 
@@ -112,8 +99,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 		centroid.tick();
 
 		parent.translate(width/2, height/2);
-		parent.scale(centroid.z());
-		parent.translate(-centroid.x(), -centroid.y());
+		parent.scale(centroid.getZ());
+		parent.translate(-centroid.getX(), -centroid.getY());
 
 		if (!isPaused)
 		{
@@ -125,8 +112,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 		{
 			Particle p = nodes.get(selectedNode);
 			p.makeFixed();
-			float mX = (zoomer.getMouseCoord().x -(width/2))/centroid.z() + centroid.x();
-			float mY = (zoomer.getMouseCoord().y -(height/2))/centroid.z() + centroid.y();
+			float mX = (zoomer.getMouseCoord().x -(width/2))/centroid.getZ() + centroid.getX();
+			float mY = (zoomer.getMouseCoord().y -(height/2))/centroid.getZ() + centroid.getY();
 			p.position().set(mX,mY,0); 
 		}
 
@@ -380,8 +367,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 	 */
 	public N getNearest(float x, float y, float radius)
 	{
-		float mX = (x - width/2)/centroid.z() + centroid.x();
-		float mY = (y - height/2)/centroid.z() + centroid.y();
+		float mX = (x - width/2)/centroid.getZ() + centroid.getX();
+		float mY = (y - height/2)/centroid.getZ() + centroid.getY();
 
 		float nearestDSq = radius*radius;
 		N nearestNode = null;
@@ -520,8 +507,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 	{
 		if (!zoomer.isMouseCaptured())
 		{
-			float mX = (zoomer.getMouseCoord().x -(width/2))/centroid.z() + centroid.x();
-			float mY = (zoomer.getMouseCoord().y -(height/2))/centroid.z() + centroid.y();
+			float mX = (zoomer.getMouseCoord().x -(width/2))/centroid.getZ() + centroid.getX();
+			float mY = (zoomer.getMouseCoord().y -(height/2))/centroid.getZ() + centroid.getY();
 
 			if (selectedNode == null)
 			{
