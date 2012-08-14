@@ -213,7 +213,7 @@ public class RungeKuttaIntegrator extends Integrator
 		k4Forces = new HashMap<Particle,Vector3D>();
 		k4Velocities = new HashMap<Particle,Vector3D>();                
 			
-		//side effect fill builders and clear forces
+		// Side effect fill builders and clear forces
 		Function.functor(originalPositions.keySet(), kFunctor(k4Forces,k4Velocities));
 
 		/////////////////////////////////////////////////////////////

@@ -74,7 +74,7 @@ public class Spring extends TwoBodyForce
 	{
 		if (l<=0) 
 		{
-			throw new IllegalArgumentException("Argument l <= 0; spring ideal length must be positive.");
+			throw new IllegalArgumentException("Rest length l <= 0; spring ideal length must be positive.");
 		}
 		this.l = l; return this;
 	}
@@ -97,9 +97,10 @@ public class Spring extends TwoBodyForce
 	{
 		if (ks<=0)
 		{
-			throw new IllegalArgumentException("Argument ks <= 0; the spring constant must be > 0.");
+			throw new IllegalArgumentException("Spring strength ks <= 0; spring strength must be positive.");
 		}
-		this.ks = ks; return this;
+		this.ks = ks; 
+		return this;
 	}
 	
 	/** Reports the damping constant of the spring {@link #d}; Will always be greater than 0.
@@ -119,7 +120,7 @@ public class Spring extends TwoBodyForce
 	{
 		if (d<0)
 		{
-			throw new IllegalArgumentException("Argument d is < 0; damping constant must be >= 0.");
+			throw new IllegalArgumentException("Spring damping is < 0; damping constant must be positive.");
 		}
 		this.d = d; return this;
 	}

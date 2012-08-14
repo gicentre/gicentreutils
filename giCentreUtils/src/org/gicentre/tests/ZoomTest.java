@@ -127,7 +127,7 @@ public class ZoomTest extends PApplet
     public void keyPressed()
     {
        
-        if ((key == 'b') || (key == 'b'))
+        if ((key == 'b') || (key == 'B'))
         {
             // Resets the zoom/pan with a little bounce.
             panOffset = zoomer.getPanOffset();

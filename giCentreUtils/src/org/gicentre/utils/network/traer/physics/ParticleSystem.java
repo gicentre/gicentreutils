@@ -123,7 +123,7 @@ public class ParticleSystem
 	 *  @return this ParticleSystem, post the advance.
 	 *  @throws IllegalArgumentException if t<=0
 	 */
-	public final ParticleSystem tick( float t ) 
+	public final ParticleSystem tick(float t) 
 	{
 		if (t<=0) 
 		{
@@ -247,16 +247,16 @@ public class ParticleSystem
 	 *  damping they don't overshoot and they settle down quickly, with low damping springs oscillate.
 	 *  @param a First particle to be joined with the spring.
 	 *  @param b Second particle to be joined with the spring.
-	 *  @param ks Strength of the spring.
-	 *  @param d The damping component of the spring.
-	 *  @param r Rest length of the spring.
+	 *  @param strength Strength of the spring.
+	 *  @param damping The damping component of the spring.
+	 *  @param restLength Rest length of the spring.
 	 *  @return Spring with the given properties.
 	 *  @throws NullPointerException if either of the particles are null.
 	 */
-	public final Spring	makeSpring(Particle a, Particle b, float ks, float d, float r) throws NullPointerException 
+	public final Spring	makeSpring(Particle a, Particle b, float strength, float damping, float restLength) throws NullPointerException 
 	{
-		Spring s = new Spring(a, b, ks, d, r);
-		springs.add( s );
+		Spring s = new Spring(a, b, strength, damping, restLength);
+		springs.add(s);
 		return s;
 	}
 	
@@ -265,14 +265,14 @@ public class ParticleSystem
 	 *  how strong this force can get close up.
 	 *  @param a First particle to be associated with the attraction.
 	 *  @param b Second particle to be associated with the attraction.
-	 *  @param k Strength of the attraction, positive to bring particles together, negative to repulse.
+	 *  @param strength Strength of the attraction, positive to bring particles together, negative to repulse.
 	 *  @param minDistance Minimum distance below which the attraction is not applied.
 	 *  @return The new attractive force.
 	 *  @throws NullPointerException if either of the particles is null.
 	 */
-	public final Attraction	makeAttraction(Particle a, Particle b, float k, float minDistance) throws NullPointerException 
+	public final Attraction	makeAttraction(Particle a, Particle b, float strength, float minDistance) throws NullPointerException 
 	{
-		Attraction m = new Attraction(a, b, k, minDistance);
+		Attraction m = new Attraction(a, b, strength, minDistance);
 		attractions.add(m);
 		return m;
 	}
