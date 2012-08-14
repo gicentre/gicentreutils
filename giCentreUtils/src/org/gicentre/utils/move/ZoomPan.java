@@ -27,7 +27,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.2, 14th August, 2011. 
  */ 
 // *****************************************************************************************
 
