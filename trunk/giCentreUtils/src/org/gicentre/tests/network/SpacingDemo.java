@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.gicentre.utils.FrameTimer;
 import org.gicentre.utils.geom.HashGrid;
 import org.gicentre.utils.network.traer.physics.Attraction;
+import org.gicentre.utils.network.traer.physics.Integrator.METHOD;
 import org.gicentre.utils.network.traer.physics.Particle;
 import org.gicentre.utils.network.traer.physics.ParticleSystem;
 import org.gicentre.utils.network.traer.physics.Vector3D;
@@ -52,8 +54,11 @@ public class SpacingDemo extends PApplet
 	private ParticleSystem physics;
 	private ArrayList<Particle>particles;
 	private HashGrid<Particle>hashGrid;
+	private FrameTimer frameTimer;
+	private boolean isStable;
+	private int particleOffset;
 
-	private final static int NUM_PARTICLES = 2000;
+	private final static int NUM_PARTICLES = 5000;
 	private final static int GRID_RADIUS =20;
 	private final static int MAX_NUM_FORCES_PER_PARTICLE = 100;
 	private final static int MAX_NUM_PARTICLES_WITH_FORCES = 200;
@@ -62,19 +67,24 @@ public class SpacingDemo extends PApplet
 
 	public void setup()
 	{
-		size(600, 400);
+		size(1400, 900);
 		smooth();
 		fill(0,100);
 		ellipseMode(CENTER);
+		frameTimer = new FrameTimer(0, 1);
+		isStable = false;
+		particleOffset = 0;
 
-		physics = new ParticleSystem(0,0.05f);
+		physics = new ParticleSystem(0,0.1f);
+		physics.setIntegrator(METHOD.EULER);
 		particles = new ArrayList<Particle>();
 		hashGrid = new HashGrid<Particle>(width, height, GRID_RADIUS);
 
 		for (int i=0; i<NUM_PARTICLES; i++)
 		{
 			//Particle p = physics.makeParticle(1, random(0,width-1), random(0,height-1), 0);
-			Particle p = physics.makeParticle(1, width/2, height/2, 0);
+			//Particle p = physics.makeParticle(1, width/2+random(-20,20), height/2+random(-20,20), 0);
+			Particle p = physics.makeParticle(1,width/2,height/2,0);
 			particles.add(p);
 			hashGrid.add(p);
 		}
@@ -83,7 +93,9 @@ public class SpacingDemo extends PApplet
 	public void draw()
 	{
 		background(255);
-		
+		frameTimer.update();
+		frameTimer.displayFrameRate();
+
 		// Draw hash grid bounds
 		stroke(0);
 		strokeWeight(0.5f);
@@ -95,61 +107,87 @@ public class SpacingDemo extends PApplet
 		{
 			line(0,y,width,y);
 		}
-		
-		
+
+
 		noStroke();
-		
-		
 
 		// Space particles that share the same hashgrid cell.
-		int numParticlesWithForces = MAX_NUM_PARTICLES_WITH_FORCES;
-		
-		physics.clearAllForces();
-		List<Particle> candiateParticles = new ArrayList<Particle>(hashGrid.getAll());
-		Collections.shuffle(candiateParticles);
-		for (Particle p1 : candiateParticles)
+		if (!isStable)
 		{
-			// Get the hash grid to provide all the particles close to the current one.
-			List<Particle> neighbours = new ArrayList<Particle>(hashGrid.get(p1.getLocation()));
-			Collections.shuffle(neighbours);
-			int numForcesPerParticle = MAX_NUM_FORCES_PER_PARTICLE;
-			for (Particle p2 : neighbours)
+			int numParticlesWithForces = MAX_NUM_PARTICLES_WITH_FORCES;
+
+			physics.clearAllForces();
+			List<Particle> candiateParticles = new ArrayList<Particle>(hashGrid.getAll());
+			//Collections.shuffle(candiateParticles);
+			//for (Particle p1 : candiateParticles)
+			for (int i=particleOffset; i<candiateParticles.size()+particleOffset; i++)
 			{
-				// See if the neighbouring particles need to be adjusted.
-				if (p1.distanceTo(p2) < 5)
+				Particle p1 = candiateParticles.get(i%candiateParticles.size());
+				
+				// Get the hash grid to provide all the particles close to the current one.
+				List<Particle> neighbours = new ArrayList<Particle>(hashGrid.get(p1.getLocation()));
+				Collections.shuffle(neighbours);
+				
+				int neighbourOffset = 0;
+				int numForcesPerParticle = MAX_NUM_FORCES_PER_PARTICLE;
+				//for (Particle p2 : neighbours)
+				for (int j=neighbourOffset; j<neighbours.size()+neighbourOffset; j++)
 				{
-					physics.addCustomForce(new SpacingForce(p1, p2));
-					numForcesPerParticle--;
+					Particle p2 = neighbours.get(j%neighbours.size());
+					// See if the neighbouring particles need to be adjusted.
+					if (p1.distanceTo(p2) < 5)
+					{
+						physics.addCustomForce(new SpacingForce(p1, p2));
+						numForcesPerParticle--;
+					}
+					if (numForcesPerParticle==0)
+					{
+						neighbourOffset += MAX_NUM_FORCES_PER_PARTICLE;
+						break;
+					}
 				}
-				if (numForcesPerParticle==0)
+				numParticlesWithForces--;
+
+				if (numParticlesWithForces==0)
 				{
+					particleOffset+=MAX_NUM_PARTICLES_WITH_FORCES;
 					break;
 				}
 			}
-			numParticlesWithForces--;
-			
-			if (numParticlesWithForces==0)
-			{
-				break;
-			}
+
+			physics.tick(1.2f);
+			hashGrid.updateAll();
 		}
 
-		physics.tick();
-		hashGrid.updateAll();
-
+		float totalV = 0;
 		for (Particle p : particles)
 		{
 			if (p.getForce().isZero())
 			{
-				fill(0,100);
+				fill(0,80);
 			}
 			else
 			{
-				System.err.println("Force found");
-				fill(255,0,0,200);
+				fill(255,0,0,80);
 			}
 			ellipse(p.position().getX(), p.position().getY(), 8, 8);
+			totalV += p.velocity().lengthSquared();
 		}
+		
+		totalV /= particles.size();
+
+		// Report total velocity and check to see if particles need to be updated.
+		if (totalV < 0.1)
+		{
+			isStable = true;
+			physics.clearAllForces();
+			fill(0,120);
+		}
+		else
+		{
+			fill(255,0,0,120);
+		}
+		text("Velocity: "+totalV,20,20);
 	}
 
 	// ----------------------------------------- Nested Classes -----------------------------------------
@@ -176,14 +214,13 @@ public class SpacingDemo extends PApplet
 			if (d < GRID_RADIUS)
 			{
 				// If the two particles are at the same location, space them randomly
-				if (d <=1)
+				if (d ==0)
 				{
-					//getOneEnd().position().add(random(-0.1f,-0.1f), random(-0.1f,0.1f), 0);
-					return equalAndOpposite(new Vector3D(random(-0.5f,0.5f), random(-0.5f,0.5f), 0));
+					return equalAndOpposite(new Vector3D(random(-1f,1f), random(-1f,1f), 0));
 				}
 
 				Vector3D fromTheOtherEndtoOneEnd = Vector3D.subtract(getOneEnd().position(), getTheOtherEnd().position());
-				fromTheOtherEndtoOneEnd.length(0.2f*getOneEnd().mass()*getTheOtherEnd().mass()/fromTheOtherEndtoOneEnd.lengthSquared());
+				fromTheOtherEndtoOneEnd.length(1.5f*getOneEnd().mass()*getTheOtherEnd().mass()/Math.max(1f, fromTheOtherEndtoOneEnd.lengthSquared()));
 				return equalAndOpposite(fromTheOtherEndtoOneEnd);
 			}
 
@@ -191,30 +228,4 @@ public class SpacingDemo extends PApplet
 
 		}
 	}
-	/*
-	class SpacingForce extends TwoBodyForce
-	{
-		private ForcePair repulsion, noForce;
-
-
-		protected SpacingForce(Particle oneEnd, Particle theOtherEnd) throws NullPointerException 
-		{
-			super(oneEnd, theOtherEnd);
-			repulsion = equalAndOpposite(new Vector3D(random(-0.5f,-0.1f), random(0.1f,0.5f), 0));
-			noForce   = equalAndOpposite(new Vector3D(0,0,0));
-		}
-
-		@Override
-		protected ForcePair forcePair() 
-		{	
-			// If the two particles are close together, apply a repulsive force, otherwise no force acts on the particles.
-			if (getOneEnd().distanceTo(getTheOtherEnd()) < 1)
-			{
-				return repulsion;
-			}
-
-			return noForce;
-		}	
-	}
-	 */
 }
