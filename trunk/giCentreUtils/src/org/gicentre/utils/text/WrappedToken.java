@@ -6,14 +6,14 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 
-//****************************************************************************************
+// ****************************************************************************************
 /** Holds details of wrapped tokens from org.gicentre.utils.text.wordWrapAndTokenise()
  *  and can return the screen bounds of the token, using the current textFont, textSize
  *  and textAlign.
  *  @author Aidan Slingsby, giCentre, City University London.
  *  @version 1.1, July 2012 
  */ 
-//*****************************************************************************************
+// *****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
 * redistribute it and/or modify it under the terms of the GNU Lesser General Public License

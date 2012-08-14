@@ -99,11 +99,9 @@ public class ZoomPan
 		allowPanButton = true;
 		listeners = new Vector<ZoomPanListener>();
 		reset();
+		timer=new Timer();
 		aContext.registerMouseEvent(this);
 		aContext.addMouseWheelListener(new MouseWheelMonitor());
-		//Set up
-		timer=new Timer();
-		
 	}
 
 	/** Initialises the zooming and panning transformations for the given applet and graphics contexts. 
@@ -130,6 +128,7 @@ public class ZoomPan
 		allowPanButton = true;
 		listeners = new Vector<ZoomPanListener>();
 		reset();
+		timer=new Timer();
 		aContext.registerMouseEvent(this);
 		aContext.addMouseWheelListener(new MouseWheelMonitor());
 	}
