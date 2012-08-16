@@ -58,7 +58,8 @@ public class SpacingDemo extends PApplet
 	private boolean isStable;
 	private int particleOffset;
 
-	private final static int NUM_PARTICLES = 5000;
+	private final static int NUM_CLUSTERS = 100;
+	private final static int NUM_PARTICLES = 500;
 	private final static int GRID_RADIUS =20;
 	private final static int MAX_NUM_FORCES_PER_PARTICLE = 100;
 	private final static int MAX_NUM_PARTICLES_WITH_FORCES = 200;
@@ -75,18 +76,24 @@ public class SpacingDemo extends PApplet
 		isStable = false;
 		particleOffset = 0;
 
-		physics = new ParticleSystem(0,0.1f);
+		physics = new ParticleSystem(0,0.2f);
 		physics.setIntegrator(METHOD.EULER);
 		particles = new ArrayList<Particle>();
 		hashGrid = new HashGrid<Particle>(width, height, GRID_RADIUS);
 
-		for (int i=0; i<NUM_PARTICLES; i++)
+		for (int c=0; c<NUM_CLUSTERS; c++)
 		{
-			//Particle p = physics.makeParticle(1, random(0,width-1), random(0,height-1), 0);
-			//Particle p = physics.makeParticle(1, width/2+random(-20,20), height/2+random(-20,20), 0);
-			Particle p = physics.makeParticle(1,width/2,height/2,0);
-			particles.add(p);
-			hashGrid.add(p);
+			float cx = random(30,width-30);
+			float cy = random(30,height-30);
+			
+			for (int i=0; i<NUM_PARTICLES; i++)
+			{
+				//Particle p = physics.makeParticle(1, random(0,width-1), random(0,height-1), 0);
+				//Particle p = physics.makeParticle(1, width/2+random(-20,20), height/2+random(-20,20), 0);
+				Particle p = physics.makeParticle(1,cx,cy,0);
+				particles.add(p);
+				hashGrid.add(p);
+			}
 		}
 	}
 

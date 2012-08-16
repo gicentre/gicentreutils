@@ -1,11 +1,14 @@
 package org.gicentre.utils.network.traer.physics;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 // *****************************************************************************************
 /** Represents an entire particle system containing particles and forces between them.
- *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
- *  @since 4.0
+ *  @author Jeffrey Traer Bernstein, Carl Pearson and modifications by Jo Wood.
+ *  @version 4.1, 16th August, 2012.
  */
 // *****************************************************************************************
 
@@ -36,10 +39,10 @@ public class ParticleSystem
 				/** The default magnitude for the y-component of gravity. */
 	protected static final float DEFAULT_GRAVITY = 0;
 
-	private List<Particle> particles = new ArrayList<Particle>();
-	private List<Spring> springs = new ArrayList<Spring>();
-	private List<Attraction> attractions = new ArrayList<Attraction>();
-	private List<AbstractForce> customForces = new ArrayList<AbstractForce>();
+	private Set<Particle> particles = new LinkedHashSet<Particle>();
+	private Set<Spring> springs = new LinkedHashSet<Spring>();
+	private Set<Attraction> attractions = new LinkedHashSet<Attraction>();
+	private Set<AbstractForce> customForces = new LinkedHashSet<AbstractForce>();
 	//private Map<String,UniversalForce> uForces = new HashMap<String,UniversalForce>();
 	
 	private float deltaT = 1f; 			// The time step to use with {@link #tick()}; set to 1 by default.
@@ -261,7 +264,7 @@ public class ParticleSystem
 	}
 	
 	/** Creates an attractive force between the given particles with the given strength. If the strength is negative the
-	 *  particles will repel each other, if the strength is positive they attract. The given  minimum distance limits
+	 *  particles will repel each other, if the strength is positive they attract. The given minimum distance limits
 	 *  how strong this force can get close up.
 	 *  @param a First particle to be associated with the attraction.
 	 *  @param b Second particle to be associated with the attraction.
@@ -277,19 +280,23 @@ public class ParticleSystem
 		return m;
 	}
 	
-	/** Reports a list of the springs currently defined as part of this particle system.
-	 *  @return List of springs.
+	/** Reports a collection of the springs currently defined as part of this particle system. While the current implementation
+	 *  will return the collection in insert-order, there is no guarantee that future versions will maintain a fixed order in the 
+	 *  returned collection.
+	 *  @return Collection of springs.
 	 *  @deprecated Replace in favour of the more consistently named getSprings().
 	 */
-	public final List<Spring> springs()
+	public final Collection<Spring> springs()
 	{ 
 		return getSprings(); 
 	}
 	
-	/** Reports a list of the springs currently defined as part of this particle system.
-	 *  @return List of springs.
+	/** Reports a collection of the springs currently defined as part of this particle system. While the current implementation
+	 *  will return the collection in insert-order, there is no guarantee that future versions will maintain a fixed order in the 
+	 *  returned collection.
+	 *  @return Collection of springs.
 	 */
-	public final List<Spring> getSprings()
+	public final Collection<Spring> getSprings()
 	{ 
 		return springs; 
 	}
@@ -311,25 +318,52 @@ public class ParticleSystem
 		return springs.size(); 
 	}
 	
-	/** Provides the spring at the given position in the list of springs stored in this particle system.
-	 *  @param i List index (the ith spring in the list).
+	/** Provides the spring at the given position in the collection of springs stored in this particle system.
+	 *  @param i List index (the ith spring in the collection). While the springs are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
 	 *  @return The spring requested.
 	 */
 	public final Spring getSpring(int i) 
 	{ 
-		return springs.get(i);
+		int counter = 0;
+		Spring spring = null;
+		Iterator<Spring> it = springs.iterator();
+		while (it.hasNext())
+		{
+			spring = it.next();
+			if (counter == i)
+			{
+				break;
+			}
+			counter++;
+		}
+		return spring;
 	}
 	
-	/** Removes the spring at the given position in the list of springs stored in this particle system.
-	 *  @param i List index (the ith spring in the list).
-	 *  @return The spring removed.
+	/** Removes the spring at the given position in the collection of springs stored in this particle system.
+	 *  @param i List index (the ith spring in the collection). While the springs are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
+	 *  @return The spring removed or null if the given position is out of bounds.
 	 */
 	public final Spring removeSpring(int i)
 	{ 
-		return springs.remove(i);
+		int counter = 0;
+		Spring spring = null;
+		Iterator<Spring> it = springs.iterator();
+		while (it.hasNext())
+		{
+			spring = it.next();
+			if (counter == i)
+			{
+				it.remove();
+				return spring;
+			}
+			counter++;
+		}
+		return null;
 	}
 	
-	/** Removes the given spring from the list of springs stored in this particle system if it exists.
+	/** Removes the given spring from the collection of springs stored in this particle system if it exists.
 	 *  @param spring The spring to remove.
 	 *  @return The particle system updated with the removed spring.
 	 */
@@ -339,19 +373,23 @@ public class ParticleSystem
 		return this; 
 	}
 	
-	/** Reports a list of the attractions currently defined as part of this particle system.
-	 *  @return List of attractions.
+	/** Reports a collection of the attractions currently defined as part of this particle system. While the current implementation
+	 *  will return the collection in insert-order, there is no guarantee that future versions will maintain a fixed order in the 
+	 *  returned collection.
+	 *  @return Collection of attractions.
 	 *  @deprecated Replace in favour of the more consistently named getAttractions().
 	 */
-	public final List<Attraction> attractions() 
+	public final Collection<Attraction> attractions() 
 	{ 
 		return attractions; 
 	}
 	
-	/** Reports a list of the attractions currently defined as part of this particle system.
-	 *  @return List of attractions.
+	/** Reports a collection of the attractions currently defined as part of this particle system. While the current implementation
+	 *  will return the collection in insert-order, there is no guarantee that future versions will maintain a fixed order in the 
+	 *  returned collection.
+	 *  @return Collection of attractions.
 	 */
-	public final List<Attraction> getAttractions() 
+	public final Collection<Attraction> getAttractions() 
 	{ 
 		return attractions; 
 	}
@@ -372,26 +410,53 @@ public class ParticleSystem
 	{ 
 		return attractions.size(); 
 	} 
-	
-	/** Provides the attraction at the given position in the list of attractions stored in this particle system.
-	 *  @param i List index (the ith attraction in the list).
+		
+	/** Provides the attraction at the given position in the collection of attractions stored in this particle system.
+	 *  @param i List index (the ith attraction in the collection). While the attractions are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
 	 *  @return The attraction requested.
 	 */
 	public final Attraction getAttraction(int i) 
-	{
-		return attractions.get(i); 
+	{ 
+		int counter = 0;
+		Attraction attraction = null;
+		Iterator<Attraction> it = attractions.iterator();
+		while (it.hasNext())
+		{
+			attraction = it.next();
+			if (counter == i)
+			{
+				break;
+			}
+			counter++;
+		}
+		return attraction;
 	}
-	
-	/** Removes the attraction at the given position in the list of attractions stored in this particle system.
-	 *  @param i List index (the ith attraction in the list).
-	 *  @return The attraction removed.
+		
+	/** Removes the attraction at the given position in the collection of attractions stored in this particle system.
+	 *  @param i List index (the ith attraction in the collection). While the attractions are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
+	 *  @return The attraction removed or null if the given position is out of bounds.
 	 */
 	public final Attraction removeAttraction(int i)
 	{ 
-		return attractions.remove(i); 
+		int counter = 0;
+		Attraction attraction = null;
+		Iterator<Attraction> it = attractions.iterator();
+		while (it.hasNext())
+		{
+			attraction = it.next();
+			if (counter == i)
+			{
+				it.remove();
+				return attraction;
+			}
+			counter++;
+		}
+		return null;
 	}
 	
-	/** Removes the given attraction from the list of attractions stored in this particle system if it exists.
+	/** Removes the given attraction from the collection of attractions stored in this particle system if it exists.
 	 *  @param attraction The attraction to remove.
 	 *  @return The particle system updated with the removed attraction.
 	 */
@@ -401,26 +466,30 @@ public class ParticleSystem
 		return this;
 	}
 	
-	/** Reports a list of the custom forces currently defined as part of this particle system.
-	 *  @return List of custom forces.
+	/** Provides a collection of the custom forces currently defined as part of this particle system. While the 
+	 *  current implementation will return the collection in insert-order, there is no guarantee that future
+	 *  versions will maintain a fixed order in the returned collection.
+	 *  @return Collection of custom forces.
 	 *  @deprecated Replace in favour of the more consistently named getCustomForces().
 	 */
-	public final List<AbstractForce> customForces() 
+	public final Collection<AbstractForce> customForces() 
 	{ 
 		return getCustomForces(); 
 	}  
 	
-	/** Reports a list of the custom forces currently defined as part of this particle system.
-	 *  @return List of custom forces.
+	/** Provides a collection of the custom forces currently defined as part of this particle system. While the 
+	 *  current implementation will return the collection in insert-order, there is no guarantee that future
+	 *  versions will maintain a fixed order in the returned collection.
+	 *  @return Collection of custom forces.
 	 */
-	public final List<AbstractForce> getCustomForces() 
+	public final Collection<AbstractForce> getCustomForces() 
 	{ 
 		return customForces; 
 	}  
 	
 	/** Adds a custom force to those in this particle system.
-	 * @param customForce Custom force to add.
-	 * @return Particle system with the new custom force added.
+	 *  @param customForce Custom force to add.
+	 *  @return Particle system with the new custom force added.
 	 */
 	public final ParticleSystem addCustomForce(AbstractForce customForce) 
 	{ 
@@ -444,26 +513,53 @@ public class ParticleSystem
 	{
 		return customForces.size();
 	}
-	
-	/** Provides the custom force at the given position in the list of custom forces stored in this particle system.
-	 *  @param i List index (the ith custom force in the list).
+		
+	/** Provides the custom force at the given position in the collection of custom forces stored in this particle system.
+	 *  @param i List index (the ith attraction in the collection). While the custom forces are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
 	 *  @return The custom force requested.
 	 */
-	public final AbstractForce getCustomForce(int i)
+	public final AbstractForce getCustomForce(int i) 
 	{ 
-		return customForces.get(i);
+		int counter = 0;
+		AbstractForce force = null;
+		Iterator<AbstractForce> it = customForces.iterator();
+		while (it.hasNext())
+		{
+			force = it.next();
+			if (counter == i)
+			{
+				break;
+			}
+			counter++;
+		}
+		return force;
 	}
-	
-	/** Removes the custom force at the given position in the list of custom forces stored in this particle system.
-	 *  @param i List index (the ith custom force in the list).
-	 *  @return The custom force removed.
+		
+	/** Removes the custom force at the given position in the collection of custom forces stored in this particle system.
+	 *  @param i List index (the ith attraction in the collection). While the custom forces are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
+	 *  @return The custom force removed or null if the given position is out of bounds.
 	 */
 	public final AbstractForce removeCustomForce(int i)
-	{
-		return customForces.remove(i);
+	{ 
+		int counter = 0;
+		AbstractForce force = null;
+		Iterator<AbstractForce> it = customForces.iterator();
+		while (it.hasNext())
+		{
+			force = it.next();
+			if (counter == i)
+			{
+				it.remove();
+				return force;
+			}
+			counter++;
+		}
+		return null;
 	}
 	
-	/** Removes the given custom force from the list of custom forces stored in this particle system if it exists.
+	/** Removes the given custom force from the collection of custom forces stored in this particle system if it exists.
 	 *  @param customForce The custom force to remove.
 	 *  @return The particle system updated with the removed custom force.
 	 */
@@ -473,19 +569,19 @@ public class ParticleSystem
 		return this; 
 	}
 	
-	/** Reports a list of the particles currently defined as part of this particle system.
-	 *  @return List of particles.
+	/** Provides a collection of the particles currently defined as part of this particle system.
+	 *  @return Collection of particles.
 	 *  @deprecated Replace in favour of the more consistently named getParticles().
 	 */
-	public final List<Particle> particles() 
+	public final Collection<Particle> particles() 
 	{ 
 		return getParticles(); 
 	}
 	
-	/** Reports a list of the particles currently defined as part of this particle system.
-	 *  @return List of particles.
+	/** Provides a collection of the particles currently defined as part of this particle system.
+	 *  @return Collection of particles.
 	 */
-	public final List<Particle> getParticles() 
+	public final Collection<Particle> getParticles() 
 	{ 
 		return particles; 
 	}
@@ -507,17 +603,29 @@ public class ParticleSystem
 		return particles.size(); 
 	}
 	
-	/** Provides the particle at the given position in the list of particles stored in this particle system.
-	 *  @param i List index (the ith particle in the list).
-	 *  @return The particle requested.
+	/** Provides the particle at the given position in the collection of particles stored in this particle system.
+	 *  @param i List index (the ith attraction in the collection). While the particles are stored in a fixed 
+	 *  insert-order, this is a non-repeating set, and future reliance on set order is not encouraged.
+	 *  @return The particle requested or null if position out of bounds
 	 */
-	public final Particle getParticle(int i)
+	public final Particle getParticle(int i) 
 	{ 
-		return particles.get(i);
+		int counter = 0;
+		Particle p = null;
+		Iterator<Particle> it = particles.iterator();
+		while (it.hasNext())
+		{
+			p = it.next();
+			if (counter == i)
+			{
+				break;
+			}
+			counter++;
+		}
+		return p;
 	}
-	
-	
-	/** Removes the given particle from the list of particles stored in this particle system if it exists.
+		
+	/** Removes the given particle from the collection of particles stored in this particle system if it exists.
 	 *  @param p The particle to remove.
 	 *  @return The particle system updated with the removed particle.
 	 */
