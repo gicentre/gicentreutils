@@ -9,7 +9,7 @@ import processing.core.PApplet;
 // ****************************************************************************************
 /** Random arboretum example using the giCentre version of the traer physics library. 
  *  @author Jeffrey Traer Bernstein with minor modifications by Jo Wood.
- *  @version 1.1, 27th July, 2012.
+ *  @version 1.2, 16th August, 2012.
  */ 
 // *****************************************************************************************
 
@@ -30,7 +30,6 @@ import processing.core.PApplet;
 @SuppressWarnings("serial")
 public class RandomArboretum extends PApplet 
 {
-
 	// ------------------------------ Starter method ------------------------------- 
 
 	/** Creates a simple application to test the chart drawing utilities.
@@ -155,9 +154,8 @@ public class RandomArboretum extends PApplet
 
 	private void addSpacersToNode(Particle p, Particle r)
 	{
-		for (int i=0; i<physics.getNumParticles(); ++i)
+		for (Particle q : physics.getParticles())
 		{
-			Particle q = physics.getParticle(i);
 			if ((p != q) && (p != r))
 			{
 				physics.makeAttraction(p, q, -SPACER_STRENGTH, 20);
@@ -165,7 +163,7 @@ public class RandomArboretum extends PApplet
 		}
 	}
 
-	private void makeEdgeBetween( Particle a, Particle b )
+	private void makeEdgeBetween(Particle a, Particle b)
 	{
 		physics.makeSpring(a, b, EDGE_STRENGTH, EDGE_STRENGTH, EDGE_LENGTH);
 	}
@@ -179,10 +177,12 @@ public class RandomArboretum extends PApplet
 	private void addNode()
 	{ 
 		Particle p = physics.makeParticle();
+
 		Particle q = physics.getParticle((int)random(0, physics.getNumParticles()-1));
+
 		while (q == p)
 		{
-			q = physics.getParticle( (int)random(0, physics.getNumParticles()-1));
+			q = physics.getParticle((int)random(0, physics.getNumParticles()-1));
 		}
 		addSpacersToNode(p, q);
 		makeEdgeBetween(p, q);
@@ -191,21 +191,19 @@ public class RandomArboretum extends PApplet
 
 	private void drawNetwork()
 	{      
-		// draw vertices
+		// Draw vertices
 		fill(160);
 		noStroke();
-		for (int i = 0; i < physics.getNumParticles(); ++i)
+		for (Particle v : physics.getParticles())
 		{
-			Particle v = physics.getParticle(i);
 			ellipse(v.position().getX(), v.position().getY(), NODE_SIZE, NODE_SIZE);
 		}
 
-		// draw edges 
+		// Draw edges 
 		stroke(0);
 		beginShape(LINES);
-		for (int i=0; i<physics.getNumSprings(); ++i)
+		for (Spring e : physics.getSprings())
 		{
-			Spring e = physics.getSpring(i);
 			Particle a = e.getOneEnd();
 			Particle b = e.getTheOtherEnd();
 			vertex(a.position().getX(), a.position().getY());
