@@ -37,7 +37,7 @@ public class Attraction extends TwoBodyForce
 	 *  @throws NullPointerException if either particle is null.
 	 *  @throws IllegalArgumentException if distanceMin is <=0.
 	 */
-	public Attraction( final Particle oneEnd, final Particle theOtherEnd, final float k, final float distanceMin)
+	public Attraction(final Particle oneEnd, final Particle theOtherEnd, final float k, final float distanceMin)
 														throws NullPointerException, IllegalArgumentException
 	{
 		super(oneEnd, theOtherEnd);
