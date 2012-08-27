@@ -66,22 +66,23 @@ public class Spring extends TwoBodyForce
 	}
 
 	/** Sets the ideal length of the spring.
-	 *  @param l the new rest length; must be > 0.
+	 *  @param l the new rest length; must be positive.
 	 *  @return This spring with its new rest length.
-	 *  @throws IllegalArgumentException if <code>l<=0</code>
+	 *  @throws IllegalArgumentException if rest length is negative
 	 */
 	public final Spring setRestLength(final float l) throws IllegalArgumentException 
 	{
-		if (l<=0) 
+		if (l<0) 
 		{
-			throw new IllegalArgumentException("Rest length l <= 0; spring ideal length must be positive.");
+			throw new IllegalArgumentException("Rest length l is negative; spring ideal length must be positive.");
 		}
-		this.l = l; return this;
+		this.l = Math.max(Float.MIN_VALUE, l);
+		return this;
 	}
 
 	
 	/** Reports the strength of the spring {@link #ks}; always more than 0.
-	 * @return {@link #ks}, the spring constant
+	 *  @return {@link #ks}, the spring constant
 	 */
 	public final float strength() 
 	{ 
@@ -95,11 +96,11 @@ public class Spring extends TwoBodyForce
 	 */
 	public final Spring setStrength(final float ks)	throws IllegalArgumentException 
 	{
-		if (ks<=0)
+		if (ks<0)
 		{
-			throw new IllegalArgumentException("Spring strength ks <= 0; spring strength must be positive.");
+			throw new IllegalArgumentException("Spring strength ks is negative; spring strength must be positive.");
 		}
-		this.ks = ks; 
+		this.ks = Math.max(Float.MIN_VALUE,ks); 
 		return this;
 	}
 	

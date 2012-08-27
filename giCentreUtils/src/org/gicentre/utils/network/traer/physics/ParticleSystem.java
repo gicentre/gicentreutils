@@ -20,7 +20,6 @@ import java.util.Set;
 
 public class ParticleSystem 
 {
-
 	// --------------------------- Class and object variables -----------------------------
 
 	/** Indicates a Runge Kutta integrator.
@@ -253,11 +252,15 @@ public class ParticleSystem
 	 *  @param strength Strength of the spring.
 	 *  @param damping The damping component of the spring.
 	 *  @param restLength Rest length of the spring.
-	 *  @return Spring with the given properties.
+	 *  @return Spring with the given properties or null if particles a and b are identical.
 	 *  @throws NullPointerException if either of the particles are null.
 	 */
 	public final Spring	makeSpring(Particle a, Particle b, float strength, float damping, float restLength) throws NullPointerException 
 	{
+		if (a.equals(b))
+		{
+			return null;
+		}
 		Spring s = new Spring(a, b, strength, damping, restLength);
 		springs.add(s);
 		return s;
@@ -270,11 +273,15 @@ public class ParticleSystem
 	 *  @param b Second particle to be associated with the attraction.
 	 *  @param strength Strength of the attraction, positive to bring particles together, negative to repulse.
 	 *  @param minDistance Minimum distance below which the attraction is not applied.
-	 *  @return The new attractive force.
+	 *  @return The new attractive force or null if particles a and b are identical.
 	 *  @throws NullPointerException if either of the particles is null.
 	 */
 	public final Attraction	makeAttraction(Particle a, Particle b, float strength, float minDistance) throws NullPointerException 
 	{
+		if (a.equals(b))
+		{
+			return null;
+		}
 		Attraction m = new Attraction(a, b, strength, minDistance);
 		attractions.add(m);
 		return m;
@@ -493,8 +500,12 @@ public class ParticleSystem
 	 */
 	public final ParticleSystem addCustomForce(AbstractForce customForce) 
 	{ 
-		customForces.add(customForce); 
+		if (customForce != null)
+		{
+			customForces.add(customForce);
+		}
 		return this;
+			
 	}
 	
 	/** Reports the number of custom forces in this particle system.
