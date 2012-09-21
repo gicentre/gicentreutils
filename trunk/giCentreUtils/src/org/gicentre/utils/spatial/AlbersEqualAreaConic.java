@@ -9,7 +9,7 @@ import processing.core.PVector;
  *  <a href="http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c" target="_new">
  *  http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c</a>.
  *  @author Jo Wood, giCentre, City University London and T. Mittan.
- *  @version 3.2.2, 27th June, 2012.  
+ *  @version 3.2.2, 21st September, 2012.  
  */ 
 // *****************************************************************************************
 
@@ -233,13 +233,11 @@ public class AlbersEqualAreaConic implements MapProjection
         double qs;       
         double con1;         // Temporary sign value.
         double theta;
-        long   flag;         // Error flag.
         double easting = p.x;
         double northing = p.y;
         
         double phi,lambda;
 
-        flag = 0;
         easting -= falseEast;
         northing = (float)(rh - northing + falseNorth);
         
@@ -270,7 +268,7 @@ public class AlbersEqualAreaConic implements MapProjection
             {
                 phi = phi1z(qs);
       
-                if (flag == Double.NaN)
+                if (phi == Double.NaN)
                 {
                     System.err.println("Problem calculating inverse Albers projection");
                     return null;
@@ -291,7 +289,7 @@ public class AlbersEqualAreaConic implements MapProjection
         else
         {
             phi = phi1z(qs);
-            if (flag == Double.NaN)
+            if (phi == Double.NaN)
             {
                 System.err.println("Problem calculating inverse Albers projection");
                 return null;
