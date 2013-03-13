@@ -10,8 +10,8 @@ import processing.core.PVector;
 /**
  * Class for limiting drawing to a fixed rectangular area.
  * 
- * Simple usage example:
- * 
+ * Simple usage example:<br />
+ * <pre>
  * import org.gicentre.utils.gui.Clipper;
  * Clipper clipper;
  * 
@@ -31,13 +31,14 @@ import processing.core.PVector;
  *     
  *     drawSomeOtherStuffAsUsual();
  * }
- * 
+ * </pre>
  * 
  * Limitations:
- * Ñ only works with JAVA2D
- * Ñ clipping is ignored when writing to PDF using startRecording()
- * Ñ boundaries must be always given in absolute coordinate system (matrix transitions and scalings are ignored)
- * 
+ * <ul>
+ *  <li>only works with JAVA2D</li>
+ *  <li>clipping is ignored when writing to PDF using startRecording()</li>
+ *  <li>boundaries must be always given in absolute coordinate system (matrix transitions and scalings are ignored)</li>
+ * </ul>
  * 
  * @author Alexander Kachkaev <alexander.kachkaev.1@city.ac.uk> with minor modifications by Jo Wood.
  * Inspired by Aidan Slingsby's <a.slingsby@city.ac.uk> GraphicBuffer

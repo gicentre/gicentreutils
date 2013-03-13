@@ -11,7 +11,7 @@ import processing.core.PVector;
 /** Tests zooming and panning in a simple Processing sketch. Includes tests for high quality
  *  zoomed text, for constraining zooming and panning, and for zoom-independent display.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 3rd March, 2013.
  */ 
 //  *****************************************************************************************
 
@@ -51,6 +51,7 @@ public class ZoomTest extends PApplet
     private PVector panOffset;      // Pan offset used for morphed panning.
     private double zoomScale;       // Zoom level used for morphed zooming.
     private boolean constrain;		// Determines if zooming and panning is constrained.
+    private boolean isMouseMaskOn;	// Determines if the keyboard mouse mask is actived.
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -58,10 +59,11 @@ public class ZoomTest extends PApplet
      */
     public void setup()
     {   
-        size(640,400);
+        size(800,400);
         smooth(); 
         morphT = 1;                 // 1 indicates no morphing. 
         constrain = false;
+        isMouseMaskOn = false;
         zoomer = new ZoomPan(this);
         textFont(createFont("Serif",18),18);
     }
@@ -119,7 +121,8 @@ public class ZoomTest extends PApplet
         textSize(18);
         text("Zoom scale: "+nfc((float)zoomer.getZoomScale(),4)+
         	 " Pan centre: "+nfc(zoomer.getPanOffset().x,3)+","+nfc(zoomer.getPanOffset().y,3)+
-        	 " Constraints are "+(constrain?"on.":"off."),10,height-3);
+        	 " Constraints are "+(constrain?"on.":"off.")+
+        	 " Keyboard mask is "+(isMouseMaskOn?"on.":"off."),10,height-3);
     }
     
     /** Responds to key presses by allowing the display to be reset.
@@ -149,6 +152,20 @@ public class ZoomTest extends PApplet
             	zoomer.setMinZoomScale(Double.MIN_VALUE);
             }
         }
+        else  if ((key == 'm') || (key == 'M'))
+        {
+        	if (isMouseMaskOn)
+        	{
+        		zoomer.setMouseMask(0);
+        		isMouseMaskOn = false;
+        	}
+        	else
+        	{
+        		zoomer.setMouseMask(PConstants.SHIFT);
+        		isMouseMaskOn = true;
+        	}
+        }
+        
         else  if ((key == 'r') || (key == 'R'))
         {
             zoomer.reset();
