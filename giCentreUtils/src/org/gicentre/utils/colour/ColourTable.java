@@ -854,6 +854,11 @@ public class ColourTable implements Serializable
         StringBuffer output;     // Output string.     
         ColourRule   rule=null;  // Single colour table rule.
         
+        if (cTableType == COLOUR_RAW)
+        {
+          return "Raw colour table";
+        }
+        
         if (cTable.size() <=1)
         {
             return ("Empty colour table");

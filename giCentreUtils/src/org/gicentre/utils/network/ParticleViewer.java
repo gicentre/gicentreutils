@@ -575,6 +575,12 @@ public class ParticleViewer<N extends Node, E extends Edge>
 
 		float xRange = xMax-xMin;
 		float yRange = yMax-yMin;
+		
+		if ((xRange==0) && (yRange ==0))
+		{
+			xRange = Math.max(1, xMax);
+			yRange = Math.max(1, yMax);
+		}
 		float zScale = (float)Math.min(height/(yRange*1.2),width/(xRange*1.2));
 		centroid.setTarget(xMin+0.5f*xRange, yMin+0.5f*yRange, zScale);
 	}
