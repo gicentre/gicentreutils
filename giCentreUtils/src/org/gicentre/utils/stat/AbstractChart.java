@@ -706,23 +706,32 @@ public abstract class AbstractChart
     }
 
     /** Provides an array of tic marks at rounded intervals between the given minimum and maximum values.
-     *  @param minVal Minimum value to be represented within the tic marks.
-     *  @param maxVal Maximum value to be represented within the tic marks.
+     *  @param minValue Minimum value to be represented within the tic marks.
+     *  @param maxValue Maximum value to be represented within the tic marks.
      *  @return Array of tic mark positions.
      */
-    private static float[] getTics(double minVal, double maxVal)
+    private static float[] getTics(double minValue, double maxValue)
     {
+    	double minVal = Math.min(minValue,maxValue);
+    	double maxVal = Math.max(minValue,maxValue);
+    	
+    	if (minVal == maxVal)
+    	{
+    		minVal -= 0.5;
+    		maxVal += 0.5;
+    	}
+    	
         float spacing = findSpacing(minVal, maxVal);
         float minTic = (float)Math.floor(minVal/spacing)*spacing;
         float tic = minTic;
         int numTics = 0;
-
+        
         while (tic < maxVal)
         {
             tic = minTic + numTics*spacing;
             numTics++;
         }
-
+ 
         float[] tics = new float[numTics];
         for (int i=0; i<numTics; i++)
         {

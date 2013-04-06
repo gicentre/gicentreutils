@@ -250,6 +250,7 @@ public class BarChart extends AbstractChart
         		
         		// Draw axis values
         		graphics.fill(axisValuesColour);
+ 
         		if (getIsLogScale(1))
         		{                         
         			for (float logTic : logTics[1])
