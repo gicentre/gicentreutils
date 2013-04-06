@@ -931,9 +931,10 @@ public class ColourTable implements Serializable
      *  contain a single string indicating table is empty.
      * @return ListModel representation of the colour rules.
      */              
-    public ListModel<Serializable> toListModel()
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public ListModel toListModel()
     {
-        DefaultListModel<Serializable> listModel = new DefaultListModel<Serializable>();
+        DefaultListModel listModel = new DefaultListModel();
         
         if (cTable.size() <=1)
         {
