@@ -9,7 +9,7 @@ import processing.core.PApplet;
 //  *****************************************************************************************
 /** Tests particle viewer works with single particle.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 27th August 2012 
+ *  @version 3.3, 27th August 2012 
  */ 
 //  *****************************************************************************************
 

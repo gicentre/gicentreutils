@@ -11,7 +11,7 @@ import processing.core.PVector;
 /** Tests the standard ellipse in a simple Processing sketch. Draws some random points then
  *  their weighted and unweighted standard ellipse.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.3, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

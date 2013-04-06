@@ -10,7 +10,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the Processing Utilities HelpScreen class.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 1st August, 2011.
  */ 
 // *****************************************************************************************
 

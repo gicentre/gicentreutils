@@ -11,7 +11,7 @@ import processing.core.PApplet;
 //  *****************************************************************************************
 /** Tests the text wrap class by displaying wrapped text with individual highlighting of wards.
  *  @author Aidan Slingsby with minor modifications by Jo Wood, giCentre, City University London.
- *  @version 3.2 31st July, 2012. 
+ *  @version 3.3 31st July, 2012. 
  */ 
 //  *****************************************************************************************
 

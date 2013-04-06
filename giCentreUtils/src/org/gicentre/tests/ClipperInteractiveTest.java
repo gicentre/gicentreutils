@@ -10,7 +10,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests interactive clipping using two clipping regions in the same sketch.
  *  @author Alexander Kachkaev and Jo Wood, giCentre, City University London.
- *  @version 3.2, 17th June, 2012.
+ *  @version 3.3, 17th June, 2012.
  */ 
 //  ****************************************************************************************
 

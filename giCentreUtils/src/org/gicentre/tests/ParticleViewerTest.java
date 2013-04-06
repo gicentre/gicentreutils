@@ -6,7 +6,7 @@ import org.gicentre.utils.network.*;
 //  *****************************************************************************************
 /** Tests particle viewer by creating a simple node-edge graph and displaying it. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.1, 1st August, 2012. 
+ *  @version 3.3, 1st August, 2012. 
  */ 
 //  *****************************************************************************************
 

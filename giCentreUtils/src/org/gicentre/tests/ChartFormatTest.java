@@ -8,7 +8,7 @@ import processing.core.PApplet;
 //  *****************************************************************************************
 /** Tests the formatting of chart values and categories.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2 29th April, 2012. 
+ *  @version 3.3 29th April, 2012. 
  */ 
 //  *****************************************************************************************
 
