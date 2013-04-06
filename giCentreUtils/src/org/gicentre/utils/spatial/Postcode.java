@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  *  identified individually. Will parse partial postcodes as well as those containing
  *  arbitrary whitespace.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.  
+ *  @version 3.3, 1st August, 2011.  
  */ 
 // *****************************************************************************************
 

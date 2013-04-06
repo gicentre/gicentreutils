@@ -12,7 +12,7 @@ import processing.core.PConstants;
  *          by Robert Penner, 2003, 
  *          <a href="http://www.robertpenner.com/easing/penner_chapter7_tweening.pdf" 
  *          target="_blank">Programming Macromedia Flash MX</a>.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.3, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

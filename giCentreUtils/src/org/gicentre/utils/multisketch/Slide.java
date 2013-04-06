@@ -12,7 +12,7 @@ import processing.core.PImage;
 //******************************************************************************************
 /** Class to represent a presentation slide for use in a slide show.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 1st August, 2011.
  */ 
 // *****************************************************************************************
 

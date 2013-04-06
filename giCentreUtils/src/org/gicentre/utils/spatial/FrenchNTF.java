@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  conic projection divided into one of 4 zones, plus a modified zone II projection for 
  *  national maps. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.2, 27th June, 2012.  
+ *  @version 3.3, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 

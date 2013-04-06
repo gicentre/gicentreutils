@@ -42,7 +42,7 @@ import processing.core.PVector;
  * 
  * @author Alexander Kachkaev <alexander.kachkaev.1@city.ac.uk> with minor modifications by Jo Wood.
  * Inspired by Aidan Slingsby's <a.slingsby@city.ac.uk> GraphicBuffer
- * @version 1.1, 3rd June, 2012.
+ * @version 3.3, 3rd June, 2012.
  *
  */
 // ********************************************************************************

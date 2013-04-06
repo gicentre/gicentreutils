@@ -5,7 +5,7 @@ package org.gicentre.utils.spatial;
  *  Hawaii and Alaska). This is an Albers equal area conic projection with a GRS_1980 
  *  ellipsoid and adjusted centre.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.2, 27th June, 2012.  
+ *  @version 3.3, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 

@@ -3,7 +3,7 @@ package org.gicentre.utils.move;
 //******************************************************************************************
 /** Interface for object that need to respond to the end of a zoom or pan event.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 1st August, 2011.
  */ 
 // *****************************************************************************************
 

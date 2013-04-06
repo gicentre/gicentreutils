@@ -25,7 +25,7 @@ import org.gicentre.utils.io.DOMProcessor;
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 6th April, 2013.
  */ 
 // *****************************************************************************************
 
@@ -931,9 +931,9 @@ public class ColourTable implements Serializable
      *  contain a single string indicating table is empty.
      * @return ListModel representation of the colour rules.
      */              
-    public ListModel toListModel()
+    public ListModel<Serializable> toListModel()
     {
-        DefaultListModel listModel = new DefaultListModel();
+        DefaultListModel<Serializable> listModel = new DefaultListModel<Serializable>();
         
         if (cTable.size() <=1)
         {

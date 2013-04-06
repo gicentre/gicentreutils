@@ -20,7 +20,7 @@ import processing.core.PImage;
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.
+ *  @version 3.3, 1st August, 2011.
  */ 
 // *****************************************************************************************
 
