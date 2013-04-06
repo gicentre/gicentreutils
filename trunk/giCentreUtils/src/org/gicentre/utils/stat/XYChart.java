@@ -271,6 +271,7 @@ public class XYChart extends AbstractChart
 
         	// Check to see if we have special case where x and y axes have the same origin, so only display it once.
         	boolean showSingleOriginValue = false;
+  
         	if ((getShowAxis(0) && getShowAxis(1)) && (axisFormatter[0].format(tics[0][0]).equals(axisFormatter[1].format(tics[1][0]))))
         	{
         		showSingleOriginValue = true;

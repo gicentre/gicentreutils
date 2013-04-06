@@ -10,7 +10,7 @@ import processing.core.PConstants;
 //  ****************************************************************************************
 /** Tests chart drawing in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.3, 6th April, 2013 
  */ 
 // *****************************************************************************************
 
@@ -86,7 +86,6 @@ public class ChartTest extends PApplet
         chart1.setBarColour(barData,ColourTable.getPresetColourTable(ColourTable.GREENS, -1000, 1000));
         chart1.setBarLabels(new String[] {"Item 1","Item 2","Item 3","Item 4","Item 5","Item 6","Item 7","Item 8","Item 9","Item 10","Item 11","Item 12","Item 13", "Item 14"});
         chart1.setBarGap(barGap);
- 
         
         chart2 = new XYChart(this);
         
@@ -100,16 +99,19 @@ public class ChartTest extends PApplet
         chart2.showXAxis(showXAxis);
         chart2.showYAxis(showYAxis);
         //chart2.setMinX(0);
-        chart2.setMinY(0);
+        //chart2.setMinY(0);
         chart2.setXFormat("###,###.###");
         chart2.setPointSize(10);
         //chart2.setYFormat("0.0");
         //chart2.setPointColour(color(40,50,160));
         chart2.setPointColour(xData, ColourTable.getPresetColourTable(ColourTable.BLUES,0,23));
         chart2.setPointSize(sizeData, 16);
-        chart2.setLineWidth(0.1f);
+        chart2.setLineWidth(2f);
         chart2.setXAxisLabel("This is the x-axis");
         chart2.setYAxisLabel("This is the y-axis");
+        chart2.setAxisColour(color(255));
+        chart2.setAxisLabelColour(color(255,0,0));
+        chart2.setAxisValuesColour(color(255));
         //chart2.setXAxisAt(4);
         //chart2.setYAxisAt(12.5f);
     }
@@ -123,10 +125,12 @@ public class ChartTest extends PApplet
 
         strokeWeight(1);
         
+        fill(255);
         stroke(250,100,100);
         rect(1,1,width*.5f-2,height-2);
         chart1.draw(1,1,width*.5f-2,height-2);
         
+        fill(0);
         stroke(100,100,250);
         rect(width*.5f+1,1,width*.5f-2,height-2);
         chart2.draw(width*.5f+1,1,width*.5f-2,height-2);
