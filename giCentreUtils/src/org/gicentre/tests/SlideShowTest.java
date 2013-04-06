@@ -12,7 +12,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the use of embedded sketches, text and images in a slide show.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.3, 6th April, 2013. 
  */ 
 // *****************************************************************************************
 
@@ -74,20 +74,21 @@ public class SlideShowTest extends PApplet
         
         // Each slide has a default font that must be provided in the constructor.
         // Text is added using addLine(), images added using addImage().
-        Slide slide = new Slide(font);      
-        slide.addLine("This is slide one");
-        slide.addLine("with some text in a different size",font,18);
-        slideShow.addSlide(slide);
+        Slide slide1 = new Slide(font);      
+        slide1.addLine("This is slide one");
+        slide1.addLine("with some text in a different size",font,18);
+        slideShow.addSlide(slide1);
         
+        Slide slide2 = new Slide(font);      
+        slide2.addLine("This is slide two");
+        slide2.addLine("with some small text",font,10);
+        slideShow.addSlide(slide2);
         
-        
+       
         // The slide show must be added to this master sketch in order for it to be visible.
         add(slideShow);
         
         // This starts the slide show off.
         slideShow.startShow();
     }
-    
-    
-    
 }

@@ -18,7 +18,7 @@ import processing.core.PFont;
  *  class for showing simple text screens as part of a slide show. Progress through the slide show
  *  is controlled with the PageUp ad PageDown keys.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.3, 6th April, 2013.
  */ 
 // ***********************************************************************************************
 
@@ -65,11 +65,25 @@ public class SlideShow extends Panel
     /** Initialises the slideshow.
       * @param parent Parent sketch containing the slideshow. 
       */
-    public SlideShow(PApplet parent)
+	public SlideShow(PApplet parent)
     {
         super();
         this.parent = parent;
-        parent.registerKeyEvent(this);
+
+        // TODO: This is a hack to determine whether we are running Processing 2.x or Processing 1.x
+        //       It is needed because Processing 2 uses a different event handling model to Processing 1.
+        try
+        {
+        	// Attempt to use Processing 2.x event handling.
+        	parent.registerMethod("keyEvent", this);
+        }
+        catch (Throwable e)
+        {
+        	// If a Processing 2.x event handling failed, revert to a Processing 1.5 version
+        	System.err.println("Failed to use 2.0 event: "+e);
+        	 //parent.registerKeyEvent(this);
+        }
+
         cardLayout = new CardLayout();
         pages = new HashMap<Integer,EmbeddedSketch>(); 
         slides = new HashMap<Integer,Slide>(); 
@@ -306,21 +320,51 @@ public class SlideShow extends Panel
         this.retreatKey = retreatKey;
     }
     
-    /** Controls sequence though slide show with the pageUp and pageDown keys
-      * @param e Key press event.
-      */
-    public void keyEvent(KeyEvent e)
+    /** Controls sequence though slide show with the pageUp and pageDown keys. 
+     *  @param e Key press event.
+     *  @deprecated This version is for Processing 1.x only as it relies on the AWT event handling model.
+     */
+    public void keyEvent(java.awt.event.KeyEvent e)
     {
         if (e.getID() == KeyEvent.KEY_PRESSED)
         {
-            if (e.getKeyCode() == advanceKey)
-            {
-                setCurrentSlide(currentPageNumber+1);
-            }
-            else if (e.getKeyCode() == retreatKey)
-            {
-                setCurrentSlide(currentPageNumber-1);
-            }
+        	keyEventDecoder(e.getKeyCode());
         }
     }
+    
+    /** Controls sequence though slide show with the keys that have been allocated for advancing 
+     *  and retreating through slides.
+     *  @param e Key press event.
+     */
+   public void keyEvent(processing.event.KeyEvent e)
+   { 
+	   if (e.getKey() == PConstants.CODED)
+	   {
+		   keyEventDecoder(e.getKeyCode());
+	   }
+	   else
+	   {
+		   keyEventDecoder(e.getKey());
+	   }
+   }
+   
+   /** Decodes the given key or keycode and advances/retreats the slide show by one slide if 
+    *  the relevant key has been pressed.
+    *  @param keyCode Key code or key to decode.
+    */
+  private boolean keyEventDecoder(int keyCode)
+  { 
+	   if (keyCode == advanceKey)
+	   {
+		   setCurrentSlide(currentPageNumber+1);
+		   return true;
+	   }
+	   if (keyCode == retreatKey)
+	   {
+		   setCurrentSlide(currentPageNumber-1);
+		   return true;
+	   }
+	   // No matched key/key code.
+	   return false;
+  }
 }
