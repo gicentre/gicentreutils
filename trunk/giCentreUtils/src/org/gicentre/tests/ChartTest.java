@@ -94,6 +94,8 @@ public class ChartTest extends PApplet
         
         float[] xData = new float[]{-130,-120,-110,-100,-90,-80,-70,-60,-50};
         float[] yData = new float[]{0.01f,0.02f,0.03f,0.05f,0.04f,0.035f,0.02f,0.015f,0.01f};
+        
+        
         float[] sizeData = new float[]{1,10,4,20,13,6,2,8,6};
         chart2.setData(xData, yData);
         chart2.showXAxis(showXAxis);

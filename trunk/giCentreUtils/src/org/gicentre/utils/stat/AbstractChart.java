@@ -15,7 +15,7 @@ import processing.core.PGraphics;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.2, 15th January, 2012. 
+ *  @version 3.3, 6th April, 2013 
  */ 
 // *****************************************************************************************
 
@@ -229,6 +229,14 @@ public abstract class AbstractChart
             System.err.println("Warning: Cannot set data for dimension "+dimension+": permissable range 0-"+(MAX_DIMENSIONS-1));
             return;
         }
+        
+        // Avoid having empty data in chart.
+        if (data == null)
+    	{
+    		setData(dimension, new float[] {});
+    		return;
+    	}
+        
         this.data[dimension] = data;
         updateChart(dimension);
     }
@@ -461,6 +469,11 @@ public abstract class AbstractChart
     {
         if (this.showAxis[dimension] != isVisible)
         {
+        	if (data[dimension] == null)
+        	{
+        		setData(dimension, new float[]{});
+        	}
+        	
             this.showAxis[dimension] = isVisible;
             if (isVisible)
             {
@@ -635,6 +648,21 @@ public abstract class AbstractChart
      */
     private void updateChart(int dimension)
     {
+    	if (data[dimension] == null)
+    	{
+    		data[dimension] = new float[]{};
+    	}
+    	
+    	if (data[dimension].length == 0)
+    	{
+    		if (min[dimension] == max[dimension])
+    		{
+    			min[dimension] = Math.min(0,min[dimension]);
+    			max[dimension] = Math.max(1,max[dimension]);
+    		}
+    		tics[dimension] = getTics(min[dimension], max[dimension]);
+    	}
+    	
         // Update the range of values of dataset if it exists.
         if ((data[dimension] != null) && (data[dimension].length > 0))
         {                                   
