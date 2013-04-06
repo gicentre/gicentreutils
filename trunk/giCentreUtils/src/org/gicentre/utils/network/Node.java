@@ -11,7 +11,7 @@ import processing.core.PVector;
  *  behaviour, but by inheriting it and overriding its draw() method, visual appearance of
  *  the node can be customised.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.3, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

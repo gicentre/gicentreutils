@@ -7,46 +7,47 @@ import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.core.PVector;
 
-public class ZoomPanState implements Cloneable{
+// *****************************************************************************************
+/** Class that stores the state of a ZoomPan instance and transform coordinates accordingly.
+ *  Modifiable only from classes within the package. Only intended to be created and modified
+ *  by ZoomPan.
+ *  Used by ZoomPan internally to store its state. 
+ *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
+ *  @version 3.3, 1st August, 2011. 
+ */
+// *****************************************************************************************
 
-	//package-wide visibility - directly access and manipulated by ZoomPan
-	PApplet aContext;		//the sketch
-	PGraphics pGraphics;    //an offscreen buffer 
-	AffineTransform trans,iTrans;   //the transformation
-	double zoomScale;               //zoom scale
-	PVector panOffset;              //offset
+/* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
+ * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation, either version 3 of the License, or (at your
+ * option) any later version.
+ * 
+ * gicentre.utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
+ * See the GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License along with this
+ * source code (see COPYING.LESSER included with this source code). If not, see 
+ * http://www.gnu.org/licenses/.
+ */
 
+public class ZoomPanState implements Cloneable
+{
+	// ---------------------------- Object variables -----------------------------
 	
-	// *****************************************************************************************
-	/** Class that stores the state of a ZoomPan instance and transform coordinates accordingly.
-	 * 
-	 * Modifiable only from classes within the package. Only intended to be created and modified
-	 * by ZoomPan.
-	 * 
-	 * Used by ZoomPan internally to store its state. 
-	 * 
-     *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
-     *  @version 1, 1st August, 2011. 
-     */
+	// Package-wide visibility - directly access and manipulated by ZoomPan
+	PApplet aContext;				// The sketch
+	PGraphics pGraphics;    		// An offscreen buffer 
+	AffineTransform trans,iTrans;   // The transformation
+	double zoomScale;               // Zoom scale
+	PVector panOffset;              // Offset
+
+
+	// ------------------------------- Constructor ------------------------------- 
 	
-	// *****************************************************************************************
-
-	/* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
-	 * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
-	 * as published by the Free Software Foundation, either version 3 of the License, or (at your
-	 * option) any later version.
-	 * 
-	 * gicentre.utils is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-	 * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  
-	 * See the GNU Lesser General Public License for more details.
-	 * 
-	 * You should have received a copy of the GNU Lesser General Public License along with this
-	 * source code (see COPYING.LESSER included with this source code). If not, see 
-	 * http://www.gnu.org/licenses/.
-	 */
-
-	/** Constructor
-	 * Do not use - request from ZoomPan
+	/** Do not use this constructor but instead call request it from ZoomPan.
+	 *  @param aContext Parent sketch.
+	 *  @param pGraphics Graphics context to zoom.
 	 */
 	ZoomPanState(PApplet aContext, PGraphics pGraphics)
 	{
@@ -58,8 +59,7 @@ public class ZoomPanState implements Cloneable{
 		iTrans=new AffineTransform();
 	}
 
-
-	
+	// ------------------------------ Public methods -----------------------------
 	
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
@@ -104,7 +104,8 @@ public class ZoomPanState implements Cloneable{
 	
 	/** Performs the zooming/panning transformation. This method should be called in the
 	 *  draw() method before any drawing that is to be zoomed or panned. 
-	 */	public void transform()
+	 */	
+	public void transform()
 	{    
 		getGraphics().translate((float)trans.getTranslateX(),(float)trans.getTranslateY());
 		getGraphics().scale((float)trans.getScaleX(),(float)trans.getScaleY());
@@ -153,7 +154,12 @@ public class ZoomPanState implements Cloneable{
 		return pGraphics;
 	}
 	
-	public Object clone(){
+	/** Creates a clone of this zoomPan state.
+	 *  @return Clone of this zoomPan state.
+	 */
+	@Override
+	public Object clone()
+	{
 		ZoomPanState zoomPanState=new ZoomPanState(aContext,pGraphics);
 		zoomPanState.zoomScale=this.zoomScale;
 		zoomPanState.panOffset=this.panOffset;

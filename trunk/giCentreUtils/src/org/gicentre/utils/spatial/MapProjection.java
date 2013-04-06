@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  be able to perform a forward and inverse transformation as well as provide a textual
  *  description of the projection type. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 27th June, 2012.  
+ *  @version 3.3, 27th June, 2012.  
  */ 
 // *****************************************************************************************
 

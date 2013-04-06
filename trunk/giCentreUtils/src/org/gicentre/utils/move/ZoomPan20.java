@@ -71,7 +71,7 @@ public class ZoomPan20 implements ZoomPanable
 	private float maxPanYOffset = -1;				// Absolute maximum permitted panning offset in y direction, or negative if no maximum.
 	*/
 	
-	// ------------------------------- Constructor ------------------------------- 
+	// ------------------------------- Constructors ------------------------------- 
 
 	/** Initialises the zooming and panning transformations for the given applet context. 
 	 *  Can be used to have independent zooming in multiple windows by creating multiple

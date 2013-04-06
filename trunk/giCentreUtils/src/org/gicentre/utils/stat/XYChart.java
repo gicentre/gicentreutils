@@ -11,7 +11,7 @@ import processing.core.PVector;
 // *****************************************************************************************
 /** Class for representing X-Y charts such as scatterplots or line charts.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.2, 20th July, 2012.
+ *  @version 3.3, 20th July, 2012.
  */ 
 // *****************************************************************************************
 

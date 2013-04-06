@@ -11,7 +11,7 @@ import processing.core.PGraphics;
  *  and can return the screen bounds of the token, using the current textFont, textSize
  *  and textAlign.
  *  @author Aidan Slingsby, giCentre, City University London.
- *  @version 1.1, July 2012 
+ *  @version 3.3, 1st July 2012 
  */ 
 // *****************************************************************************************
 

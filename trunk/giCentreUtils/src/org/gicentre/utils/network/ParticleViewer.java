@@ -20,7 +20,7 @@ import processing.core.PConstants;
  *  @param <E> Type of edge to be stored in the particle viewer. This can be an <code>Edge</code>
  *             or any specialised subclass of it.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 31st July, 2012. 
+ *  @version 3.3, 31st July, 2012. 
  */ 
 // *****************************************************************************************
 

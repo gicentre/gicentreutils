@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Class for representing and building a convex hull around a set of point values. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011. 
+ *  @version 3.3, 1st August, 2011. 
  */ 
 // *****************************************************************************************
 

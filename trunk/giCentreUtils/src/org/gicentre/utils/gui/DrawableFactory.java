@@ -4,7 +4,7 @@ package org.gicentre.utils.gui;
 /** Factory to produce drawable renderers. This factory will allow renderers created in 
  *  external libraries to be used by giCentre utilities.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2.2, 15th January, 2012.
+ *  @version 3.3, 15th January, 2012.
  */ 
 //*****************************************************************************************
 
