@@ -94,6 +94,7 @@ public class ProjectionTest extends TestCase
 		
 		ArrayList<MapProjection> projs = new ArrayList<MapProjection>();
 		projs.add(new LambertConformalConic(new Ellipsoid(Ellipsoid.CLARKE_1866),33,45,-96,23,0,0));
+		projs.add(new LambertConformalConic(25,-133.459,12.19));
 		
 		for (MapProjection proj : projs)
 		{
