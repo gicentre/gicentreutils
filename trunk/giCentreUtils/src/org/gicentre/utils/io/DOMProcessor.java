@@ -112,6 +112,7 @@ public class DOMProcessor
             }
            
             dom = db.getDOMImplementation().createDocument(null,name,null);
+            dom.setStrictErrorChecking(false); 
             return dom.getDocumentElement();
         }
         

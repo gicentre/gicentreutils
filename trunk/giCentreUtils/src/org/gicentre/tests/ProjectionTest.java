@@ -2,13 +2,14 @@ package org.gicentre.tests;
 
 import java.util.ArrayList;
 import org.gicentre.utils.spatial.*;			// For Map projections.
+
 import processing.core.PVector;
 import junit.framework.TestCase;
 
 //  ****************************************************************************************
 /** Set of unit tests for projection conversion.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th June, 2012.
+ *  @version 3.3.1, 26th May, 2013.
  */ 
 // *****************************************************************************************
 
@@ -55,7 +56,7 @@ public class ProjectionTest extends TestCase
 	public void testAlbers()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(-165,65),		// Western Alaska.
-											 new PVector(-180,52),		// Bering Straights.
+											 new PVector(-180,52),		// Bering Straits.
 											 new PVector(-127,59),		// Northern BC.
 											 new PVector(-157,20),		// Hawaii
 											 new PVector(-98,26),		// Southern Texas
@@ -67,6 +68,33 @@ public class ProjectionTest extends TestCase
 		projs.add(new AlbersUS());
 		projs.add(new AlbersUSCont());
 
+		for (MapProjection proj : projs)
+		{
+			System.out.println("\n"+proj.getDescription());
+			for (PVector geo : geoCoords)
+			{
+				roundTrip(proj, geo);
+			}
+		}
+	}
+	
+	/** Checks that forward and inverse transformations for the various Lambert conformal conic projection
+	 *  round trips (start and end coordinates are equal).
+	 */
+	public void testLambertConformalConic()
+	{
+		PVector[] geoCoords = new PVector[] {new PVector(-75,35),		// See Snyder (1987) p.296
+											 new PVector(-165,65),		// Western Alaska.
+											 new PVector(-180,52),		// Bering Straits.
+											 new PVector(-127,59),		// Northern BC.
+											 new PVector(-157,20),		// Hawaii
+											 new PVector(-98,26),		// Southern Texas
+											 new PVector(-68,45),		// NE US
+											 new PVector(-99,39)};		// Kansas
+		
+		ArrayList<MapProjection> projs = new ArrayList<MapProjection>();
+		projs.add(new LambertConformalConic(new Ellipsoid(Ellipsoid.CLARKE_1866),33,45,-96,23,0,0));
+		
 		for (MapProjection proj : projs)
 		{
 			System.out.println("\n"+proj.getDescription());
@@ -94,6 +122,7 @@ public class ProjectionTest extends TestCase
 		projs.add(new FrenchNTF());
 		projs.add(new OSGB());
 		projs.add(new Swiss());
+		projs.add(new LambertConformalConic(new Ellipsoid(Ellipsoid.INTERNATIONAL),43,62,10,30,0,0));
 
 		for (MapProjection proj : projs)
 		{
@@ -166,8 +195,8 @@ public class ProjectionTest extends TestCase
 
 	/** Performs a round-trip test to check that an inverse transformation applied to 
 	 *  its forward equivalent takes the location back to the start.
-	 * @param proj Pojection to test.
-	 * @param geo Lat/long coordinate to test.
+	 *  @param proj Projection to test.
+	 *  @param geo Lat/long coordinate to test.
 	 */
 	private void roundTrip(MapProjection proj, PVector geo)
 	{
