@@ -70,7 +70,7 @@ public class LambertConformalConic implements MapProjection
 	 */
     public LambertConformalConic(double lat1, double lon0, double lat0)
     {
-        this(new Ellipsoid(Ellipsoid.SPHERE),lat1,lat1,0,0,0,0);
+        this(new Ellipsoid(Ellipsoid.SPHERE),lat1,lat1,lon0,lat0,0,0);
     }
 	
 	/** Initialises the projection converter with the given ellipsoid. The 
@@ -91,7 +91,7 @@ public class LambertConformalConic implements MapProjection
 		this.phi1       = lat1*DEG2RAD;
 		this.phi2       = lat2*DEG2RAD;
 
-		if (Math.abs(phi1 + phi2) < 1.0e-10)
+		if (Math.abs(phi1 - phi2) < 1.0e-10)
 		{
 			isSingleParallel = true;
 		}
