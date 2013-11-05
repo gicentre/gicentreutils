@@ -84,6 +84,8 @@ public class ProjectionTest extends TestCase
 	public void testLambertConformalConic()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(-75,35),		// See Snyder (1987) p.296
+											 new PVector(-124.73158f,49.383404f),	// Top-left of conterminious US
+											 new PVector(-67.054596f,25.142752f),	// Bottom-right of conterminious US
 											 new PVector(-165,65),		// Western Alaska.
 											 new PVector(-180,52),		// Bering Straits.
 											 new PVector(-127,59),		// Northern BC.
