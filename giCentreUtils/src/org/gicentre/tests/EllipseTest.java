@@ -33,7 +33,7 @@ public class EllipseTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
 
-	/** Creates a simple application to test the Likert chart widget.
+	/** Creates a simple application to test the geom.Ellipse class.
 	 *  @param args Command line arguments (ignored). 
 	 */
 	public static void main(String[] args)
