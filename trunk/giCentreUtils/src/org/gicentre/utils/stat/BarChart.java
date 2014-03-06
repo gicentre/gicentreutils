@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Represents a bar chart. Appearance can be customised such as display of axes, 
  *  bar colours, orientations etc. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 15th January, 2012.
+ *  @version 3.3.1, 6th March, 2014.
  */ 
 //  ****************************************************************************************
 
@@ -114,6 +114,9 @@ public class BarChart extends AbstractChart
         int strokeColour = graphics.strokeColor;
         
         graphics.pushStyle();
+        
+        // Drawing bars assumes rectangle mode is 'CORNER'
+        graphics.rectMode(PConstants.CORNER);
         
         // Extra spacing required to fit axis labels. This can't be handled by the AbstractChart
         // because not all charts label their axes in the same way.
