@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests more sophisticated chart options in a Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.3.1, 4th March, 2014.
  */ 
 // *****************************************************************************************
 
@@ -108,6 +108,9 @@ public class ChartTest2 extends PApplet
     {   
         background(255);
         noLoop();
+        
+        // Changing rectangle mode should have no effect on bars
+        rectMode(CENTER);
                 
         // Draw the bar chart first, then overlay the line chart.
         stroke(150,100,100,200);
