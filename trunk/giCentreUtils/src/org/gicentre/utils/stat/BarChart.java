@@ -523,7 +523,7 @@ public class BarChart extends AbstractChart
      *  are scaled to the same maximum. If the given value is <code>Float.NaN</code>, then 
      *  the maximum value will be set to the maximum of the data values in the chart.
      *  @param maxVal Maximum value to use for scaling bar lengths or <code>Float.NaN</code> 
-     *                if data minimum is to be used.
+     *                if data maximum is to be used.
      */
     public void setMaxValue(float maxVal)
     {
