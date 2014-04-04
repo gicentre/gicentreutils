@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gicentre.utils.move.ZoomPan;
+import org.gicentre.utils.move.ZoomPanState;
 import org.gicentre.utils.network.traer.physics.*;
 import org.gicentre.utils.network.traer.animation.*;
 
@@ -298,7 +299,7 @@ public class ParticleViewer<N extends Node, E extends Edge>
     	Spring tether = tethers.get(stake);
     	if (tether == null)
     	{
-    		tether = physics.makeSpring(stake, p1, strength, DAMPING, 0);
+    		tether = physics.makeSpring(stake, p1, strength, DAMPING, Float.MIN_VALUE);
     		tethers.put(stake,tether);
     	}
     	else

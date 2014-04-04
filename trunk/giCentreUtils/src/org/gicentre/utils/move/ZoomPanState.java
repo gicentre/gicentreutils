@@ -39,7 +39,8 @@ public class ZoomPanState implements Cloneable
 	PApplet aContext;				// The sketch
 	PGraphics pGraphics;    		// An offscreen buffer 
 	AffineTransform trans,iTrans;   // The transformation
-	double zoomScale;               // Zoom scale
+	double zoomScaleX;               // Zoom scale in X
+	double zoomScaleY;               // Zoom scale in Y
 	PVector panOffset;              // Offset
 
 
@@ -53,7 +54,8 @@ public class ZoomPanState implements Cloneable
 	{
 		this.aContext=aContext;
 		this.pGraphics=pGraphics;
-		zoomScale=1;
+		zoomScaleX=1;
+		zoomScaleY=1;
 		panOffset=new PVector();
 		trans=new AffineTransform();
 		iTrans=new AffineTransform();
@@ -122,14 +124,34 @@ public class ZoomPanState implements Cloneable
 		offScreenBuffer.scale((float)trans.getScaleX(),(float)trans.getScaleY());
 	}
 	
-	/** Reports the current zoom scale. Can be used for drawing objects that maintain their
+	/** Reports the current zoom scale in X. Can be used for drawing objects that maintain their
 	 *  size when zooming.
 	 *  @return Current zoom scale. 
 	 */
 	public double getZoomScale()
 	{
-		return zoomScale;
+		return zoomScaleX;
 	}
+
+	/** Reports the current zoom scale in X. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleX()
+	{
+		return zoomScaleX;
+	}
+
+	/** Reports the current zoom scale in Y. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleY()
+	{
+		return zoomScaleX;
+	}
+
+	
 	
 	/** Reports the current pan offset. Useful when wishing to use an interpolated panning
 	 *  between this current value and some new pan offset.
@@ -161,7 +183,8 @@ public class ZoomPanState implements Cloneable
 	public Object clone()
 	{
 		ZoomPanState zoomPanState=new ZoomPanState(aContext,pGraphics);
-		zoomPanState.zoomScale=this.zoomScale;
+		zoomPanState.zoomScaleX=this.zoomScaleX;
+		zoomPanState.zoomScaleY=this.zoomScaleY;
 		zoomPanState.panOffset=this.panOffset;
 		zoomPanState.trans=new AffineTransform(trans);
 		zoomPanState.iTrans=new AffineTransform(iTrans);

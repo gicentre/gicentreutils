@@ -1,6 +1,7 @@
 package org.gicentre.utils.move;
 
 import org.gicentre.utils.move.ZoomPan.ZoomPanBehaviour;
+import org.gicentre.utils.move.ZoomPan.ZoomPanDirection;
 
 import processing.core.PGraphics;
 import processing.core.PVector;
@@ -85,17 +86,62 @@ interface ZoomPanable
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
 	abstract void setZoomScale(double zoomScale);
+
+	
+	/** Should report the current zoom scale in X. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	abstract double getZoomScaleX();
+	
+	/** Should set a new zoom scale in X. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	abstract void setZoomScaleX(double zoomScaleX);
+
+
+	/** Should report the current zoom scale in Y. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	abstract double getZoomScaleY();
+	
+	/** Should set a new zoom scale in Y. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	abstract void setZoomScaleY(double zoomScaleY);
+
 	
 	/** Should set the zoom/pan behaviour type
 	 *  @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
+	@Deprecated
 	abstract void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType);
 
 	/** Should report the zoom/pan behaviour type.
 	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
+	@Deprecated
 	abstract ZoomPanBehaviour getZoomPanBehaviour();
 
+	
+	/** Should set the zooming/panning direction
+	 *  @param zoomPanDirection
+	 */
+	abstract void setZoomPanDirection(ZoomPanDirection zoomPanDirection);
+
+	/** Should report the zoom/pan zooming/panning direction
+	 *  @return  zoomPanDirection
+	 */
+	abstract ZoomPanDirection getZoomPanDirection();
+
+	
 	/** Should report the current pan offset. Useful when wishing to use an interpolated panning
 	 *  between this current value and some new pan offset.
 	 *  @return Current pan offset. Negative coordinates indicate an offset to the left
