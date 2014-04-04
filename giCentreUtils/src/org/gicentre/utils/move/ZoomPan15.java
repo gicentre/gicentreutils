@@ -12,6 +12,7 @@ import java.util.TimerTask;
 import java.util.Vector;
 
 import org.gicentre.utils.move.ZoomPan.ZoomPanBehaviour;
+import org.gicentre.utils.move.ZoomPan.ZoomPanDirection;
 import org.gicentre.utils.move.ZoomPanListener;
 
 import processing.core.PApplet;
@@ -63,11 +64,14 @@ public class ZoomPan15 implements ZoomPanable
 	private Timer timer; 							// Timer so that we have a delay before a zoom event is triggered with the timer
 	private int millisecondsBeforeWheelZoomEvent=700;// Milliseconds before a zoom event is triggered by the mouse wheel - set to 0.7 of a second by default
 	
-	double minZoomScale=Double.MIN_VALUE;
-	double maxZoomScale=Double.MAX_VALUE;
+	double minZoomScaleX=Double.MIN_VALUE;
+	double maxZoomScaleX=Double.MAX_VALUE;
+	double minZoomScaleY=Double.MIN_VALUE;
+	double maxZoomScaleY=Double.MAX_VALUE;
 	
 	
-	private ZoomPanBehaviour zoomPanType=ZoomPanBehaviour.BOTH_DIRECTIONS; 
+	private ZoomPanBehaviour zoomPanBehaviour=ZoomPanBehaviour.BOTH_DIRECTIONS;
+	private ZoomPanDirection zoomPanDirection=ZoomPanDirection.ZOOM_PAN_BOTH;
 	
 	// ------------------------------- Constructor ------------------------------- 
 
@@ -151,7 +155,8 @@ public class ZoomPan15 implements ZoomPanable
 	{
 		zoomPanState.trans		= new AffineTransform();
 		zoomPanState.iTrans		= new AffineTransform();
-		zoomPanState.zoomScale	= 1;
+		zoomPanState.zoomScaleX	= 1;
+		zoomPanState.zoomScaleY	= 1;
 		zoomPanState.panOffset	= new PVector(0,0);
 		zoomStep    	    	= 1.05;
 		isZooming       		= false;
@@ -237,6 +242,25 @@ public class ZoomPan15 implements ZoomPanable
 		return zoomPanState.getZoomScale();
 	}
 
+	/** Reports the current zoom scale in X. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleX()
+	{
+		return zoomPanState.getZoomScaleX();
+	}
+
+	/** Reports the current zoom scale in Y. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleY()
+	{
+		return zoomPanState.getZoomScaleY();
+	}
+
+	
 	/** Sets a new zoom scale. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
 	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
@@ -245,26 +269,88 @@ public class ZoomPan15 implements ZoomPanable
 	 */
 	public void setZoomScale(double zoomScale)
 	{
-		setZoomScaleWithoutRecalculation(zoomScale);
+		setZoomScaleWithoutRecalculation(zoomScale,zoomScale);
 		calcTransformation();
 	}
+
+	/** Sets a new zoom scale for X and Y separately. Can be used for programmatic
+	 *  control of zoomer, such as eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	public void setZoomScale(double zoomScaleX,double zoomScaleY)
+	{
+		setZoomScaleWithoutRecalculation(zoomScaleX,zoomScaleY);
+		calcTransformation();
+	}
+
+	
+	/** Sets a new zoom scale for X. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	public void setZoomScaleX(double zoomScaleX)
+	{
+		setZoomScaleWithoutRecalculation(zoomScaleX,zoomPanState.zoomScaleY);
+		calcTransformation();
+	}
+
+	/** Sets a new zoom scale for Y. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	public void setZoomScaleY(double zoomScaleY)
+	{
+		setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomScaleY);
+		calcTransformation();
+	}
+
+	
 	
 	/**Sets the zoom/pan behaviour type
 	 * 
 	 * @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
+	@Deprecated
 	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType)
 	{
-		this.zoomPanType=zoomPanType;
+		this.zoomPanBehaviour=zoomPanType;
 		calcTransformation();
 	}
 
+	/**Get the zooming/panning direction
+	 * 
+	 * @return  
+	 */
+	public ZoomPanDirection getZoomPanDirection(){
+		return zoomPanDirection;
+	}
+
+	
+	/**Sets the zooming/panning direction
+	 * 
+	 * @param zoomPan direction
+	 */
+	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection)
+	{
+		this.zoomPanDirection=zoomPanDirection;
+	}
+
+
+
+	
 	/**Get the zoom/zan behaviour type
 	 * 
 	 * @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
+	@Deprecated
 	public ZoomPanBehaviour getZoomPanBehaviour(){
-		return zoomPanType;
+		return zoomPanBehaviour;
 	}
 
 
@@ -423,11 +509,21 @@ public class ZoomPan15 implements ZoomPanable
 
 				if (zoomPanState.aContext.mouseY < oldPosition.y)
 				{
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScale*zoomStep);
+					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL||zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL||zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
 				}
 				else if (zoomPanState.aContext.mouseY > oldPosition.y)
 				{
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScale/zoomStep);
+					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL||zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL||zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
 				}
 				doZoom();
 				zoomStep += 0.005;    // Accelerate zooming with prolonged drag.
@@ -435,9 +531,14 @@ public class ZoomPan15 implements ZoomPanable
 			else if (allowPanButton && isMouseCaptured)
 			{        
 				isPanning = true;
-				//panOffset.setLocation((panOffset.y + e.getX() - oldPosition.y),
-				//                     panOffset.y+ e.getY() - oldPosition.y);
-				zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
+				
+				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH  || zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)				
+					zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)				
+					zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,0));
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)				
+					zoomPanState.panOffset.add(new PVector(0,e.getY()-oldPosition.y));
+				
 				calcTransformation(); 
 			}
 
@@ -464,11 +565,46 @@ public class ZoomPan15 implements ZoomPanable
 	 */
 	public void setMinZoomScale(double minZoomScale)
 	{
-		this.minZoomScale=minZoomScale;
+		this.minZoomScaleX=minZoomScale;
+		this.minZoomScaleY=minZoomScale;
 		
-		if (zoomPanState.zoomScale < minZoomScale)
+		if (zoomPanState.zoomScaleX < minZoomScale)
 		{
 			setZoomScale(minZoomScale);
+		}
+		if (zoomPanState.zoomScaleY < minZoomScale)
+		{
+			setZoomScale(minZoomScale);
+		}
+	}
+
+	/** Sets the minimum permitted zoom scale in X(i.e. how far zoomed out a view is allowed to be). If the
+	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
+	 *  minimum value. A value above zero but less than one means that the view will be smaller than
+	 *  its natural size. A value greater than one means the view will be larger than its natural size.
+	 *  @param minZoomScale
+	 */
+	public void setMinZoomScaleX(double minZoomScaleX)
+	{
+		this.minZoomScaleX=minZoomScaleX;
+		
+		if (zoomPanState.zoomScaleX < minZoomScaleX)
+		{
+			setZoomScaleX(minZoomScaleX);
+		}
+	}
+	
+	/** Sets the minimum permitted zoom scale in Y (i.e. how far zoomed out a view is allowed to be). If the
+	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
+	 *  minimum value. A value above zero but less than one means that the view will be smaller than
+	 *  its natural size. A value greater than one means the view will be larger than its natural size.
+	 *  @param minZoomScale
+	 */
+	public void setMinZoomScaleY(double minZoomScaleY)
+	{
+		this.minZoomScaleY=minZoomScaleY;
+		{
+			setZoomScaleY(minZoomScaleY);
 		}
 	}
 	
@@ -480,9 +616,14 @@ public class ZoomPan15 implements ZoomPanable
 	 */
 	public void setMaxZoomScale(double maxZoomScale)
 	{
-		this.maxZoomScale=maxZoomScale;
+		this.maxZoomScaleX=maxZoomScale;
+		this.maxZoomScaleY=maxZoomScale;
 		
-		if (zoomPanState.zoomScale > maxZoomScale)
+		if (zoomPanState.zoomScaleX > maxZoomScale)
+		{
+			setZoomScale(maxZoomScale);
+		}
+		if (zoomPanState.zoomScaleY > maxZoomScale)
 		{
 			setZoomScale(maxZoomScale);
 		}
@@ -652,15 +793,18 @@ public class ZoomPan15 implements ZoomPanable
 	 *  elsewhere.
 	 *  @param zoomScale New zoom scale to be used.
 	 */
-	void setZoomScaleWithoutRecalculation(double zoomScale)
+	void setZoomScaleWithoutRecalculation(double zoomScaleX,double zoomScaleY)
 	{
 		// This method is of package-wide scope to allow inner classes to have access to it.*
 		//limit zoom to min/max
 		synchronized (this) 
 		{
-			zoomPanState.zoomScale = zoomScale;
-			zoomPanState.zoomScale=Math.min(zoomPanState.zoomScale,maxZoomScale);
-			zoomPanState.zoomScale=Math.max(zoomPanState.zoomScale,minZoomScale);
+			zoomPanState.zoomScaleX = zoomScaleX;
+			zoomPanState.zoomScaleY = zoomScaleY;
+			zoomPanState.zoomScaleX=Math.min(zoomPanState.zoomScaleX,maxZoomScaleX);
+			zoomPanState.zoomScaleX=Math.max(zoomPanState.zoomScaleX,minZoomScaleX);
+			zoomPanState.zoomScaleY=Math.min(zoomPanState.zoomScaleY,maxZoomScaleY);
+			zoomPanState.zoomScaleY=Math.max(zoomPanState.zoomScaleY,minZoomScaleY);
 		}
 	}
 
@@ -682,31 +826,32 @@ public class ZoomPan15 implements ZoomPanable
 	private void calcTransformation()
 	{    
 
-		double centreX = (zoomPanState.getGraphics().width*(1-zoomPanState.zoomScale))/2;
-		double centreY = (zoomPanState.getGraphics().height*(1-zoomPanState.zoomScale))/2;
+		double centreX = (zoomPanState.getGraphics().width*(1-zoomPanState.zoomScaleX))/2;
+		double centreY = (zoomPanState.getGraphics().height*(1-zoomPanState.zoomScaleY))/2;
 
 		zoomPanState.trans = new AffineTransform();
 		zoomPanState.iTrans = new AffineTransform();
 
 		//scale depending on the type
-		if (zoomPanType==ZoomPanBehaviour.BOTH_DIRECTIONS){
+		if (zoomPanBehaviour==ZoomPanBehaviour.BOTH_DIRECTIONS){
 			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,centreY+zoomPanState.panOffset.y);
-			zoomPanState.trans.scale(zoomPanState.zoomScale,zoomPanState.zoomScale);
-			zoomPanState.iTrans.scale(1/zoomPanState.zoomScale,1/zoomPanState.zoomScale);
+			zoomPanState.trans.scale(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY);
+			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1/zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x, -centreY-zoomPanState.panOffset.y);
 		}
-		else if (zoomPanType==ZoomPanBehaviour.VERTICAL_ONLY){
+		else if (zoomPanBehaviour==ZoomPanBehaviour.VERTICAL_ONLY){
 			zoomPanState.trans.translate(0,centreY+zoomPanState.panOffset.y);
-			zoomPanState.trans.scale(1,zoomPanState.zoomScale);
-			zoomPanState.iTrans.scale(1,1/zoomPanState.zoomScale);
+			zoomPanState.trans.scale(1,zoomPanState.zoomScaleY);
+			zoomPanState.iTrans.scale(1,1/zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.translate(0, -centreY-zoomPanState.panOffset.y);
 		}
-		else if (zoomPanType==ZoomPanBehaviour.HORIZONTAL_ONLY){
+		else if (zoomPanBehaviour==ZoomPanBehaviour.HORIZONTAL_ONLY){
 			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,0);
-			zoomPanState.trans.scale(zoomPanState.zoomScale,1);
-			zoomPanState.iTrans.scale(1/zoomPanState.zoomScale,1);
+			zoomPanState.trans.scale(zoomPanState.zoomScaleX,1);
+			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1);
 			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x,0);
 		}
+
 
 	}
 	
@@ -745,7 +890,12 @@ public class ZoomPan15 implements ZoomPanable
 
 			if (e.getWheelRotation() < 0)
 			{
-				setZoomScaleWithoutRecalculation(getZoomScale()*getZoomStep());
+				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
 				doZoom();
 				
 				// Store the time at which this was done
@@ -756,7 +906,12 @@ public class ZoomPan15 implements ZoomPanable
 			}
 			else if (e.getWheelRotation() > 0)
 			{
-				setZoomScaleWithoutRecalculation(getZoomScale()/getZoomStep());
+				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
+				else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
+					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
 				doZoom();
 				
 				// Store the time at which this was done

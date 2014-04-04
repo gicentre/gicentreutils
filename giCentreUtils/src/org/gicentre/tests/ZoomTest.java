@@ -2,6 +2,7 @@ package org.gicentre.tests;
 
 import org.gicentre.utils.move.Ease;
 import org.gicentre.utils.move.ZoomPan;
+import org.gicentre.utils.move.ZoomPan.ZoomPanDirection;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -123,6 +124,9 @@ public class ZoomTest extends PApplet
         	 " Pan centre: "+nfc(zoomer.getPanOffset().x,3)+","+nfc(zoomer.getPanOffset().y,3)+
         	 " Constraints are "+(constrain?"on.":"off.")+
         	 " Keyboard mask is "+(isMouseMaskOn?"on.":"off."),10,height-3);
+        
+        textAlign(RIGHT,TOP);
+        text(zoomer.getZoomPanDirection().toString(),width,0);
     }
     
     /** Responds to key presses by allowing the display to be reset.
@@ -169,6 +173,15 @@ public class ZoomTest extends PApplet
         else  if ((key == 'r') || (key == 'R'))
         {
             zoomer.reset();
+        }
+        
+        else if (key=='d' || key=='D')
+        {
+        	int ord=zoomer.getZoomPanDirection().ordinal();
+        	ord++;
+        	if (ord>=ZoomPanDirection.values().length)
+        		ord=0;
+        	zoomer.setZoomPanDirection(ZoomPanDirection.values()[ord]);
         }
                 
     }

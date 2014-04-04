@@ -39,7 +39,9 @@ public class ZoomPan
 	
 	private ZoomPanable zoomer;
 
-	/** Type of zoom/pan behaviour. */ 
+	/** Type of zoom/pan behaviour.
+	 * Decrecated: user ZoomPanDirection instead*/
+	@Deprecated 
 	public enum ZoomPanBehaviour
 	{
 		/** Indicates panning can occur in both directions. */ 				BOTH_DIRECTIONS,
@@ -47,6 +49,13 @@ public class ZoomPan
 		/** Indicates panning can occur in horizontal direction only. */	HORIZONTAL_ONLY
 	}
 	
+	public enum ZoomPanDirection{
+		ZOOM_PAN_BOTH,               //Zooming and panning in both directions. The default 
+		ZOOM_PAN_VERTICAL,           //Only zoom and pan in a vertical direction (y) 
+		ZOOM_PAN_HORIZONTAL,         //Only zoom and pan in a horizontal  direction (x)
+		ZOOM_VERTICAL_PAN_BOTH,      //Zoom in vertical direction only (y), pan in both
+		ZOOM_HORIZONTAL_PAN_BOTH,    //Zoom in vertical direction only (x), pan in both
+	}
 	
 	// ------------------------------- Constructors ------------------------------- 
 
@@ -175,6 +184,25 @@ public class ZoomPan
 		return zoomer.getZoomScale();
 	}
 
+	/** Reports the current zoom scale in X. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleX()
+	{
+		return zoomer.getZoomScaleX();
+	}
+
+	/** Reports the current zoom scale in Y. Can be used for drawing objects that maintain their
+	 *  size when zooming.
+	 *  @return Current zoom scale. 
+	 */
+	public double getZoomScaleY()
+	{
+		return zoomer.getZoomScaleY();
+	}
+
+	
 	/** Sets a new zoom scale. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
 	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
@@ -185,10 +213,38 @@ public class ZoomPan
 	{
 		zoomer.setZoomScale(zoomScale);
 	}
+
+	/** Sets a new zoom scale in X. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	public void setZoomScaleX(double zoomScaleX)
+	{
+		zoomer.setZoomScaleX(zoomScaleX);
+	}
+
+	
+	/** Sets a new zoom scale in Y. Can be used for programmatic control of zoomer, such as
+	 *  eased interpolated zooming.
+	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 */
+	public void setZoomScaleY(double zoomScaleY)
+	{
+		zoomer.setZoomScaleY(zoomScaleY);
+	}
+
+	
 	
 	/** Sets the zoom/pan behaviour type
 	 *  @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	 *  
+	 *  Deprecated: use setZoomPnaDirectionn()
 	 */
+	@Deprecated
 	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType)
 	{
 		zoomer.setZoomPanBehaviour(zoomPanType);
@@ -196,12 +252,38 @@ public class ZoomPan
 
 	/** Reports the zoom/pan behaviour type
 	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	 *  
+     *  Deprecated: use getZoomPnaDirectionn()
 	 */
+	@Deprecated
 	public ZoomPanBehaviour getZoomPanBehaviour()
 	{
 		return zoomer.getZoomPanBehaviour();
 	}
 
+	
+	/** Sets the zooming/panning direction
+	 *  @param zoomPanDirection:
+	 *  		ZOOM_PAN_BOTH              Zooming and panning in both directions. The default 
+	 *	        ZOOM_PAN_VERTICAL          Only zoom and pan in a vertical direction (y) 
+	 *          ZOOM_PAN_HORIZONTAL        Only zoom and pan in a horizontal  direction (x)
+	 *          ZOOM_VERTICAL_PAN_BOTH     Zoom in vertical direction only (y), pan in both
+	 *          ZOOM_HORIZONTAL_PAN_BOTH   Zoom in vertical direction only (x), pan in both
+	 */
+	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection)
+	{
+		zoomer.setZoomPanDirection(zoomPanDirection);
+	}
+
+	/** Reports the zooming/panning direction
+	 *  @return  
+	 */
+	public ZoomPanDirection getZoomPanDirection()
+	{
+		return zoomer.getZoomPanDirection();
+	}
+
+	
 	/** Reports the current pan offset. Useful when wishing to use an interpolated panning
 	 *  between this current value and some new pan offset.
 	 *  @return Current pan offset. Negative coordinates indicate an offset to the left
