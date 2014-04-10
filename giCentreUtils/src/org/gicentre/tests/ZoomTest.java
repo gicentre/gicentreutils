@@ -127,6 +127,14 @@ public class ZoomTest extends PApplet
         
         textAlign(RIGHT,TOP);
         text(zoomer.getZoomPanDirection().toString(),width,0);
+        
+        textAlign(LEFT,TOP);
+        String s="";
+        if (zoomer.isPanning())
+        	s+="panning ";
+        if (zoomer.isZooming())
+        	s+="zooming ";
+        text(s,0,0);
     }
     
     /** Responds to key presses by allowing the display to be reset.
