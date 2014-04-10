@@ -885,9 +885,12 @@ public class ZoomPan15 implements ZoomPanable
 			{
 				return;
 			}
+
+			isZooming=true;
 			
 			setZoomStartPosition(new PVector(e.getX(),e.getY()));
 
+			
 			if (e.getWheelRotation() < 0)
 			{
 				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
@@ -949,6 +952,7 @@ public class ZoomPan15 implements ZoomPanable
 				{
 					for (ZoomPanListener listener:listeners)
 					{
+						isZooming=false;
 						timeAtLastWheelZoom=null;
 						listener.zoomEnded();
 					}

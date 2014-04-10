@@ -926,6 +926,8 @@ public class ZoomPan20 implements ZoomPanable
 				return;
 			}
 			
+			isZooming=true;
+			
 			setZoomStartPosition(new PVector(e.getX(),e.getY()));
 
 			if (e.getWheelRotation() < 0)
@@ -937,7 +939,7 @@ public class ZoomPan20 implements ZoomPanable
 				else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
 					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
 				doZoom();
-				
+								
 				// Store the time at which this was done
 				timeAtLastWheelZoom = new Long(new Date().getTime());
 				
@@ -990,6 +992,7 @@ public class ZoomPan20 implements ZoomPanable
 					for (ZoomPanListener listener:listeners)
 					{
 						timeAtLastWheelZoom=null;
+						isZooming=false;
 						listener.zoomEnded();
 					}
 				}
