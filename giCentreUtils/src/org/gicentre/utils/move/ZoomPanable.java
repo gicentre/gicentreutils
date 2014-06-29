@@ -65,6 +65,7 @@ interface ZoomPanable
 	 *  <code>CONTROL</code>, <code>SHIFT</code>, <code>ALT</code>, <code>0</code> and <code>-1</code>. 
 	 */
 	abstract void setMouseMask(int mouseMask);
+	
 
 	/** Should report the current mouse position in coordinate space. This method should be used
 	 *  in preference to <code>mouseX </code>and <code>mouseY</code> if the current display 
@@ -96,7 +97,7 @@ interface ZoomPanable
 	
 	/** Should set a new zoom scale in X. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -111,7 +112,7 @@ interface ZoomPanable
 	
 	/** Should set a new zoom scale in Y. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */

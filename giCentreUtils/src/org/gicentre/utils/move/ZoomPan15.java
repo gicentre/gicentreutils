@@ -275,7 +275,10 @@ public class ZoomPan15 implements ZoomPanable
 
 	/** Sets a new zoom scale for X and Y separately. Can be used for programmatic
 	 *  control of zoomer, such as eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored. 
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -288,7 +291,7 @@ public class ZoomPan15 implements ZoomPanable
 	
 	/** Sets a new zoom scale for X. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -300,7 +303,7 @@ public class ZoomPan15 implements ZoomPanable
 
 	/** Sets a new zoom scale for Y. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -309,11 +312,8 @@ public class ZoomPan15 implements ZoomPanable
 		setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomScaleY);
 		calcTransformation();
 	}
-
 	
-	
-	/**Sets the zoom/pan behaviour type
-	 * 
+	/** Sets the zoom/pan behaviour type 
 	 * @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
 	@Deprecated
@@ -323,36 +323,31 @@ public class ZoomPan15 implements ZoomPanable
 		calcTransformation();
 	}
 
-	/**Get the zooming/panning direction
-	 * 
-	 * @return  
+	/** Reports the zooming/panning direction
+	 * @return  Available zoom/panning directions.
 	 */
-	public ZoomPanDirection getZoomPanDirection(){
+	public ZoomPanDirection getZoomPanDirection()
+	{
 		return zoomPanDirection;
 	}
 
 	
-	/**Sets the zooming/panning direction
-	 * 
-	 * @param zoomPan direction
+	/** Sets the zooming/panning direction.
+	 *  @param zoomPanDirection Permitted zooming and panning directions.
 	 */
 	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection)
 	{
 		this.zoomPanDirection=zoomPanDirection;
 	}
-
-
-
 	
-	/**Get the zoom/zan behaviour type
-	 * 
-	 * @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	/** Reports the zoom/zan behaviour type
+	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
 	@Deprecated
-	public ZoomPanBehaviour getZoomPanBehaviour(){
+	public ZoomPanBehaviour getZoomPanBehaviour()
+	{
 		return zoomPanBehaviour;
 	}
-
 
 	/** Reports the current pan offset. Useful when wishing to use an interpolated panning
 	 *  between this current value and some new pan offset.
@@ -372,8 +367,7 @@ public class ZoomPan15 implements ZoomPanable
 	 *         translation to the left; a positive value indicates translation to the right.
 	 *  @param panY Y coordinate of new pan offset. A value of 0 indicates no translation
 	 *         of the display on the vertical axis; a negative value indicates a translation
-	 *         upwards; a positive value indicates translation downwards.
-	 *         
+	 *         upwards; a positive value indicates translation downwards.    
 	 */
 	public void setPanOffset(float panX, float panY)
 	{
@@ -582,7 +576,7 @@ public class ZoomPan15 implements ZoomPanable
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScaleX Minimum permitted zooming scale in the horizontal direction.
 	 */
 	public void setMinZoomScaleX(double minZoomScaleX)
 	{
@@ -598,7 +592,7 @@ public class ZoomPan15 implements ZoomPanable
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScaleY Minimum permitted zooming scale in the vertical direction.
 	 */
 	public void setMinZoomScaleY(double minZoomScaleY)
 	{
@@ -791,9 +785,10 @@ public class ZoomPan15 implements ZoomPanable
 	/** Sets the new zoom-scaling programmatically. Unlike the public method setZoomScale()
 	 *  this version is for internal use where recalculation of transformations is handled
 	 *  elsewhere.
-	 *  @param zoomScale New zoom scale to be used.
+	 *  @param zoomScaleX New horizontal zoom scale to be used.
+	 *  @param zoomScaleY New vertical zoom scale to be used.
 	 */
-	void setZoomScaleWithoutRecalculation(double zoomScaleX,double zoomScaleY)
+	void setZoomScaleWithoutRecalculation(double zoomScaleX, double zoomScaleY)
 	{
 		// This method is of package-wide scope to allow inner classes to have access to it.*
 		//limit zoom to min/max
@@ -851,8 +846,6 @@ public class ZoomPan15 implements ZoomPanable
 			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1);
 			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x,0);
 		}
-
-
 	}
 	
 
