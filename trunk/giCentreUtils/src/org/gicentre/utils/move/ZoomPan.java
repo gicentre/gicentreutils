@@ -163,7 +163,7 @@ public class ZoomPan
 	public void setMouseMask(int mouseMask)
 	{
 		zoomer.setMouseMask(mouseMask);
-	}      
+	}
 
 	/** Reports the current mouse position in coordinate space. This method should be used
 	 *  in preference to <code>mouseX </code>and <code>mouseY</code> if the current display 
@@ -216,7 +216,7 @@ public class ZoomPan
 
 	/** Sets a new zoom scale in X. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -228,7 +228,7 @@ public class ZoomPan
 	
 	/** Sets a new zoom scale in Y. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -236,8 +236,6 @@ public class ZoomPan
 	{
 		zoomer.setZoomScaleY(zoomScaleY);
 	}
-
-	
 	
 	/** Sets the zoom/pan behaviour type
 	 *  @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
@@ -263,12 +261,12 @@ public class ZoomPan
 
 	
 	/** Sets the zooming/panning direction
-	 *  @param zoomPanDirection:
-	 *  		ZOOM_PAN_BOTH              Zooming and panning in both directions. The default 
-	 *	        ZOOM_PAN_VERTICAL          Only zoom and pan in a vertical direction (y) 
-	 *          ZOOM_PAN_HORIZONTAL        Only zoom and pan in a horizontal  direction (x)
-	 *          ZOOM_VERTICAL_PAN_BOTH     Zoom in vertical direction only (y), pan in both
-	 *          ZOOM_HORIZONTAL_PAN_BOTH   Zoom in vertical direction only (x), pan in both
+	 *  @param zoomPanDirection Type of zoom panning. Should be one of<br />
+	 *  <code>ZOOM_PAN_BOTH</code>              Zooming and panning in both directions. The default.<br /> 
+	 *	<code>ZOOM_PAN_VERTICAL</code>          Only zoom and pan in a vertical direction (y). <br />
+	 *  <code>ZOOM_PAN_HORIZONTAL</code>        Only zoom and pan in a horizontal  direction (x).<br />
+	 *  <code>ZOOM_VERTICAL_PAN_BOTH</code>     Zoom in vertical direction only (y), pan in both.<br />
+	 *  <code>ZOOM_HORIZONTAL_PAN_BOTH</code>   Zoom in vertical direction only (x), pan in both.
 	 */
 	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection)
 	{
@@ -276,7 +274,7 @@ public class ZoomPan
 	}
 
 	/** Reports the zooming/panning direction
-	 *  @return  
+	 *  @return Direction options of controllable zooming and panning.
 	 */
 	public ZoomPanDirection getZoomPanDirection()
 	{

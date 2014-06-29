@@ -236,7 +236,7 @@ public class ZoomPan20 implements ZoomPanable
 			default:
 				this.mouseMask = 0;
 		}
-	}      
+	}  
 
 	/** Reports the current mouse position in coordinate space. This method should be used
 	 *  in preference to <code>mouseX </code>and <code>mouseY</code> if the current display 
@@ -292,7 +292,7 @@ public class ZoomPan20 implements ZoomPanable
 
 	/** Sets a new zoom scale for X and Y. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -305,7 +305,7 @@ public class ZoomPan20 implements ZoomPanable
 	
 	/** Sets a new zoom scale in X. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -318,7 +318,7 @@ public class ZoomPan20 implements ZoomPanable
 	
 	/** Sets a new zoom scale. Can be used for programmatic control of zoomer, such as
 	 *  eased interpolated zooming.
-	 *  @param zoomScale New zoom scale. A value of 1 indicates no zooming, values above
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
@@ -329,39 +329,38 @@ public class ZoomPan20 implements ZoomPanable
 	}
 
 	
-	/**Sets the zoom/pan behaviour type
-	 * 
-	 * @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	/**Sets the zoom/pan behaviour type.
+	 * @param zoomPanBehaviour  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
 	@Deprecated
-	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanBehaviour){
+	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanBehaviour)
+	{
 		this.zoomPanBehaviour=zoomPanBehaviour;
 		calcTransformation();
 	}
 
-	/**Get the zoom/zan behaviour type
-	 * 
-	 * @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
+	/** Reports the zoom/zan behaviour type.
+	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
 	 */
 	@Deprecated
-	public ZoomPanBehaviour getZoomPanBehaviour(){
+	public ZoomPanBehaviour getZoomPanBehaviour()
+	{
 		return zoomPanBehaviour;
 	}
 
 
-	/**Sets the zooming/panning direction
-	 * 
-	 * @param 
+	/** Sets the zooming/panning direction
+	 *  @param zoomPanDirection Direction of available zoom-pan transformations. 
 	 */
 	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection){
 		this.zoomPanDirection=zoomPanDirection;
 	}
 
-	/**Get the zoom/zan behaviour type
-	 * 
-	 * @return  
+	/** Reports the zoom/zan behaviour type.
+	 *  @return Reports the available zoom/pan options.
 	 */
-	public ZoomPanDirection getZoomPanDirection(){
+	public ZoomPanDirection getZoomPanDirection()
+	{
 		return zoomPanDirection;
 	}
 
@@ -585,7 +584,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScaleX Minimum horizontal zoom scale.
 	 */
 	public void setMinZoomScaleX(double minZoomScaleX)
 	{
@@ -601,7 +600,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScaleY Minimum vertical zoom scale.
 	 */
 	public void setMinZoomScaleY(double minZoomScaleY)
 	{
@@ -640,7 +639,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param maxZoomScale
+	 *  @param maxZoomScaleX Maximum horizontal zoom scale.
 	 */
 	public void setMaxZoomScaleX(double maxZoomScaleX)
 	{
@@ -657,7 +656,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param maxZoomScale
+	 *  @param maxZoomScaleY Maximum vertical zoom scale.
 	 */
 	public void setMaxZoomScaleY(double maxZoomScaleY)
 	{
@@ -831,7 +830,8 @@ public class ZoomPan20 implements ZoomPanable
 	/** Sets the new zoom-scaling programmatically. Unlike the public method setZoomScale()
 	 *  this version is for internal use where recalculation of transformations is handled
 	 *  elsewhere.
-	 *  @param zoomScale New zoom scale to be used.
+	 *  @param zoomScaleX New horizontal zoom scale to be used.
+	 *  @param zoomScaleY New vertical zoom scale to be used.
 	 */
 	void setZoomScaleWithoutRecalculation(double zoomScaleX,double zoomScaleY)
 	{

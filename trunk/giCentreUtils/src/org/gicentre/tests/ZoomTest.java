@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Tests zooming and panning in a simple Processing sketch. Includes tests for high quality
  *  zoomed text, for constraining zooming and panning, and for zoom-independent display.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 3rd March, 2013.
+ *  @version 3.3, 29th June 2014.
  */ 
 //  *****************************************************************************************
 
@@ -53,6 +53,7 @@ public class ZoomTest extends PApplet
     private double zoomScale;       // Zoom level used for morphed zooming.
     private boolean constrain;		// Determines if zooming and panning is constrained.
     private boolean isMouseMaskOn;	// Determines if the keyboard mouse mask is actived.
+    private PVector minBounds,maxBounds;	// Active area beyond which zooming and panning cannot be controlled with mouse.
     
     // ---------------------------- Processing methods -----------------------------
 
@@ -67,6 +68,9 @@ public class ZoomTest extends PApplet
         isMouseMaskOn = false;
         zoomer = new ZoomPan(this);
         textFont(createFont("Serif",18),18);
+        
+        minBounds = new PVector(60,30);
+        maxBounds = new PVector(width-25,height-80);
     }
 
     /** Draws a simple object that can be zoomed and panned.
@@ -74,6 +78,27 @@ public class ZoomTest extends PApplet
     public void draw()
     {   
         background(255);
+        
+        // Draw active area and only allow mouse control within it.
+        noStroke();
+        fill(250,238,194,180);
+        rect(minBounds.x,minBounds.y,maxBounds.x-minBounds.x,maxBounds.y-minBounds.y);
+        
+        if ((mouseX < minBounds.x) || (mouseX > maxBounds.x) || (mouseY < minBounds.y) || (mouseY > maxBounds.y))
+        {
+        	zoomer.setMouseMask(-1);
+        }
+        else
+        {
+        	if (isMouseMaskOn)
+        	{
+        		zoomer.setMouseMask(PConstants.SHIFT);
+        	}
+        	else
+        	{
+        		zoomer.setMouseMask(0);
+        	}
+        }
         
         pushMatrix();       // Preserve the non-zoomed display.
         
