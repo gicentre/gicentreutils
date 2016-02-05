@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  conic projection divided into one of 4 zones, plus a modified zone II projection for 
  *  national maps. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th June, 2012.  
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -398,6 +398,15 @@ public class FrenchNTF implements MapProjection
                 falseEasting  = 234358.0;
                 falseNorthing = 185861.369;
                 break;
+                
+            default:
+            	System.err.println("Warning: Unknown zone when performing FrenchNTF projection: "+zone+". Assuming II.");
+            	 latOrigin = 46.8*DEG2RAD;           // N 46d 48'
+                 phi1      = 47.69601444*DEG2RAD;    // N 47d 41' 45.652"
+                 phi2      = 45.89891889*DEG2RAD;    // N 45d 53' 56.108"
+                 falseEasting  = 600000.0;
+                 falseNorthing = 200000.0;
+            	break;
         }
        
         // Derived constants.
@@ -462,11 +471,14 @@ public class FrenchNTF implements MapProjection
                 
             case ZONE_IV:
                 return 4;
+                
+            default:
+            	System.err.println("Unknown French NTF zone. "+zone+". Assuming II");
+                return 2;    	
         }
         
         // We should never get to this line.
-        System.err.println("Unknown French NTF zone. Assuming II");
-        return 2;
+        
     }
    
     /** Reports the Lambert zone letter. This is 'e' for the national 'etendu' projection

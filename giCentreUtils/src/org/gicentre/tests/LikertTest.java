@@ -1,7 +1,5 @@
 package org.gicentre.tests;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.geom.Rectangle2D;
 
 import org.gicentre.utils.stat.LikertChart;
@@ -13,7 +11,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the Likert chart in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -31,8 +29,7 @@ import processing.core.PFont;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
-public class LikertTest extends PApplet implements ComponentListener
+public class LikertTest extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
 
@@ -55,26 +52,32 @@ public class LikertTest extends PApplet implements ComponentListener
     
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(400,200);
+		pixelDensity(displayDensity());
+	}
+	
     /** Sets up the charts and fonts.
      */
     public void setup()
     {   
-        size(400,200);
-        smooth(); 
-        
         ellipseMode(PConstants.CORNER);
         
-        if (frame!=null){//stops it crashing if you start as an applet
-        	frame.setResizable(true);
-        	frame.addComponentListener(this);
-        }
+        surface.setResizable(true);
+        bounds = new Rectangle2D.Float(width*.3f,height*.2f,width*.6f,height*.6f);
+        bounds2 = new Rectangle2D.Float(3,3,width*.6f,35);
+        
+        
         showBars = true;
         scaleToPrimary = true;
         showSecondary = false;
         chart1NewData = false;
         chart2NewData = false;
         
-        font = createFont("Corbel",10);
+        font = createFont("SansSerif",10);
         likert = new LikertChart(new float[] {2,4,6,8,10},4,0,0,
                 "Primary chart with a long title that could be greater than the bounds of the chart", "Secondary data shown with 's' key.");
         likert.setShowTitle(true);
@@ -87,10 +90,6 @@ public class LikertTest extends PApplet implements ComponentListener
         
   
         likert.setSecondaryChart(likert2);
-        
-        
-        bounds = new Rectangle2D.Float(width*.3f,height*.2f,width*.6f,height*.6f);
-        bounds2 = new Rectangle2D.Float(3,3,width*.6f,35);
     }
 
     /** Draws the charts.
@@ -98,17 +97,22 @@ public class LikertTest extends PApplet implements ComponentListener
     public void draw()
     {   
         background(255);
+        
+        // Resize the main chart in proportion to the window size        
+        bounds.setRect(width*.3f,height*.2f,width*.6f,height*.6f);
         likert.draw(this,bounds,font);
         
-        // Draw a small copy of the secondary chart for reference. 
+        // Draw a small copy of the secondary chart for reference independent of window size. 
         likert2.draw(this,bounds2,font); 
     }
 
+    /** Responds to key presses allowing appearance of chart to be changed.
+     */
     public void keyPressed()
     {
         if (key == '1')
         {
-            chart1NewData = ! chart1NewData;
+            chart1NewData = !chart1NewData;
             
             if (chart1NewData)
             {
@@ -184,50 +188,14 @@ public class LikertTest extends PApplet implements ComponentListener
             {
                 likert.setAnimationSpeed(likert.getAnimationSpeed()*1.1f);
                 likert2.setAnimationSpeed(likert2.getAnimationSpeed()*1.1f);
-            }
-            
+            }  
         }
     }
     
+    /** Responds to a mouse press by highlighting any bar that is at the mouse position when pressed.
+     */
     public void mousePressed()
     {
         likert.setHighlightBar(likert.getBarAt(mouseX, mouseY));
-    }
-
-    // ---------------------------- Implemented methods ---------------------------- 
-    
-    /** Responds to the sketch being resized by changing the size of the Likert chart.
-     *  @param e Component event.
-     * @see java.awt.event.ComponentListener#componentResized(java.awt.event.ComponentEvent)
-     */
-    public void componentResized(ComponentEvent e)
-    {
-        bounds.setRect(width*.3f,height*.2f,width*.6f,height*.6f);
-    }
-
-    
-    /* (non-Javadoc)
-     * @see java.awt.event.ComponentListener#componentHidden(java.awt.event.ComponentEvent)
-     */
-    public void componentHidden(ComponentEvent e)
-    {
-        // Do nothing at the moment.
-
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.ComponentListener#componentMoved(java.awt.event.ComponentEvent)
-     */
-    public void componentMoved(ComponentEvent e)
-    {
-        // Do nothing at the moment.
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.ComponentListener#componentShown(java.awt.event.ComponentEvent)
-     */
-    public void componentShown(ComponentEvent e)
-    {
-        // Do nothing at the moment.        
     }
 }

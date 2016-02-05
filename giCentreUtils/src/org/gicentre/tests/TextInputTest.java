@@ -8,7 +8,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the TextInput class in a simple Processing sketch. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -26,7 +26,6 @@ import processing.core.PFont;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class TextInputTest extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
@@ -41,17 +40,23 @@ public class TextInputTest extends PApplet
 
     // ----------------------------- Object variables ------------------------------
     
-    TextInput textInput;
-    PFont font;
+    private TextInput textInput;
+    private PFont font;
  
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(640,350);
+		pixelDensity(displayDensity());
+	}
+	
     /** Sets up the text input field.
      */
     public void setup()
     {   
-        size(640,350);
-        smooth(); 
         font = createFont("sans-serif",10);
         textInput = new TextInput(this,font,14);
     }

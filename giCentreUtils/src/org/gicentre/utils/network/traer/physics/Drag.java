@@ -3,6 +3,7 @@ package org.gicentre.utils.network.traer.physics;
 // *****************************************************************************************
 /** Class capable of applying the drag on a particle to inhibit its motion.
  *  @author Carl Pearson, Jeffrey Traer Bernstein and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -17,6 +18,7 @@ public class Drag extends Function<Particle,Particle>
 	// ---------------------------- Object and class variables -----------------------------
 	
 	private float drag;
+								/** Default drag value. */
 	public static final float DEFAULT_DRAG = 0.01f;
 
 	// ----------------------------------- Constructors ------------------------------------

@@ -11,25 +11,25 @@ import processing.core.PVector;
  *  v1 != v2.  The one exception is the {@link Vector3D#cross(Vector3D)} method, which always 
  *  returns a new Vector3D.  Also, none of the operations alter their parameters, except in
  *  self-referential conditions (e.g., <code>Vector3D.add(v1,v2,v1)</code> modifies v1).
- *  <br /><br />
  *  The methods in the class are designed to allow "chaining"; given a Vector3D v1, it could be used as:
- *  <br /><code>
- *  v1.add(1,2,3);<br />
- *  v1.add(3,2,1);<br />
+ *  <br><code>
+ *  v1.add(1,2,3);<br>
+ *  v1.add(3,2,1);<br>
  *  v1.multiplyBy(2);</code>
- *  <br />
+ *  <br>
  *  However, because the class is designed to allow chaining, those operations can also be done as:
- *  <br />
+ *  <br>
  *  <code>v1.add(1,2,3).add(3,2,1).multiplyBy(2);</code>
- *  <br /><br />
+ *  <br><br>
  *  Standard mathematical order-of-operations applies, so
- *  <br />
- *  <code>v1.add(1,2,3).add(3,2,1).multiplyBy(2) == v1.add(3,2,1).add(1,2,3).multiplyBy(2)<br /> 
+ *  <br>
+ *  <code>v1.add(1,2,3).add(3,2,1).multiplyBy(2) == v1.add(3,2,1).add(1,2,3).multiplyBy(2)<br> 
  *  v1.add(1,2,3).add(3,2,1).multiplyBy(2) != v1.multiplyBy(2).add(1,2,3).add(3,2,1)</code>
- *  <br /><br />
+ *  <br><br>
  *  Finally, most of the methods throw NullPointerException if provided a null argument instead
  *  of Vector3D argument.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 
@@ -99,10 +99,8 @@ public class Vector3D implements Locatable
 	}
 	
 	/** Static constructor; convenience method for chaining calls.  Replaces
-	 * <br />
 	 * <code>Vector3D v2 = (new Vector3D(x,y,z)).add(v1)...</code>
-	 * <br />with<br />
-	 * <code>Vector3D v2 = Vector3D.of(x,y,z).add(v1)...</code>
+	 * with <code>Vector3D v2 = Vector3D.of(x,y,z).add(v1)...</code>
 	 * @param x the x component of the vector.
 	 * @param y the y component of the vector.
 	 * @param z the z component of the vector.
@@ -145,6 +143,7 @@ public class Vector3D implements Locatable
 	/** Throws a NullPointerException with the provided message.
 	 *  @param message the message
 	 *  @return convenience return type for use with ? : ; operator
+	 *  @throws NullPointerException  Null pointer exception.
 	 */
 	public static final Vector3D thrower(String message) throws NullPointerException 
 	{
@@ -157,7 +156,6 @@ public class Vector3D implements Locatable
 	 *  @param z the z component of the vector.
 	 *  @return this, modified by subtraction
 	 */
-	@SuppressWarnings("hiding")
 	public final Vector3D subtract(final float x, final float y, final float z)
 	{ 
 		return set(this.x-x, this.y-y, this.z-z); 
@@ -206,7 +204,6 @@ public class Vector3D implements Locatable
 	 * @param z the z component of the vector.
 	 * @return this, modified by addition.
 	 */
-	@SuppressWarnings("hiding")
 	public final Vector3D add(final float x, final float y, final float z)
 	{ 
 		return set(this.x+x, this.y+y, this.z+z); 
@@ -386,7 +383,6 @@ public class Vector3D implements Locatable
 	 *  @return target, modified, or a new Vector3D.
 	 *  @throws NullPointerException if v==null.
 	 */
-	@SuppressWarnings("null")
 	public final static Vector3D multiplyBy(Vector3D v, float f, Vector3D target) throws NullPointerException 
 	{
 		if (v==null)
@@ -453,7 +449,6 @@ public class Vector3D implements Locatable
 	 *  @param z The z component of the vector.
 	 *  @return Shortest Distance between the two vectors.
 	 */
-	@SuppressWarnings("hiding")
 	public final float distanceTo(float x, float y, float z) 
 	{
 		float dx = this.x - x;
@@ -473,7 +468,7 @@ public class Vector3D implements Locatable
 
 	/** Calculates the dot product between this Vector3D and another - this.x*p.x + this.y*p.y + this.y*p.y
 	 *  @param p the other Vector3D
-	 *  @return the dot product; always >=0
+	 *  @return the dot product; always &gt;=0
 	 *  @throws NullPointerException if p==null
 	 */
 	public final float dot(Vector3D p) throws NullPointerException 

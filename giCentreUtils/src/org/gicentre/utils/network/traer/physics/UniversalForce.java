@@ -6,9 +6,9 @@ package org.gicentre.utils.network.traer.physics;
  *  does not support the {@link Force#apply()} method. Users wishing to create custom Forces 
  *  of this kind should extend this class, implementing the {@link Force#apply(Particle)}
  *  method only.
- *  <br /><br />
  *  Examples of this kind of Force are the {@link Gravity} and {@link Drag} classes.
  *  @author Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 

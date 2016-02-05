@@ -11,7 +11,7 @@ import processing.core.PVector;
  *  <a href="http://www.spaceroots.org/documents/ellipse" target="_blank">www.spaceroots.org/documents/ellipse</a>
  *  for some of the mathematical derivations used in this class. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 6th April 2013. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 //  *****************************************************************************************
 
@@ -151,7 +151,7 @@ public class Ellipse
 	 *  @param startAngle First angle in arc (radians).
 	 *  @param endAngle Second angle in arc (radians).
 	 *  @return Array containing vertex points and control points in the order [p1,q1,q2,p2,q3,q4,p3...etc.]
-	 *          which matches the order required when calling Processing's own <code>bezierVertex()<code>
+	 *          which matches the order required when calling Processing's own <code>bezierVertex()</code>
 	 *          methods from between <code>beginShape()</code> and <code>endShape()</code>. Note that when
 	 *          doing this, the first anchor point (p1) should be fixed with a call to <code>vertex()</code>.
 	 */

@@ -5,7 +5,7 @@ import processing.core.PVector;
 //******************************************************************************************
 /** Interface that guarantees that an implementing class will be able to return its location.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 

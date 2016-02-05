@@ -7,6 +7,7 @@ import java.util.*;
  *  Euler integrators this one is slower but is more stable. This version can be forced to 
  *  stabalise after a given settling period.
  *  @author Carl Pearson, Jeffrey Traer Bernstein and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -21,7 +22,9 @@ public class SettlingRungeKuttaIntegrator extends RungeKuttaIntegrator
 
 	// --------------------------- Object and class variables ----------------------------
 	
+								/** Default settling age (50). */
 	public static final int DEFAULT_SETTLING_AGE = 50;
+	
 	private final int settlingAge;
 	private final float epsilon = 0.0001f;
 
@@ -46,33 +49,23 @@ public class SettlingRungeKuttaIntegrator extends RungeKuttaIntegrator
 	}
 
 	/** Provides the function that updates the particles in the system.
-	 * @param k1Forces
-	 * @param k1Velocities
-	 * @param k2Forces
-	 * @param k2Velocities
-	 * @param k3Forces
-	 * @param k3Velocities
-	 * @param k4Forces
-	 * @param k4Velocities
-	 * @param originalPositions
-	 * @param originalVelocities
-	 * @param deltaT
+	 *  @param k1f K1 forces.
+	 *  @param k1v K1 velocities.
+	 *  @param k2f K2 forces.
+	 *  @param k2v K2 velocities.
+	 *  @param k3f K3 forces.
+	 *  @param k3v K3 velocities.
+	 *  @param k4f K4 forces.
+	 *  @param k4v K4 velocities.
+	 *  @param oPos Original position.
+	 *  @param oVel Original velocity.
+	 *  @param deltaT Change in time units.
 	 * @return Function that updates the particle positions.
 	 */
-	@Override 
-	protected Function<Particle,?> updater(final Map<Particle,Vector3D> k1Forces, final Map<Particle,Vector3D> k1Velocities, final Map<Particle,Vector3D> k2Forces, final Map<Particle,Vector3D> k2Velocities, final Map<Particle,Vector3D> k3Forces, final Map<Particle,Vector3D> k3Velocities, final Map<Particle,Vector3D> k4Forces, final Map<Particle,Vector3D> k4Velocities, final Map<Particle,Vector3D> originalPositions, final Map<Particle,Vector3D> originalVelocities,	final float deltaT) 
+	
+	protected Function<Particle,?> updater(final Map<Particle,Vector3D> k1f, final Map<Particle,Vector3D> k1v, final Map<Particle,Vector3D> k2f, final Map<Particle,Vector3D> k2v, final Map<Particle,Vector3D> k3f, final Map<Particle,Vector3D> k3v, final Map<Particle,Vector3D> k4f, final Map<Particle,Vector3D> k4v, final Map<Particle,Vector3D> oPos, final Map<Particle,Vector3D> oVel, final float deltaT) 
 	{
-		final Function<Particle,?> superUpdater = super.updater(k1Forces, 
-																k1Velocities,
-																k2Forces,
-																k2Velocities,
-																k3Forces,
-																k3Velocities,
-																k4Forces,
-																k4Velocities,
-																originalPositions,
-																originalVelocities,
-																deltaT);
+		final Function<Particle,?> superUpdater = super.updater(k1f,k1v, k2f,k2v, k3f,k3v, k4f,k4v, oPos,oVel, deltaT);
 
 		return new Function<Particle,Object>() 
 		{

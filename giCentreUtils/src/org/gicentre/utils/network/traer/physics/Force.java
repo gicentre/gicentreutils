@@ -5,16 +5,14 @@ package org.gicentre.utils.network.traer.physics;
  *  implementations: a {@link TargetedForce} with specified targets, where the {@link #apply()}
  *  method is used; and a {@link UniversalForce} that is applied to a {@link Particle}, where
  *  the {@link #apply(Particle)} method is used.
- *  <p> </p>
  *  The {@link Spring} force between two Particles is an example of the first form, while the 
  *  universal free-fall {@link Gravity} is an example of the second form.
- *  <p> </p>
  *  An intermediate skeletal implementation of this interface is provided in the {@link AbstractForce}
  *  class. Unless substantial extra behaviour associated with turning a Force on and off needs 
  *  to be specified, in general users should extend the AbstractForce class instead of
  *  implementing this interface.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
- *  @since 4.0
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 

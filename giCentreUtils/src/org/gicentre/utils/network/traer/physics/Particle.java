@@ -8,6 +8,7 @@ import processing.core.PVector;
 /** Class for representing a Particle. It contains the Particle's position, velocity, and
  *  the force on the Particle. The particle also has a mass, and a fixed vs free state.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -176,6 +177,7 @@ public class Particle implements Locatable
 	 *  @return the force on the Particle
 	 *  @deprecated Calls to this method should replaced with calls to the more standard {@link #getForce()}.
 	 */
+	@Deprecated
 	public final Vector3D force()
 	{ 
 		return getForce(); 

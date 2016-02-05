@@ -11,7 +11,7 @@ import processing.core.PGraphics;
  *  how it is displayed that Processing's built-in functions
  *  
  *  @author Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 1st August 2011 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -35,10 +35,10 @@ public class WordWrapper
 	 *  in pixels and returns as a list of strings, each of which will not exceed
 	 *  the given width. The advantage over using Processing's draw(text,x,y,w,h)
 	 *  is that the number of lines that result is known.
-	 *  <br />
-	 *  <code>\t</code> characters are converted to single spaces<br />
-	 *  <code>\n</code> are honoured<br />
-	 *  <br />
+	 *  <br>
+	 *  <code>\t</code> characters are converted to single spaces<br>
+	 *  <code>\n</code> are honoured<br>
+	 *  <br>
 	 *  Uses the sketch's current <code>textFont</code> and <code>textSize</code>.
 	 *  Wraps on '<code>&nbsp;</code>' and '<code>-</code>'.
 	 *  @param text Text to wrap
@@ -46,7 +46,8 @@ public class WordWrapper
 	 *  @param sketch The sketch (uses current font)
 	 *  @return List of lines that will not exceed width
 	 */
-	public static List<String> wordWrap(String text, int width, PApplet sketch) {
+	public static List<String> wordWrap(String text, int width, PApplet sketch) 
+	{
 		return wordWrap(text, width, sketch.g);
 	}
 
@@ -55,10 +56,10 @@ public class WordWrapper
 	 *  in pixels and returns as a list of strings, each of which will not exceed
 	 *  the given width. The advantage over using Processing's draw(text,x,y,w,h) is that 
 	 *  the number of lines that result is known.
-	 *  <br />
-	 *  <code>\t</code> characters are converted to single spaces<br />
-	 *  <code>\n</code> are honoured </br>
-	 *  <br />
+	 *  <br>
+	 *  <code>\t</code> characters are converted to single spaces<br>
+	 *  <code>\n</code> are honoured <br>
+	 *  <br>
 	 *  Uses <code>pGraphics</code>'s current <code>textFont</code> and <code>textSize</code>.
 	 *  Wraps on '<code>&nbsp;</code>' and '<code>-</code>'.
 	 *  @param textToWrap Text to wrap.
@@ -66,9 +67,9 @@ public class WordWrapper
 	 *  @param pGraphics The graphic context doing the text drawing.
 	 *  @return List of lines that will not exceed width.
 	 */
-	public static List<String> wordWrap(String textToWrap, int width, PGraphics pGraphics) {
-
-		//Add a new line char to the end
+	public static List<String> wordWrap(String textToWrap, int width, PGraphics pGraphics) 
+	{
+		// Add a new line char to the end
 		String text = textToWrap +'\n';
 		
 		ArrayList<String> wrappedLines=new ArrayList<String>();
@@ -78,35 +79,41 @@ public class WordWrapper
 		StringBuffer currentWord=new StringBuffer(); //to hold the current word
 		float cumWCurLine=0; //cumulative width of this line so far
 		
-		//keep going, char by char, until whole string done
-		while(idxInOriginalString<lengthOriginalString){
+		// Keep going, char by char, until whole string done
+		while(idxInOriginalString<lengthOriginalString)
+		{
 			char ch=text.charAt(idxInOriginalString);
 			boolean wrapIfNeeded=false;
 			boolean forceNewLine=false;
 			
 			//convert tab to space
-			if (ch=='\t'){
+			if (ch=='\t')
+			{
 				ch=' ';
 			}
-			
-			if (ch=='\n'){
+			else if (ch=='\n')
+			{
 				wrapIfNeeded=true;
 				forceNewLine=true;
 			}
-			else if (ch!=' '){
-				//append the char, but not if its a space (yet)
+			else if (ch!=' ')
+			{
+				// Append the char, but not if its a space (yet)
 				currentWord.append(ch);
 			}
 
-			//flag to check whether this word must be wrapped
-			if (ch==' '|| ch=='-'){
+			// Flag to check whether this word must be wrapped
+			if (ch==' '|| ch=='-')
+			{
 				wrapIfNeeded=true;
 			}
 
-			if (wrapIfNeeded){
+			if (wrapIfNeeded)
+			{
 				float w=pGraphics.textWidth(currentWord.toString());
 				//check if this word would make the line too long
-				if (currentLine.length()>0 && cumWCurLine+w>width){
+				if (currentLine.length()>0 && cumWCurLine+w>width)
+				{
 					//if so, add what we have already to our completed lines and reset current line
 					wrappedLines.add(currentLine.toString().trim());
 					currentLine=new StringBuffer();
@@ -118,13 +125,15 @@ public class WordWrapper
 				currentWord=new StringBuffer();
 			}
 			//add the space now
-			if (ch==' '){ //add this now we've check the length
+			if (ch==' ')
+			{ //add this now we've check the length
 				currentLine.append(ch);
 				cumWCurLine+=pGraphics.textWidth(' ');
 			}
 			
 			//wrap now if we flagged to
-			if (forceNewLine){
+			if (forceNewLine)
+			{
 				currentLine.append(currentWord);
 				currentWord=new StringBuffer();
 				wrappedLines.add(currentLine.toString());
@@ -140,7 +149,7 @@ public class WordWrapper
 	/** Tokenises the input string and return a list of these tokens and where they should be
 	 *  drawn. Wraps text to the given width and tokenises the string according to the token
 	 *  information embedded and so that tokens do not run over multiple lines. 
-	 *  <br />
+	 *  <br>
 	 *  Designed for:
 	 *  <ul>
 	 *   <li>colouring different words/phrases in a paragraph in different colours</li>
@@ -148,17 +157,17 @@ public class WordWrapper
 	 *  </ul> 
 	 *  Embedded token information takes the form of a string in curly brackets inline in the
 	 *  supplied text. The string identifies the token in the return WrappedTokens.
-	 *  <br />
+	 *  <br>
 	 *  For example:
-	 *  <br />
+	 *  <br>
 	 *  <code> &quot;{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
 	 *         {adjective}lazy{other} dog&quot;</code>
-	 *  <br /> 
+	 *  <br> 
      *  results in a series of tokens that do not straddle lines and are identified as &quot;other&quot;
      *  or &quot;adjective&quot;. Any strings can be used.
-     *  <br />
+     *  <br>
      *  The WrappedTokens returned contain the required information to draw them in the
-     *  correct place on the screen.<br />
+     *  correct place on the screen.<br>
 	 *  Wraps on '<code>&nbsp;</code>' and '<code>-</code>'.
      *  Uses the sketch's current <code>textFont</code>, <code>textSize</code>, <code>textLeading</code> 
      *  (line spacing) and <code>textAlign</code>.
@@ -168,16 +177,17 @@ public class WordWrapper
 	 *  @param y The y position of the text block placement.
 	 *  @param width The width of the area within which to wrap text.
 	 *  @param sketch The sketch doing the text drawing.
-	 *  @return List of <code>WrappedToken<code>s that contain the information required to display these on screen.
+	 *  @return List of <code>WrappedToken</code>s that contain the information required to display these on screen.
 	 */
-	public static List<WrappedToken> wordWrapAndTokenise(String text, float x, float y, float width, PApplet sketch) {
+	public static List<WrappedToken> wordWrapAndTokenise(String text, float x, float y, float width, PApplet sketch)
+	{
 		return wordWrapAndTokenise(text, x, y, width, sketch.g);
 	}
 	
 	/** Tokenises the input string and return a list of these tokens and where they should be
 	 *  drawn. Wraps text to the given width and tokenises the string according to the token
 	 *  information embedded and so that tokens do not run over multiple lines. 
-	 *  <br />
+	 *  <br>
 	 *  Designed for:
 	 *  <ul>
 	 *   <li>colouring different words/phrases in a paragraph in different colours</li>
@@ -185,18 +195,18 @@ public class WordWrapper
 	 *  </ul> 
 	 *  Embedded token information takes the form of a string in curly brackets inline in the
 	 *  supplied text. The string identifies the token in the return WrappedTokens.
-	 *  <br />
+	 *  <br>
 	 *  For example:
-	 *  <br />
+	 *  <br>
 	 *  <code>&quot;{other}The {adjective}quick{other} {adjective}brown{other} fox jumped over the
 	 *          {adjective}lazy{other} dog&quot;</code>
-	 *  <br />
+	 *  <br>
      *  results in a series of tokens that do not straddle lines and are identified as &quot;other&quot;
      *  or &quot;adjective&quot;. Any strings can be used.
-     *  <br />
+     *  <br>
      *  The WrappedTokens returned contain the required information to draw them in the
      *  correct place on the screen.
-     *  <br />
+     *  <br>
   	 *  Wraps on '<code>&nbsp;</code>' and '<code>-</code>'.
      *  Uses the <code>pGraphics</code>'s current <code>textFont</code>, <code>textSize</code>, <code>textLeading</code>
      *  (line spacing) and <code>textAlign</code>. The token positions returned can be used directly in the
@@ -208,7 +218,8 @@ public class WordWrapper
 	 *  @param pGraphics Graphics context doing the text drawing.
 	 *  @return List of WrappedTokens that contain the information required to display these on screen
 	 */
-	public static List<WrappedToken> wordWrapAndTokenise(String textToTokenize, float x, float y, float width, PGraphics pGraphics) {
+	public static List<WrappedToken> wordWrapAndTokenise(String textToTokenize, float x, float y, float width, PGraphics pGraphics)
+	{
 		float maxX=x+width;
 		
 		String text = textToTokenize+'\n';		//add new line char to end
@@ -233,11 +244,13 @@ public class WordWrapper
 			boolean forceNewLine=false;
 
 			//get string id if here
-			if (ch=='{'){
+			if (ch=='{')
+			{
 				nextStringID="";
 				idxInOriginalString++;
 				ch=text.charAt(idxInOriginalString);
-				while (ch!='}' && idxInOriginalString<lengthOriginalString){
+				while (ch!='}' && idxInOriginalString<lengthOriginalString)
+				{
 					nextStringID+=ch;
 					idxInOriginalString++;
 					if (idxInOriginalString<lengthOriginalString)
@@ -245,10 +258,12 @@ public class WordWrapper
 				}
 				idxInOriginalString++;
 				if (idxInOriginalString<lengthOriginalString)
+				{
 					ch=text.charAt(idxInOriginalString);
-
-				//Create new token, using previous id
-				//But first check whether the most recent word needs to wrap
+				}
+				
+				// Create new token, using previous id
+				// but first check whether the most recent word needs to wrap.
 				float w=pGraphics.textWidth(currentWord.toString());
 				//check if this word would make the line too long
 				if (curX+cumWCurToken+w>maxX){
@@ -269,10 +284,12 @@ public class WordWrapper
 					cumWCurToken=0;
 					currentLine=new StringBuffer();
 				}
-				//Do current word (and rest of line if it didn't wrap (above))
+				
+				// Do current word (and rest of line if it didn't wrap (above))
 				cumWCurToken+=pGraphics.textWidth(currentWord.toString());
 				currentLine.append(currentWord);
-				if (currentLine.length()>0){
+				if (currentLine.length()>0)
+				{
 					WrappedToken wrappedToken=new WrappedToken();
 					wrappedToken.id=curStringID;
 					wrappedToken.text=currentLine.toString();
@@ -293,34 +310,42 @@ public class WordWrapper
 			}
 			
 			//convert tab to space
-			if (ch=='\t'){
+			if (ch=='\t')
+			{
 				ch=' ';
 			}
 			
-			if (ch=='\n'){
+			if (ch=='\n')
+			{
 				wrapIfNeeded=true;
 				forceNewLine=true;
 			}
-			else if (ch!=' '){
+			else if (ch!=' ')
+			{
 				//append the char, but not if its a space (yet)
 				currentWord.append(ch);
 			}
 
 			//flag to check whether this word must be wrapped
-			if (ch==' '|| ch=='-'){
+			if (ch==' '|| ch=='-')
+			{
 				wrapIfNeeded=true;
 			}
 
-			if (wrapIfNeeded){
-//				System.out.println("wrap if needed: "+currentWord+"; ch="+ch);
+			if (wrapIfNeeded)
+			{
 				float w=pGraphics.textWidth(currentWord.toString());
-				//check if this word would make the line too long, but not if the current line has no chars in it
-				if (curX+cumWCurToken+w>maxX){
-					//if so, add what we have already to our completed lines and reset current line
+				
+				// Check if this word would make the line too long, but not if the current line has no chars in it.
+				if (curX+cumWCurToken+w>maxX)
+				{
+					// If so, add what we have already to our completed lines and reset current line.
 					WrappedToken wrappedToken=new WrappedToken();
 					wrappedToken.id=curStringID;
-					//trim space at end
-					if (currentLine.length()>0 && currentLine.charAt(currentLine.length()-1)==' '){
+					
+					// Trim space at end.
+					if (currentLine.length()>0 && currentLine.charAt(currentLine.length()-1)==' ')
+					{
 						currentLine.deleteCharAt(currentLine.length()-1);
 					}
 					wrappedToken.text=currentLine.toString();
@@ -336,19 +361,24 @@ public class WordWrapper
 					cumWCurToken=0;
 					currentLine=new StringBuffer();
 				}
-				//add word to current line
+				
+				// Add word to current line.
 				currentLine.append(currentWord);
 				cumWCurToken+=w;
 				currentWord=new StringBuffer();
 			}
-			//add the space now
-			if (ch==' '){ //add this now we've check the length
+			
+			// Add the space now
+			if (ch==' ')
+			{ 
+				// Add this now we've check the length.
 				currentLine.append(ch);
 				cumWCurToken+=pGraphics.textWidth(' ');
 			}
 			
 			//wrap now if we flagged to
-			if (forceNewLine){
+			if (forceNewLine)
+			{
 				currentLine.append(currentWord);
 				currentWord=new StringBuffer();
 				WrappedToken wrappedToken=new WrappedToken();
@@ -371,20 +401,24 @@ public class WordWrapper
 		}
 		pGraphics.textFont.getSize();
 
-		if (!wrappedTokens.isEmpty() 
-				&& (pGraphics.textAlign==PConstants.CENTER || pGraphics.textAlign==PConstants.RIGHT)){
+		if (!wrappedTokens.isEmpty() && (pGraphics.textAlign==PConstants.CENTER || pGraphics.textAlign==PConstants.RIGHT))
+		{
 			float lineY=wrappedTokens.get(0).y;
 			List<WrappedToken> wrappedTokensOnSameLine=new ArrayList<WrappedToken>();
-			for (WrappedToken wrappedToken:wrappedTokens){
-				if (lineY!=wrappedToken.y){
-					//correct alignment for last tokens on same line
+			
+			for (WrappedToken wrappedToken:wrappedTokens)
+			{
+				if (lineY!=wrappedToken.y)
+				{
+					// Correct alignment for last tokens on same line.
 					correctForAlignment(wrappedTokensOnSameLine,maxX,pGraphics);
 					wrappedTokensOnSameLine.clear();
 				}
 				wrappedTokensOnSameLine.add(wrappedToken);
 				lineY=wrappedToken.y;
 			}
-			//correct alignment for last line
+			
+			// Correct alignment for last line.
 			correctForAlignment(wrappedTokensOnSameLine,maxX,pGraphics);
 		}		
 		return wrappedTokens;
@@ -395,34 +429,41 @@ public class WordWrapper
 	 *  @param maxX The maximum x position of the text to display.
 	 *  @param pGraphics The graphics context doing the text display.
 	 */
-	private static void correctForAlignment(List<WrappedToken> wrappedTokensOnSameLine,float maxX, PGraphics pGraphics){
+	private static void correctForAlignment(List<WrappedToken> wrappedTokensOnSameLine,float maxX, PGraphics pGraphics)
+	{
 		float lineW=0;
-		for (WrappedToken wrappedToken2:wrappedTokensOnSameLine){
+		for (WrappedToken wrappedToken2:wrappedTokensOnSameLine)
+		{
 			lineW+=wrappedToken2.bounds.width;
 		}
 
-		if (pGraphics.textAlign==PConstants.CENTER){
+		if (pGraphics.textAlign==PConstants.CENTER)
+		{
 			float lineOffset=(maxX-lineW)/2f;
-			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine){
+			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine)
+			{
 				float wordOffset=wrappedToken2.bounds.width/2f;
 				wrappedToken2.x+=lineOffset+wordOffset;
 				wrappedToken2.bounds.x=(int)(wrappedToken2.x-wordOffset);
 			}
 		}
-		else if (pGraphics.textAlign==PConstants.RIGHT){
+		else if (pGraphics.textAlign==PConstants.RIGHT)
+		{
 			float lineOffset=(maxX-lineW);
-			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine){
+			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine)
+			{
 				float wordOffset=pGraphics.textWidth(wrappedToken2.text);
 				wrappedToken2.x+=lineOffset+wordOffset;
 				wrappedToken2.bounds.x=(int)(wrappedToken2.x-wordOffset);
 			}
 		}
 
-		if (pGraphics.textAlignY==PConstants.CENTER){
-			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine){
+		if (pGraphics.textAlignY==PConstants.CENTER)
+		{
+			for (WrappedToken wrappedToken2:wrappedTokensOnSameLine)
+			{
 				wrappedToken2.bounds.y-=pGraphics.textLeading/2-pGraphics.textDescent();
 			}
 		}
-
 	}
 }

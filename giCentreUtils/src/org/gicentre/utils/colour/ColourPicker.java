@@ -1,8 +1,5 @@
 package org.gicentre.utils.colour;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,13 +11,14 @@ import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.event.MouseEvent;
 
 // *****************************************************************************************
 /** Creates a graphical colour picker using Cynthia Brewer's 'ColorBrewer' schemes.
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -38,7 +36,7 @@ import processing.core.PImage;
  * http://www.gnu.org/licenses/.
  */
 
-public class ColourPicker implements MouseListener, MouseMotionListener
+public class ColourPicker //implements MouseListener, MouseMotionListener
 {
     // ------------------ Object variables --------------------
 
@@ -180,13 +178,16 @@ public class ColourPicker implements MouseListener, MouseMotionListener
 
         if (isActive)
         {
-            sketch.addMouseListener(this);
-            sketch.addMouseMotionListener(this);
+            //sketch.addMouseListener(this);
+            //sketch.addMouseMotionListener(this);
+        	sketch.registerMethod("mouseEvent", this);
+        	
         }
         else
         {
-            sketch.removeMouseListener(this);
-            sketch.removeMouseMotionListener(this);
+            //sketch.removeMouseListener(this);
+            //sketch.removeMouseMotionListener(this);
+        	sketch.unregisterMethod("mouseEvent", this);
         }
     }
 
@@ -229,154 +230,113 @@ public class ColourPicker implements MouseListener, MouseMotionListener
 
     // --------------------- Event handling ----------------------
 
-    /** Responds to a mouse click in the colour picker, if active, updating the last selected
-     *  colour and firing an event to all <code>PickerListener</code>s.
-     *  event.
-     *  @param e Mouse event storing the location of the mouse click.
+    /** Responds to mouse events by allowing colours to be picked with the mouse pointer.
+     *  @param e Mouse event.
      */
-    public void mouseClicked(MouseEvent e)
+    public void mouseEvent(MouseEvent e)
     {
-        if (isActive)
-        {
-            float xScale = (sketch.width-2*xBorder)/(float)imgWidth;
-            float yScale = (sketch.height-2*yBorder)/(float)imgHeight;
+    	if (e.getAction() == MouseEvent.CLICK)
+    	{
+    		if (isActive)
+    		{
+    			float xScale = (sketch.width-2*xBorder)/(float)imgWidth;
+    			float yScale = (sketch.height-2*yBorder)/(float)imgHeight;
 
-            float xClick = (e.getX()-xBorder)/xScale;
-            float yClick = (e.getY()-yBorder)/yScale;
+    			float xClick = (e.getX()-xBorder)/xScale;
+    			float yClick = (e.getY()-yBorder)/yScale;
 
-            for (Rectangle2D.Float rect : swatches.keySet())
+    			for (Rectangle2D.Float rect : swatches.keySet())
+    			{
+    				if (rect.contains(xClick,yClick))
+    				{
+    					lastColourTable = swatches.get(rect);
+
+    					// Find the colour selected:
+    					float pos =(float)((xClick-rect.getX())/rect.getWidth());  // Scaled between 0-1
+    					float range = lastColourTable.getMaxIndex() - lastColourTable.getMinIndex();
+
+    					if (lastColourTable.getIsDiscrete())
+    					{
+    						if (range==1)
+    						{
+    							// Dicrete versions of continuous schemes need to be quantized.
+    							pos = ((int)(pos*9))/9f + 0.055555f;            
+    						}
+    						else  
+    						{
+    							// Dicrete qualitative scheme.
+    							float numColours = range+1;
+    							pos = pos*numColours+0.5f;
+    						}
+    					}
+
+    					lastColour = lastColourTable.findColour(pos);
+    					fireColourSelectionEvent();
+    					return;
+    				}
+    			}
+
+    			// If a click has occurred outside of a swatch, set the selected colour/colour table to null.
+    			lastColourTable = null;
+    			lastColour = Integer.MAX_VALUE;
+    			fireColourSelectionEvent();
+    		}
+    	}
+    	else if (e.getAction() == MouseEvent.RELEASE)
+    	{
+    		if ((isActive) && (isDragged))
+    		{
+    			isDragged = false;
+    			if (lastColourTable != null)
+    			{
+    				fireColourSelectionEvent(); 
+    			}
+    		}
+    	}
+    	else if (e.getAction() == MouseEvent.DRAG)
+    	{
+    		if (isActive)
             {
-                if (rect.contains(xClick,yClick))
+                isDragged = true;
+                float xScale = (sketch.width-2*xBorder)/(float)imgWidth;
+                float yScale = (sketch.height-2*yBorder)/(float)imgHeight;
+
+                float xClick = (e.getX()-xBorder)/xScale;
+                float yClick = (e.getY()-yBorder)/yScale;
+
+                for (Rectangle2D.Float rect : swatches.keySet())
                 {
-                    lastColourTable = swatches.get(rect);
-
-                    // Find the colour selected:
-                    float pos =(float)((xClick-rect.getX())/rect.getWidth());  // Scaled between 0-1
-                    float range = lastColourTable.getMaxIndex() - lastColourTable.getMinIndex();
-
-                    if (lastColourTable.getIsDiscrete())
+                    if (rect.contains(xClick,yClick))
                     {
-                        if (range==1)
+                        lastColourTable = swatches.get(rect);
+
+                        // Find the colour selected:
+                        float pos =(float)((xClick-rect.getX())/rect.getWidth());  // Scaled between 0-1
+                        float range = lastColourTable.getMaxIndex() - lastColourTable.getMinIndex();
+
+                        if (lastColourTable.getIsDiscrete())
                         {
-                            // Dicrete versions of continuous schemes need to be quantized.
-                            pos = ((int)(pos*9))/9f + 0.055555f;            
+                            if (range==1)
+                            {
+                                // Discrete versions of continuous schemes need to be quantized.
+                                pos = ((int)(pos*9))/9f + 0.055555f;            
+                            }
+                            else  
+                            {
+                                // Discrete qualitative scheme
+                                float numColours = range+1;
+                                pos = pos*numColours+0.5f;
+                            }
                         }
-                        else  
-                        {
-                            // Dicrete qualitative scheme.
-                            float numColours = range+1;
-                            pos = pos*numColours+0.5f;
-                        }
+                        lastColour = lastColourTable.findColour(pos);
+                        return;
                     }
-
-                    lastColour = lastColourTable.findColour(pos);
-                    fireColourSelectionEvent();
-                    return;
                 }
+                // Don't do anything if the mouse has been dragged outside a swatch.
             }
-
-            // If a click has occurred outside of a swatch, set the selected colour/colour table to null.
-            lastColourTable = null;
-            lastColour = Integer.MAX_VALUE;
-            fireColourSelectionEvent();
-        }
+    	}
     }
-
-    /** Would respond to a mouse entering the colour picker, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     */
-    public void mouseEntered(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Would respond to a mouse leaving the colour picker, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     */  
-    public void mouseExited(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Would respond to a mouse being pressed in the colour picker, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     */
-    public void mousePressed(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Responds to a mouse being released over the colour picker. If this release is after a mouse
-     *  drag and it is over a colour, it fires an event to all <code>PickerListener</code>s.
-     *  @param e Mouse event (ignored).
-     */
-    public void mouseReleased(MouseEvent e)
-    {
-        if ((isActive) && (isDragged))
-        {
-            isDragged = false;
-            if (lastColourTable != null)
-            {
-                fireColourSelectionEvent(); 
-            }
-        }
-    } 
-
-    /** Responds to a mouse being dragged over the colour picker, if active, updating the 
-     *  last selected colour. Listeners are not informed until the mouse is released.
-     *  @param e Mouse event storing the location of the mouse drag.
-     */
-    public void mouseDragged(MouseEvent e)
-    {
-        if (isActive)
-        {
-            isDragged = true;
-            float xScale = (sketch.width-2*xBorder)/(float)imgWidth;
-            float yScale = (sketch.height-2*yBorder)/(float)imgHeight;
-
-            float xClick = (e.getX()-xBorder)/xScale;
-            float yClick = (e.getY()-yBorder)/yScale;
-
-            for (Rectangle2D.Float rect : swatches.keySet())
-            {
-                if (rect.contains(xClick,yClick))
-                {
-                    lastColourTable = swatches.get(rect);
-
-                    // Find the colour selected:
-                    float pos =(float)((xClick-rect.getX())/rect.getWidth());  // Scaled between 0-1
-                    float range = lastColourTable.getMaxIndex() - lastColourTable.getMinIndex();
-
-                    if (lastColourTable.getIsDiscrete())
-                    {
-                        if (range==1)
-                        {
-                            // Discrete versions of continuous schemes need to be quantized.
-                            pos = ((int)(pos*9))/9f + 0.055555f;            
-                        }
-                        else  
-                        {
-                            // Discrete qualitative scheme
-                            float numColours = range+1;
-                            pos = pos*numColours+0.5f;
-                        }
-                    }
-                    lastColour = lastColourTable.findColour(pos);
-                    return;
-                }
-            }
-            // Don't do anything if the mouse has been dragged outside a swatch.
-        }
-    }
-
-    /** Would respond to a mouse being moved over the colour picker, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     */
-    public void mouseMoved(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
+    
     // --------------------- Private methods ----------------------
 
     /** Informs any listeners that a colour has been selected by the picker.
@@ -393,7 +353,7 @@ public class ColourPicker implements MouseListener, MouseMotionListener
      *  need to be called once.
      *  @param buffer Offscreen buffer in which to draw the swatches.
      */
-    private void createPickerImage(PGraphics buffer)
+	private void createPickerImage(PGraphics buffer)
     {
         swatches = new HashMap<Rectangle2D.Float, ColourTable>();
         

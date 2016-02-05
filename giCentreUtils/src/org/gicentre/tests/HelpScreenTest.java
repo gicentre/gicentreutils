@@ -10,7 +10,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the Processing Utilities HelpScreen class.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -28,10 +28,8 @@ import processing.core.PFont;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class HelpScreenTest extends PApplet
 {
-
     // ------------------------------ Starter method ------------------------------- 
 
     /** Runs the help screen sketch as an application.
@@ -50,18 +48,23 @@ public class HelpScreenTest extends PApplet
     private int verticalSpacing;
     
     private static final String TITLE_TEXT  = "This is the title";
-    private static final String FOOTER_TEXT = "Last modified 20th June 2010";
+    private static final String FOOTER_TEXT = "Last modified 5th February 2016";
 
  
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(800,600);
+		pixelDensity(displayDensity());
+	}
+	
     /** Initialises the sketch.
      */
     public void setup()
-    {   
-        size(800,600);
-        smooth(); 
-        
+    {           
         font = createFont("sansSerif",14);
         showTitle  = true;
         showFooter = true;

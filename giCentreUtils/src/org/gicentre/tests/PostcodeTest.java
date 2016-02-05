@@ -6,7 +6,7 @@ import org.gicentre.utils.spatial.Postcode;
 //  ****************************************************************************************
 /** Set of unit tests for postcode parsing.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February 2016.
  */ 
 // *****************************************************************************************
 

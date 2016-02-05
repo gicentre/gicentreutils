@@ -4,7 +4,7 @@ package org.gicentre.utils.network.traer.animation;
 /** A single smoother for transitions towards a target over time. It is a normalised one-pole
  *  filter that transitions towards a target at a rate determined by its smoothness
  *  @author Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @version 31st July 2012.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 

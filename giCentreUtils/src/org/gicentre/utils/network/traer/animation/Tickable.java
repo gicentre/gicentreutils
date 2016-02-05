@@ -3,7 +3,7 @@ package org.gicentre.utils.network.traer.animation;
 //  *****************************************************************************************
 /** Defines the behaviour of all tickable smoothers that can be advanced over time.  
  *  @author Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @version 31st July 2012.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 

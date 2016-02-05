@@ -4,11 +4,13 @@ import org.gicentre.utils.stat.BarChart;
 import org.gicentre.utils.stat.XYChart;
 
 import processing.core.PApplet;
+import processing.core.PFont;
+import processing.core.PVector;
 
 //  *****************************************************************************************
 /** Tests the formatting of chart values and categories.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3 29th April, 2012. 
+ *  @version 3.4 5th February, 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -26,7 +28,6 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ChartFormatTest extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
@@ -43,19 +44,32 @@ public class ChartFormatTest extends PApplet
 
     private BarChart chart1;
     private XYChart chart2;
-    
-      
+    private PFont font1, font2;
+    private boolean isFont1,isThickLine, isDarkBar, isDarkLine, isLargeFont;
+              
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(1200,600);
+		pixelDensity(displayDensity());
+	}
+    
     /** Sets up the chart and fonts.
      */
     public void setup()
     {   
-        size(1000,600);
-        smooth(); 
-        textFont(createFont("Helvetica",10));
-        textSize(10);
-
+    	font1 = createFont("SansSerif",10);
+    	font2 = createFont("Serif",10);
+    	isFont1 = true;
+    	isThickLine = false;
+    	isDarkBar  = false;
+    	isLargeFont = false;
+    	isDarkLine = true;
+    	
+        
         float[] barData = new float[] {0.21235f, 0.5f, 1,     2,     4,     8,     16,    32,    64,    128,   256,   512,   1024, 2048};
         
         chart1 = new BarChart(this);
@@ -81,10 +95,8 @@ public class ChartFormatTest extends PApplet
       
       
         chart2.setPointSize(sizeData, 16);
-        chart2.setLineWidth(0.1f);
         chart2.setXAxisLabel("This is the x-axis");
-        chart2.setYAxisLabel("This is the y-axis");
-    
+        chart2.setYAxisLabel("This is the y-axis");    
     }
 
     /** Draws some charts.
@@ -92,14 +104,65 @@ public class ChartFormatTest extends PApplet
     public void draw()
     {   
         background(255);
+       
+        // These settings should have no effect on the appearance of the chart
+        strokeWeight(30);		// Would be thick if test fails.		
+        stroke(color(255,0,0));	// Would be red if test fails.
+        fill(color(0,255,0));	// Would be green if test fails.
+        textAlign(RIGHT,TOP);	// Text labels would appear uncentred if test fails.
+       
+        
+        // These settings should affect appearance of the charts.
+        textFont(isFont1? font1 : font2);
+        textSize(isLargeFont ? 18 : 10);
+                
+        chart1.setBarColour(isDarkBar? color(40,0,0) : color(150,150,220));
+        chart2.setLineWidth(isThickLine? 4: 1);         
+        chart2.setLineColour(isDarkLine? color(0,0,40) : color(220,150,150));
+        chart2.updateLayout();
+  
+        chart1.draw(20,1,width*.5f-20,height-22);
+        chart2.draw(width*.5f+20,1,width*.5f-20,height-22);
+        
+        
+        fill(80,0,0);
+        textAlign(LEFT,TOP);
+        textFont(font1);
+        textSize(14);
+        text("This text should be left-aligned with the first column centre. B to switch bar colour; F to switch fonts; L to switch line colour; S to switch font size; W to switch line width.",
+        	chart1.getDataToScreen(new PVector(0,0)).x,20,width*0.4f,height*0.3f);
         noLoop();
-
-        strokeWeight(1);
-        
-        
-        chart1.draw(1,1,width*.5f-2,height-2);
-        
-      
-        chart2.draw(width*.5f+1,1,width*.5f-2,height-2);
     }
+    
+    /** Responds to key presses that configure the appearance of the chart.
+     */
+    public void keyPressed()
+    {
+    	if (key == 'b')
+    	{
+    		isDarkBar = !isDarkBar;
+    		loop();
+    	}
+    	else if (key == 'f')
+    	{
+    		isFont1 = !isFont1;
+    		loop();
+    	}
+    	else if (key == 'l')
+    	{
+    		isDarkLine = !isDarkLine;    		
+    		loop();
+    	}
+    	else if (key == 's')
+    	{
+    		isLargeFont = !isLargeFont;    		
+    		loop();
+    	}
+    	else if (key == 'w')
+    	{
+    		isThickLine = !isThickLine;    		
+    		loop();
+    	}
+    }
+    
 }

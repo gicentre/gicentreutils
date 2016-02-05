@@ -6,7 +6,7 @@ import org.gicentre.utils.network.*;
 //  *****************************************************************************************
 /** Tests particle viewer by creating a simple node-edge graph and displaying it. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2012. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -24,7 +24,6 @@ import org.gicentre.utils.network.*;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ParticleViewerTest extends PApplet
 {
 	// ----------------------------- Object variables ------------------------------
@@ -44,12 +43,18 @@ public class ParticleViewerTest extends PApplet
 
 	// ------------------------- Processing initialisation -------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(800,600);
+		pixelDensity(displayDensity());
+	}
+	
 	/** Sets up the sketch ready to display.
 	 */
 	public void setup()
 	{
-		size(800,600);
-		smooth();
 		strokeWeight(1);		// For thickness of edge lines.
 		selectedNode = null;
 		
@@ -150,7 +155,6 @@ public class ParticleViewerTest extends PApplet
 				noStroke();
 				ellipse(x, y, 15, 10);
 			}
-			
 		}
 
 		public void setHighlight(boolean isHighlighted)

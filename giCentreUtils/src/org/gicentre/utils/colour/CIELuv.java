@@ -8,16 +8,16 @@ import processing.core.PVector;
 /** Utilities for handling the CIELuv colour space. This space is approximately perceptually
  *  uniform in that two colours a fixed distance apart in the colour space should be equally
  *  distinguishable from each other regardless of their location. 
- *  <br /><br />
+ *  <br><br>
  *  For details see <a href="http://en.wikipedia.org/wiki/CIELUV_color_space" target="_blank">
  *  en.wikipedia.org/wiki/CIELUV_color_space</a>. 
- *  <br /><br />
+ *  <br><br>
  *  Includes methods for creating colour tables from this space that maximise the use of the
  *  colour space with similar appearance to Brewer colour schemes. This is based on the 
  *  process described by <b>Wijffelaars, Vliegen, van Wijk and van der Linden</b> (2008)
  *  Generating color palettes using intuitive parameters, <i>Computer Graphics Forum,27(3)</i>.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -396,36 +396,11 @@ public class CIELuv
         return cTable;
     }
     
-    private double[] B(double[]b0, double[]b1,double[]b2,double t)
-    {
-        return new double[] {(1-t)*(1-t)*b0[0] + 2*(1-t)*t*b1[0]+t*t*b2[0],
-                             (1-t)*(1-t)*b0[1] + 2*(1-t)*t*b1[1]+t*t*b2[1],
-                             (1-t)*(1-t)*b0[2] + 2*(1-t)*t*b1[2]+t*t*b2[2]};
-    }
-    
-    private double Binv(double b0, double b1, double b2,double v)
-    {
-        return (b0-b1+Math.sqrt(b1*b1-b0*b2+(b0-2*b1+b2)*v))/(b0-2*b1+b2);      
-    }
-    
-    private double T(double l, double p0L, double p2L, double q0L, double q1L, double q2L)
-    {
-        if (l <= q1L)
-        {
-            return 0.5*Binv(p0L,q0L,q1L,l);
-        }
-        return 0.5*Binv(q1L,q2L,p2L,l)+0.5;
-    }
-    
-    
-    
-    // ---------------------------------- Private methods ------------------------------------------
-    
     /** Finds the most saturated colour for the given hue.
      *  @param hue Hue whose most saturated colour is to be found. This should be a value scaled between 0-360 degrees.
      *  @return Colour expressed in RGB coordinates.
      */
-    public double[] getMostSaturatedColour(double hue)
+    public static double[] getMostSaturatedColour(double hue)
     {
         // This version just uses a lookup table rather than calculating intersection analytically.
         int hueIndex = (int)Math.round(hue%360);
@@ -464,6 +439,8 @@ public class CIELuv
         */
     }
     
+    // ---------------------------------- Private methods ------------------------------------------
+       
     /** Finds the nearest in-gamut colour to the given RGB triplet.
      *  @param rgb Colour to find. Each value can be out of range 0-1.
      *  @param Luv The Luv triplet that give rise to the given RGB triplet.
@@ -561,5 +538,26 @@ public class CIELuv
         
         // Colour was within gamut, so just create a color object out of the given r,g,b values.
         return new Color((float)rgb[0],(float)rgb[1],(float)rgb[2]);
+    }
+    
+    private static double[] B(double[]b0, double[]b1,double[]b2,double t)
+    {
+        return new double[] {(1-t)*(1-t)*b0[0] + 2*(1-t)*t*b1[0]+t*t*b2[0],
+                             (1-t)*(1-t)*b0[1] + 2*(1-t)*t*b1[1]+t*t*b2[1],
+                             (1-t)*(1-t)*b0[2] + 2*(1-t)*t*b1[2]+t*t*b2[2]};
+    }
+    
+    private static double Binv(double b0, double b1, double b2,double v)
+    {
+        return (b0-b1+Math.sqrt(b1*b1-b0*b2+(b0-2*b1+b2)*v))/(b0-2*b1+b2);      
+    }
+    
+    private static double T(double l, double p0L, double p2L, double q0L, double q1L, double q2L)
+    {
+        if (l <= q1L)
+        {
+            return 0.5*Binv(p0L,q0L,q1L,l);
+        }
+        return 0.5*Binv(q1L,q2L,p2L,l)+0.5;
     }
 }

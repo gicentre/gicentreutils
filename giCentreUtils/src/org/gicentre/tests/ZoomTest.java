@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Tests zooming and panning in a simple Processing sketch. Includes tests for high quality
  *  zoomed text, for constraining zooming and panning, and for zoom-independent display.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 29th June 2014.
+ *  @version 3.4, 4th February 2016.
  */ 
 //  *****************************************************************************************
 
@@ -29,8 +29,6 @@ import processing.core.PVector;
  * source code (see COPYING.LESSER included with this source code). If not, see 
  * http://www.gnu.org/licenses/.
  */
-
-@SuppressWarnings("serial")
 public class ZoomTest extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
@@ -57,12 +55,18 @@ public class ZoomTest extends PApplet
     
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(800,400);
+		pixelDensity(displayDensity());
+	}
+    
     /** Sets up the sketch.
      */
     public void setup()
     {   
-        size(800,400);
-        smooth(); 
         morphT = 1;                 // 1 indicates no morphing. 
         constrain = false;
         isMouseMaskOn = false;
@@ -75,7 +79,8 @@ public class ZoomTest extends PApplet
 
     /** Draws a simple object that can be zoomed and panned.
      */
-    public void draw()
+    @SuppressWarnings("deprecation")
+	public void draw()
     {   
         background(255);
         
@@ -135,10 +140,16 @@ public class ZoomTest extends PApplet
         fill(20);
         textSize(8);
         textAlign(PConstants.CENTER, PConstants.CENTER);
-        // Use Zoomer's improved text method (try replacing with text() to see improvement).
-        zoomer.text("Zoom and pan me",width/2,height/2);
-        //text("Zoom and pan me",width/2,height/2);
         
+        // It looks like we no longer need to use Zoomer's improved text method as the Processing bug that 
+        // caused irregular text placement under high scaling appears to have been fixed.
+        zoomer.text(" Zoom and pan me",width/2,height/2);
+        
+        text("Zoom and pan me",width/2,height/2);
+        
+        float fixedSize = (float)Math.sqrt(64/zoomer.getZoomScale());
+        textSize(fixedSize);
+        text("Text above should be offset by one space",width/2,height/2+8);
         
         popMatrix();        // Retrieve the non zoomed display
         
@@ -156,9 +167,13 @@ public class ZoomTest extends PApplet
         textAlign(LEFT,TOP);
         String s="";
         if (zoomer.isPanning())
+        {
         	s+="panning ";
+        }
         if (zoomer.isZooming())
+        {
         	s+="zooming ";
+        }
         text(s,0,0);
     }
     

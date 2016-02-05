@@ -8,9 +8,9 @@ import processing.core.PConstants;
 import processing.core.PVector;
 
 //  ****************************************************************************************
-/** Tests more sophisticated chart options in a Processing sketch. 
+/** Tests bar and line spacing and alignment options in a chart. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3.1, 4th March, 2014.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -27,8 +27,6 @@ import processing.core.PVector;
  * source code (see COPYING.LESSER included with this source code). If not, see 
  * http://www.gnu.org/licenses/.
  */
-
-@SuppressWarnings("serial")
 public class ChartTest2 extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
@@ -58,12 +56,18 @@ public class ChartTest2 extends PApplet
 
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(650,400);
+		pixelDensity(displayDensity());
+	}
+    
     /** Sets up the chart and fonts.
      */
     public void setup()
     {   
-        size(550,350);
-        smooth();
         textFont(createFont("Helvetica",10));
         textSize(10);
         

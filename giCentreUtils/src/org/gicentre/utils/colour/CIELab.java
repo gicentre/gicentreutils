@@ -10,11 +10,11 @@ import processing.core.PVector;
 /** Utilities for handling the CIELab colour space. This space is approximately perceptually
  *  uniform in that two colours a fixed distance apart in the colour space should be equally
  *  distinguishable from each other regardless of their location.
- *  <br /><br />
+ *  <br><br>
  *  For details see <a href="http://en.wikipedia.org/wiki/Lab_color_space" target="_blank">
  *  en.wikipedia.org/wiki/Lab_color_space</a>. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

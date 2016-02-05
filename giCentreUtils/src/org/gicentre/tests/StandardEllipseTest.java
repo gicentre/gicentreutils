@@ -11,7 +11,7 @@ import processing.core.PVector;
 /** Tests the standard ellipse in a simple Processing sketch. Draws some random points then
  *  their weighted and unweighted standard ellipse.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -29,7 +29,6 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class StandardEllipseTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -49,14 +48,19 @@ public class StandardEllipseTest extends PApplet
 	private static final int HIGH_WEIGHT = 10;
 
 	// ------------------------------ Initialisation -------------------------------
+	
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(700,300);
+		pixelDensity(displayDensity());
+	}
 
 	/** Creates a set of points from which the standard ellipses will be calculated.
 	 */
 	public void setup()
 	{
-		size(700,300);
-		smooth();
-
 		points = new ArrayList<PVector>();
 
 		for (int i=0; i<NUM_POINTS; i++)

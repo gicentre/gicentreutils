@@ -3,7 +3,7 @@ package org.gicentre.utils;
 // *****************************************************************************************
 /** Stores version information about the giCentre utilities package.
   * @author Jo Wood, giCentre, City University London.
-  * @version 3.3, 6th April, 2013.
+  * @version 3.4, 5th February, 2014.
   */ 
 // *****************************************************************************************
 
@@ -23,8 +23,8 @@ package org.gicentre.utils;
 
 public class Version 
 {
-    private static final float  VERSION = 3.31f;
-    private static final String VERSION_TEXT = "giCentre utils V3.3.1, 26th May, 2013";
+    private static final float  VERSION = 3.4f;
+    private static final String VERSION_TEXT = "giCentre utils V3.4, 5th February, 2016";
 
     /** Reports the current version of the giCentre utilities package.
       * @return Text describing the current version of this package.

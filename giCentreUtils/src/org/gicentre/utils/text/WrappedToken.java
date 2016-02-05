@@ -11,7 +11,7 @@ import processing.core.PGraphics;
  *  and can return the screen bounds of the token, using the current textFont, textSize
  *  and textAlign.
  *  @author Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 1st July 2012 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -28,15 +28,21 @@ import processing.core.PGraphics;
 * source code (see COPYING.LESSER included with this source code). If not, see 
 * http://www.gnu.org/licenses/.
 */
-public class WrappedToken {
-
+public class WrappedToken 
+{
+			/** Text token to wrap */
 	public String text;
+			/** ID of the text token. */
 	public String id;
+			/** x-position of the token. */
 	public float x;
+			/** y-position of the token. */
 	public float y;
+			/** Bounding rectangle of the token. */
 	public Rectangle bounds=new Rectangle();
 	
-	public String toString(){
+	public String toString()
+	{
 		return id+": "+text+" "+x+","+y;
 	}
 	
@@ -45,7 +51,8 @@ public class WrappedToken {
 	 *  @param sketch Sketch doing the drawing.
 	 *  @return Bounds of this token in screen coordinates.
 	 */
-	public Rectangle getBounds(PApplet sketch){
+	public Rectangle getBounds(PApplet sketch)
+	{
 		return getBounds(sketch.g);
 	}
 
@@ -54,7 +61,8 @@ public class WrappedToken {
 	 *  @param pGraphics The graphics context within which the text drawing takes place.
 	 *  @return Bounds of this token in screen coordinates.
 	 */
-	public Rectangle getBounds(PGraphics pGraphics){
+	public Rectangle getBounds(PGraphics pGraphics)
+	{
 		float w=pGraphics.textWidth(this.text);
 		float h=pGraphics.textAscent()+pGraphics.textDescent();
 		float xPos=this.x;

@@ -5,7 +5,7 @@ package org.gicentre.utils.network.traer.animation;
  *  smoothness. 3D smoothers are useful for 3D animation where three values must be 
  *  transitioned together.  
  *  @author Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @version 1st August 2012.
+ * @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 
@@ -172,6 +172,7 @@ public class Smoother3D implements Tickable
 	 *  @return Current x value of the smoother.
 	 *  @deprecated Consider using <code>getX()</code> instead for standard accessor naming.
 	 */
+	@Deprecated
 	public final float x()
 	{
 		return getX();
@@ -191,6 +192,7 @@ public class Smoother3D implements Tickable
 	 *  @return Current y value of the smoother.
 	 *  @deprecated Consider using <code>getY()</code> instead for standard accessor naming.
 	 */
+	@Deprecated
 	public final float y()
 	{
 		return getY();
@@ -210,6 +212,7 @@ public class Smoother3D implements Tickable
 	 *  @return Current z value of the smoother.
 	 *  @deprecated Consider using <code>getZ()</code> instead for standard accessor naming.
 	 */
+	@Deprecated
 	public final float z()
 	{
 		return getZ();

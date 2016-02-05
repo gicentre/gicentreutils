@@ -6,6 +6,7 @@ import java.util.*;
 /** Class capable of performing Runge Kutta integration. Compared to the Euler integrators,
  *  this one is slower but is more stable.
  *  @author Carl Pearson, Jeffrey Traer Bernstein and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -87,21 +88,21 @@ public class RungeKuttaIntegrator extends Integrator
 	}
 
 	/** Provides the function that updates the particles in the system.
-	 * @param k1Forces
-	 * @param k1Velocities
-	 * @param k2Forces
-	 * @param k2Velocities
-	 * @param k3Forces
-	 * @param k3Velocities
-	 * @param k4Forces
-	 * @param k4Velocities
-	 * @param originalPositions
-	 * @param originalVelocities
-	 * @param deltaT
-	 * @return Function that updates the particle positions.
+	 *  @param k1f K1 force.
+	 *  @param k1v K1 velocity.
+	 *  @param k2f K2 force.
+	 *  @param k2v K2 velocity.
+	 *  @param k3f K3 force.
+	 *  @param k3v K3 velocity.
+	 *  @param k4f K4 force.
+	 *  @param k4v K4 velocity.
+	 *  @param oPos Original position.
+	 *  @param oVel Original velocity.
+	 *  @param deltaT Change in time units.
+	 *  @return Function that updates the particle positions.
 	 */
-	@SuppressWarnings("hiding")
-	protected Function<Particle,?> updater(final Map<Particle,Vector3D> k1Forces, final Map<Particle,Vector3D> k1Velocities, final Map<Particle,Vector3D> k2Forces, final Map<Particle,Vector3D> k2Velocities, final Map<Particle,Vector3D> k3Forces, final Map<Particle,Vector3D> k3Velocities, final Map<Particle,Vector3D> k4Forces, final Map<Particle,Vector3D> k4Velocities, final Map<Particle,Vector3D> originalPositions, final Map<Particle,Vector3D> originalVelocities, final float deltaT) 
+	@SuppressWarnings("static-method")
+	protected Function<Particle,?> updater(final Map<Particle,Vector3D> k1f, final Map<Particle,Vector3D> k1v, final Map<Particle,Vector3D> k2f, final Map<Particle,Vector3D> k2v, final Map<Particle,Vector3D> k3f, final Map<Particle,Vector3D> k3v, final Map<Particle,Vector3D> k4f, final Map<Particle,Vector3D> k4v, final Map<Particle,Vector3D> oPos, final Map<Particle,Vector3D> oVel, final float deltaT) 
 	{
 		return new Function<Particle,Object>() 
 		{
@@ -109,20 +110,20 @@ public class RungeKuttaIntegrator extends Integrator
 			public Object apply(Particle from)
 			{
 				from.age += deltaT;
-				Vector3D originalPosition = originalPositions.get(from);
-				Vector3D k1Velocity = k1Velocities.get(from).multiplyBy(deltaT/6.0f);
-				Vector3D k2Velocity = k2Velocities.get(from).multiplyBy(deltaT/3.0f);
-				Vector3D k3Velocity = k3Velocities.get(from).multiplyBy(deltaT/3.0f);
-				Vector3D k4Velocity = k4Velocities.get(from).multiplyBy(deltaT/6.0f);
+				Vector3D originalPosition = oPos.get(from);
+				Vector3D k1Velocity = k1v.get(from).multiplyBy(deltaT/6.0f);
+				Vector3D k2Velocity = k2v.get(from).multiplyBy(deltaT/3.0f);
+				Vector3D k3Velocity = k3v.get(from).multiplyBy(deltaT/3.0f);
+				Vector3D k4Velocity = k4v.get(from).multiplyBy(deltaT/6.0f);
 
 				from.position().set(originalPosition).add(k1Velocity).add(k2Velocity).add(k3Velocity).add(k4Velocity);
 
 				// Update velocity
-				Vector3D originalVelocity = originalVelocities.get(from);
-				Vector3D k1Force = k1Forces.get(from).multiplyBy(deltaT / (6.0f*from.mass()));
-				Vector3D k2Force = k2Forces.get(from).multiplyBy(deltaT / (3.0f*from.mass()));
-				Vector3D k3Force = k3Forces.get(from).multiplyBy(deltaT / (3.0f*from.mass()));
-				Vector3D k4Force = k4Forces.get(from).multiplyBy(deltaT / (6.0f*from.mass()));
+				Vector3D originalVelocity = oVel.get(from);
+				Vector3D k1Force = k1f.get(from).multiplyBy(deltaT / (6.0f*from.mass()));
+				Vector3D k2Force = k2f.get(from).multiplyBy(deltaT / (3.0f*from.mass()));
+				Vector3D k3Force = k3f.get(from).multiplyBy(deltaT / (3.0f*from.mass()));
+				Vector3D k4Force = k4f.get(from).multiplyBy(deltaT / (6.0f*from.mass()));
 
 				from.velocity().set(originalVelocity).add(k1Force).add(k2Force).add(k3Force).add(k4Force);
 				return null;

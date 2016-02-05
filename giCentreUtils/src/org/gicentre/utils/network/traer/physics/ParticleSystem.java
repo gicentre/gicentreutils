@@ -8,7 +8,7 @@ import java.util.Set;
 // *****************************************************************************************
 /** Represents an entire particle system containing particles and forces between them.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and modifications by Jo Wood.
- *  @version 4.1, 16th August, 2012.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -17,7 +17,6 @@ import java.util.Set;
  * http://code.google.com/p/traerphysics/. The traer.physics package is distributed under the
  * Artistic Licence: http://dev.perl.org/licenses/
  */
-
 public class ParticleSystem 
 {
 	// --------------------------- Class and object variables -----------------------------
@@ -25,11 +24,13 @@ public class ParticleSystem
 	/** Indicates a Runge Kutta integrator.
 	 *  @deprecated Use the enum values defined in the {@link Integrator} class in preference to this.
 	 */
+	@Deprecated
 	public static final int RUNGE_KUTTA = Integrator.METHOD.RUNGEKUTTA.ordinal();
 	
 	/** Indicates a modified Euler integrator.
 	 *  @deprecated Use the enum values defined in the {@link Integrator} class in preference to this.
 	 */
+	@Deprecated
 	public static final int MODIFIED_EULER = Integrator.METHOD.MODEULER.ordinal();
 
 	
@@ -91,7 +92,7 @@ public class ParticleSystem
 	/** Sets the size of the time step used with {@link Integrator#step(float)} for this ParticleSystem.
 	 * @param t the time step size
 	 * @return this ParticleSystem with its new time step size.
-	 * @throws IllegalArgumentException if t<=0
+	 * @throws IllegalArgumentException if t&lt;=0
 	 */
 	public final ParticleSystem	setDeltaT(float t)	throws IllegalArgumentException 
 	{
@@ -123,7 +124,7 @@ public class ParticleSystem
 	/** Advances this ParticleSystem's Integrator by a user-specified time step.
 	 *  @param t the amount of time to advance
 	 *  @return this ParticleSystem, post the advance.
-	 *  @throws IllegalArgumentException if t<=0
+	 *  @throws IllegalArgumentException if t&lt;=0
 	 */
 	public final ParticleSystem tick(float t) 
 	{
@@ -293,6 +294,7 @@ public class ParticleSystem
 	 *  @return Collection of springs.
 	 *  @deprecated Replace in favour of the more consistently named getSprings().
 	 */
+	@Deprecated
 	public final Collection<Spring> springs()
 	{ 
 		return getSprings(); 
@@ -312,6 +314,7 @@ public class ParticleSystem
 	 *  @return Number of springs in the system.
 	 *  @deprecated Replace in favour of the more consistently named getNumSprings().
 	 */
+	@Deprecated
 	public final int numberOfSprings() 
 	{ 
 		return getNumSprings(); 
@@ -386,6 +389,7 @@ public class ParticleSystem
 	 *  @return Collection of attractions.
 	 *  @deprecated Replace in favour of the more consistently named getAttractions().
 	 */
+	@Deprecated
 	public final Collection<Attraction> attractions() 
 	{ 
 		return attractions; 
@@ -405,6 +409,7 @@ public class ParticleSystem
 	 *  @return Number of attractions in the system.
 	 *  @deprecated Replace in favour of the more consistently named getNumAttractions().
 	 */
+	@Deprecated
 	public final int numberOfAttractions() 
 	{ 
 		return getNumAttractions(); 
@@ -479,6 +484,7 @@ public class ParticleSystem
 	 *  @return Collection of custom forces.
 	 *  @deprecated Replace in favour of the more consistently named getCustomForces().
 	 */
+	@Deprecated
 	public final Collection<AbstractForce> customForces() 
 	{ 
 		return getCustomForces(); 
@@ -512,6 +518,7 @@ public class ParticleSystem
 	 *  @return Number of custom forces in the system.
 	 *  @deprecated Replace in favour of the more consistently named getNumCustomForces().
 	 */
+	@Deprecated
 	public final int numberOfCustomForces() 
 	{
 		return getNumCustomForces();
@@ -584,6 +591,7 @@ public class ParticleSystem
 	 *  @return Collection of particles.
 	 *  @deprecated Replace in favour of the more consistently named getParticles().
 	 */
+	@Deprecated
 	public final Collection<Particle> particles() 
 	{ 
 		return getParticles(); 
@@ -601,6 +609,7 @@ public class ParticleSystem
 	 *  @return Number of particles in the system.
 	 *  @deprecated Replace in favour of the more consistently named getParticles().
 	 */
+	@Deprecated
 	public final int numberOfParticles() 
 	{ 
 		return getNumParticles();

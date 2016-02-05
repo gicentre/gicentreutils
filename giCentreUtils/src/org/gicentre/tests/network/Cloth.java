@@ -8,7 +8,7 @@ import processing.core.PApplet;
 // ****************************************************************************************
 /** Simple cloth simulation using the giCentre version of the traer physics library. 
  *  @author Jeffrey Traer Bernstein with minor modifications by Jo Wood.
- *  @version 1.1, 27th July, 2012.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -26,13 +26,12 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class Cloth extends PApplet 
 {
 
 	// ------------------------------ Starter method ------------------------------- 
 
-	/** Creates a simple application to test the chart drawing utilities.
+	/** Creates a simple application to test the giCentre version of the Traer physics engine.
 	 *  @param args Command line arguments (ignored). 
 	 */
 	public static void main(String[] args)
@@ -51,14 +50,19 @@ public class Cloth extends PApplet
 
 	// ----------------------------- Processing Methods -----------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(400,400);
+		pixelDensity(displayDensity());
+	}
+	
 	public void setup()
 	{
-		size(400, 400);
-		smooth();
 		fill(0);
 
 		physics = new ParticleSystem(0.1f, 0.01f);
-
 		particles = new Particle[gridSize][gridSize];
 
 		float gridStepX = (width / 2f) / gridSize;

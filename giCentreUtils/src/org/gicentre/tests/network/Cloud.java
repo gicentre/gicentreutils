@@ -9,7 +9,7 @@ import processing.core.PImage;
 // ****************************************************************************************
 /** Simple cloud simulation using the giCentre version of the traer physics library. 
  *  @author Jeffrey Traer Bernstein with minor modifications by Jo Wood.
- *  @version 1.1, 27th July, 2012.
+ *  @version 3.4, 4th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -27,13 +27,12 @@ import processing.core.PImage;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class Cloud extends PApplet 
 {
 
 	// ------------------------------ Starter method ------------------------------- 
 
-	/** Creates a simple application to test the chart drawing utilities.
+	/** Creates a simple application to test the giCentre version of the Traer physics engine.
 	 *  @param args Command line arguments (ignored). 
 	 */
 	public static void main(String[] args)
@@ -50,9 +49,16 @@ public class Cloud extends PApplet
 	
 	// ----------------------------- Processing Methods -----------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(400,400,P3D);
+		pixelDensity(displayDensity());
+	}
+	
 	public void setup()
 	{
-		size(400, 400);
 		frameRate(24);
 		cursor(CROSS);
 

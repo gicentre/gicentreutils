@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  transforms from/to lat,long. Uses transformation equations from Snyder (1987) <a href=
  *  "http://pubs.er.usgs.gov/publication/pp1395" target="_blank"> Map Projections - A 
  *  Working Manual</a>
- *  @version 3.3.1, 26th May, 2013.  
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 

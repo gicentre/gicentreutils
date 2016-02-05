@@ -12,7 +12,7 @@ import java.util.TimerTask;
  *  method. Frame rates can be reported either every <i>n</i> frames or every <i>t</i> seconds
  *  depending on which constructor is used.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 31st July, 2012. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 

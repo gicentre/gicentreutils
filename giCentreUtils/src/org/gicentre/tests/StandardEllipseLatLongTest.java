@@ -13,7 +13,7 @@ import processing.core.PVector;
  *  mouse. This tests the ability to calculate standard ellipse across the 'join' in a
  *  global map projection.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -31,7 +31,6 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class StandardEllipseLatLongTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -51,13 +50,18 @@ public class StandardEllipseLatLongTest extends PApplet
 
 	// ------------------------------ Initialisation -------------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(720,360);
+		pixelDensity(displayDensity());
+	}
+	
 	/** Creates a set of points from which the standard ellipses will be calculated.
 	 */
 	public void setup()
 	{
-		size(720,360);
-		smooth();
-
 		points = new ArrayList<PVector>();	
 		points.add(new PVector(173,45,1));
 		points.add(new PVector(175,55,1));

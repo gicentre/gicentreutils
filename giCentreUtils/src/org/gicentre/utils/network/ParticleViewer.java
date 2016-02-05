@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.gicentre.utils.move.ZoomPan;
-import org.gicentre.utils.move.ZoomPanState;
+
 import org.gicentre.utils.network.traer.physics.*;
 import org.gicentre.utils.network.traer.animation.*;
 
@@ -21,7 +21,7 @@ import processing.core.PConstants;
  *  @param <E> Type of edge to be stored in the particle viewer. This can be an <code>Edge</code>
  *             or any specialised subclass of it.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 31st July, 2012. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -66,6 +66,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 
 	/** Initialises the particle viewer.
 	 *  @param parent Parent sketch in which this viewer is to be drawn.
+	 *  @param width Width of the particle viewer in pixel units.
+	 *  @param height Height of the particle viewer in pixel units.
 	 */
 	public ParticleViewer(PApplet parent, int width, int height)
 	{
@@ -126,11 +128,10 @@ public class ParticleViewer<N extends Node, E extends Edge>
 
 			for (Map.Entry<E,Spring> row: edges.entrySet() )
 			{
-				E edge = row.getKey();
 				Spring spring = row.getValue();
 				Vector3D p1 = spring.getOneEnd().position();
 				Vector3D p2 = spring.getTheOtherEnd().position();
-				edge.draw(parent, p1.x(),p1.y(),p2.x(),p2.y());
+				row.getKey().draw(parent, p1.x(),p1.y(),p2.x(),p2.y());
 			}
 		}
 
@@ -141,9 +142,8 @@ public class ParticleViewer<N extends Node, E extends Edge>
 
 		for (Map.Entry<N,Particle> row: nodes.entrySet() )
 		{
-			N node = row.getKey();
-			Vector3D p = row.getValue().position();
-			node.draw(parent, p.x(),p.y());
+			Vector3D pos = row.getValue().position();
+			row.getKey().draw(parent, pos.x(),pos.y());
 		}
 
 		parent.popMatrix();
@@ -440,6 +440,7 @@ public class ParticleViewer<N extends Node, E extends Edge>
 	 *  nodes that have already been added to the viewer. This version will fix the distance of 
 	 *  separation between nodes to the given value
 	 *  @param edge Edge to add to the display.
+	 *  @param distance Distance of separation between the nodes.
 	 *  @return True if edge was added successfully. False if edge contains nodes that have not been
 	 *               added to the viewer.
 	 */

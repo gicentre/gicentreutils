@@ -5,7 +5,7 @@ import processing.core.PApplet;
 //  ****************************************************************************************
 /** TODO Describe class here. 
  *  TODO: @author Your name, giCentre, City University London.
- *  TODO: @version 3.3, Replace with version and date 
+ *  TODO: @version 3.4, Replace with version and date 
  */ 
 // *****************************************************************************************
 
@@ -23,7 +23,6 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ProcessingTemplate extends PApplet
 {
 
@@ -45,12 +44,20 @@ public class ProcessingTemplate extends PApplet
     
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(800,600);
+		// For tests, setting maximum pixel density useful. For real sketches this may depend on speed and other consdierations.
+		pixelDensity(displayDensity());
+	}
+	
     /** Initialise the sketch.
      */
     public void setup()
     {   
-        size(600,400);
-        smooth(); 
+       // Add initialisation here.
     }
 
     /** Draw the sketch.

@@ -10,7 +10,7 @@ import processing.core.PVector;
 /** Tests the drawing ellipse arcs as Bezier curves. Can use arrow keys to move the start
  *  and end of the ellipse segment.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 6th April, 2013 
+ *  @version 3.4, 5th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -28,7 +28,6 @@ import processing.core.PVector;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class EllipseTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -47,11 +46,18 @@ public class EllipseTest extends PApplet
 
 	// ------------------------------ Initialisation -------------------------------
 
+	/** Sets the widow size and maximum pixel density.
+	 */
+	public void settings()
+	{
+		size(600, 600);
+		pixelDensity(displayDensity());
+	}
+	
 	/** Initialises the test.
 	 */
 	public void setup()
 	{
-		size(600, 600);
 		startAngle = 0;
 		endAngle = radians(90);
 	}

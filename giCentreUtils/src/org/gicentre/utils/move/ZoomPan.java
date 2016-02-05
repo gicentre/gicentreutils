@@ -15,7 +15,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 13th March, 2013. 
+ *  @version 3.4, 5th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -38,23 +38,21 @@ public class ZoomPan
 	// ----------------------- Object and class variables -------------------------
 	
 	private ZoomPanable zoomer;
-
-	/** Type of zoom/pan behaviour.
-	 * Decrecated: user ZoomPanDirection instead*/
-	@Deprecated 
-	public enum ZoomPanBehaviour
-	{
-		/** Indicates panning can occur in both directions. */ 				BOTH_DIRECTIONS,
-		/** Indicates panning can occur in vertical direction only. */ 		VERTICAL_ONLY,
-		/** Indicates panning can occur in horizontal direction only. */	HORIZONTAL_ONLY
-	}
 	
-	public enum ZoomPanDirection{
-		ZOOM_PAN_BOTH,               //Zooming and panning in both directions. The default 
-		ZOOM_PAN_VERTICAL,           //Only zoom and pan in a vertical direction (y) 
-		ZOOM_PAN_HORIZONTAL,         //Only zoom and pan in a horizontal  direction (x)
-		ZOOM_VERTICAL_PAN_BOTH,      //Zoom in vertical direction only (y), pan in both
-		ZOOM_HORIZONTAL_PAN_BOTH,    //Zoom in vertical direction only (x), pan in both
+	/** Enumerates zooming and panning constraints.
+	 */
+	public enum ZoomPanDirection
+	{
+		/** Zooming and panning in both directions. The default.*/ 
+		ZOOM_PAN_BOTH,
+		/** Only zoom and pan in a vertical direction (y).*/
+		ZOOM_PAN_VERTICAL,  
+		/** Only zoom and pan in a horizontal  direction (x).*/
+		ZOOM_PAN_HORIZONTAL,   
+		/** Zoom in vertical direction only (y), pan in both. */
+		ZOOM_VERTICAL_PAN_BOTH,
+		/** Zoom in horizontal direction only (x), pan in both. */
+		ZOOM_HORIZONTAL_PAN_BOTH,   
 	}
 	
 	// ------------------------------- Constructors ------------------------------- 
@@ -71,17 +69,15 @@ public class ZoomPan
 	 */
 	public ZoomPan(PApplet aContext)
 	{
-		// TODO: This is a hack to determine whether we are running Processing 2.x or Processing 1.x
-		//       It is needed because Processing 2 uses a different event handling model to Processing 1.
+		// From v.3.4 onwards, ZoomPan relies on Processing 3 or greater.
 		try
 		{
-			// Attempt to create a Processing 2.x compatible zoomer.
-			zoomer = new ZoomPan20(aContext);
+			// Attempt Processing V3.xx first.
+			zoomer = new ZoomPan30(aContext);
 		}
-		catch (Throwable e)
+		catch (Throwable e3)
 		{
-			// If a Processing 2.x zoomer failed, revert to a Processing 1.5 version
-			zoomer = new ZoomPan15(aContext);
+			System.err.println("This version of giCentreUtils works only with Processing 3 or greater. For older versions of Processing, see http://www.gicentre.net/software/#/utils");
 		}
 	}
 
@@ -93,17 +89,14 @@ public class ZoomPan
 	 */
 	public ZoomPan(PApplet aContext, PGraphics graphics)
 	{
-		// TODO: This is a hack to determine whether we are running Processing 2.x or Processing 1.x
-		//       It is needed because Processing 2 uses a different event handling model to Processing 1.
+		// From v.3.4 onwards, ZoomPan relies on Processing 3 or greater.
 		try
 		{
-			// Attempt to create a Processing 2.x compatible zoomer.
-			zoomer = new ZoomPan20(aContext,graphics);
+			zoomer = new ZoomPan30(aContext,graphics);
 		}
-		catch (Throwable e)
+		catch (Throwable e3)
 		{
-			// If a Processing 2.x zoomer failed, revert to a Processing 1.5 version
-			zoomer = new ZoomPan15(aContext,graphics);
+			System.err.println("This version of giCentreUtils works only with Processing 3 or greater. For older versions of Processing, see http://www.gicentre.net/software/#/utils");
 		}
 	}
 
@@ -121,6 +114,7 @@ public class ZoomPan
 	 *  can be used for transforming off-screen buffers that were not provided to the constructor. Can
 	 *  be useful when a sketch temporarily creates an off-screen buffer that needs to be zoomed and panned
 	 *  in the same way as the main PApplet.
+	 *  @param offScreenBuffer Graphics context in which to apply the zoom/pan transformation.
 	 */
 	public void transform(PGraphics offScreenBuffer)
 	{    
@@ -237,35 +231,13 @@ public class ZoomPan
 		zoomer.setZoomScaleY(zoomScaleY);
 	}
 	
-	/** Sets the zoom/pan behaviour type
-	 *  @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 *  
-	 *  Deprecated: use setZoomPnaDirectionn()
-	 */
-	@Deprecated
-	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType)
-	{
-		zoomer.setZoomPanBehaviour(zoomPanType);
-	}
-
-	/** Reports the zoom/pan behaviour type
-	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 *  
-     *  Deprecated: use getZoomPnaDirectionn()
-	 */
-	@Deprecated
-	public ZoomPanBehaviour getZoomPanBehaviour()
-	{
-		return zoomer.getZoomPanBehaviour();
-	}
-
 	
 	/** Sets the zooming/panning direction
-	 *  @param zoomPanDirection Type of zoom panning. Should be one of<br />
-	 *  <code>ZOOM_PAN_BOTH</code>              Zooming and panning in both directions. The default.<br /> 
-	 *	<code>ZOOM_PAN_VERTICAL</code>          Only zoom and pan in a vertical direction (y). <br />
-	 *  <code>ZOOM_PAN_HORIZONTAL</code>        Only zoom and pan in a horizontal  direction (x).<br />
-	 *  <code>ZOOM_VERTICAL_PAN_BOTH</code>     Zoom in vertical direction only (y), pan in both.<br />
+	 *  @param zoomPanDirection Type of zoom panning. Should be one of<br>
+	 *  <code>ZOOM_PAN_BOTH</code>              Zooming and panning in both directions. The default.<br> 
+	 *	<code>ZOOM_PAN_VERTICAL</code>          Only zoom and pan in a vertical direction (y). <br>
+	 *  <code>ZOOM_PAN_HORIZONTAL</code>        Only zoom and pan in a horizontal  direction (x).<br>
+	 *  <code>ZOOM_VERTICAL_PAN_BOTH</code>     Zoom in vertical direction only (y), pan in both.<br>
 	 *  <code>ZOOM_HORIZONTAL_PAN_BOTH</code>   Zoom in vertical direction only (x), pan in both.
 	 */
 	public void setZoomPanDirection(ZoomPanDirection zoomPanDirection)
@@ -358,7 +330,7 @@ public class ZoomPan
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScale Minimum permitted zoom scale.
 	 */
 	public void setMinZoomScale(double minZoomScale)
 	{
@@ -369,7 +341,7 @@ public class ZoomPan
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param maxZoomScale
+	 *  @param maxZoomScale Maximum permitted zoom scale.
 	 */
 	public void setMaxZoomScale(double maxZoomScale)
 	{
@@ -415,10 +387,12 @@ public class ZoomPan
 	 *  characters in Java2D mode when a zoomed font is to be displayed. This method is not necessary when
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
+	 *  @deprecated Bug in Processing is now fixed in 3.x, so this method is no longer needed.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
-	 */  
+	 */ 
+	@Deprecated
 	public void text(String textToDisplay, float xPos, float yPos)
 	{
 		zoomer.text(textToDisplay, xPos, yPos);
@@ -430,11 +404,13 @@ public class ZoomPan
 	 *  As with the other <code>text()</code> method it is not necessary to call this method if the
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
+	 *  @deprecated Bug in Processing is now fixed in 3.x, so this method is no longer needed.
 	 *  @param applet Sketch in which text is to be drawn.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
 	 */  
+	@Deprecated
 	public static void text(PApplet applet, String textToDisplay, float xPos, float yPos)
 	{
 		// If we are not using the default renderer, use text() as normal.

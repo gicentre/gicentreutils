@@ -5,7 +5,7 @@ package org.gicentre.utils.network.traer.animation;
  *  smoothness. 2D smoothers are useful for 2D animation where two values must be 
  *  transitioned together.
  *  @author Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @version 31st July 2012.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 
@@ -139,6 +139,7 @@ public class Smoother2D implements Tickable
 	 *  @return Current x value of the smoother.
 	 *  @deprecated Consider using <code>getX()</code> instead for standard accessor naming.
 	 */
+	@Deprecated
 	public final float x()
 	{
 		return getX();
@@ -158,6 +159,7 @@ public class Smoother2D implements Tickable
 	 *  @return Current y value of the smoother.
 	 *  @deprecated Consider using <code>getY()</code> instead for standard accessor naming.
 	 */
+	@Deprecated
 	public final float y()
 	{
 		return getY();

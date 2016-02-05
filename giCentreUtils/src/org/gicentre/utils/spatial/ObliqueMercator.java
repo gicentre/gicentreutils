@@ -6,10 +6,10 @@ import processing.core.PVector;
 /** Class for representing Oblique Mercator projections. Includes forward and inverse transforms
  *  from and to longitude/latitude. Uses transformation equations from Snyder (1987) Atlas of Map 
  *  Projections summarised at this
- *  <a href="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html target="new">
+ *  <a href="http://www.remotesensing.org/geotiff/proj_list/hotine_oblique_mercator.html" target="_blank">
  *  Hotine Oblique Mercator</a> page. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th June, 2012. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

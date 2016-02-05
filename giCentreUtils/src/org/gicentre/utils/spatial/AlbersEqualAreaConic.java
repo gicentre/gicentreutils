@@ -9,7 +9,7 @@ import processing.core.PVector;
  *  <a href="http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c" target="_new">
  *  http://geography.usgs.gov/ftp/software/current_software/gctpc2/alberfor.c</a>.
  *  @author Jo Wood, giCentre, City University London and T. Mittan.
- *  @version 3.3, 21st September, 2012.  
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -342,7 +342,7 @@ public class AlbersEqualAreaConic implements MapProjection
       * @param origLng Longitude value to adjust.
       * @return Longitude value guaranteed to be within +- 180 (in radians).
       */
-    private double adjustLong(double origLng) 
+    private static double adjustLong(double origLng) 
     {
         long count = 0;
         double lng = origLng;
@@ -426,7 +426,7 @@ public class AlbersEqualAreaConic implements MapProjection
       * @param origCon Value to calculate inverse sine from.
       * @return Inverse sine.
       */
-    private double asinz (double origCon)
+    private static double asinz (double origCon)
     {
     	double con1 = origCon;
         if (Math.abs(con1) > 1.0)

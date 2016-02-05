@@ -8,9 +8,11 @@ import processing.core.PApplet;
 import processing.core.PFont;
 
 //  ****************************************************************************************
-/** Tests interactive clipping using two clipping regions in the same sketch.
+/** Tests interactive clipping using two clipping regions in the same sketch. This test is
+ *  for backward compatibility only as Processing now provides its own clip() / noClip()
+ *  methods.
  *  @author Alexander Kachkaev and Jo Wood, giCentre, City University London.
- *  @version 3.3, 17th June, 2012.
+ *  @version 3.4, 5th February, 2016.
  */ 
 //  ****************************************************************************************
 
@@ -27,7 +29,7 @@ import processing.core.PFont;
  * source code (see COPYING.LESSER included with this source code). If not, see 
  * http://www.gnu.org/licenses/.
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("deprecation")
 public class ClipperInteractiveTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -50,12 +52,18 @@ public class ClipperInteractiveTest extends PApplet
 
 	// ---------------------------- Processing methods -----------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(850,400);
+		pixelDensity(displayDensity());
+	}
+	
     /** Sets up the sketch.
      */
 	public void setup()
 	{
-		size(850, 400);
-		smooth();
 		textAlign(CENTER,CENTER);
 		font = createFont("Helvetica", 12);
 

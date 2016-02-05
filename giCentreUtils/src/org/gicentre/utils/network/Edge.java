@@ -2,14 +2,14 @@ package org.gicentre.utils.network;
 
 import processing.core.PApplet;
 
-//*****************************************************************************************
+//  *****************************************************************************************
 /** Represents an edge between two nodes in a network graph structure. This class has a 
  *  default drawing behaviour, but by inheriting it and overriding its draw() method, visual
  *  appearance of the edge can be customised.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016.
  */ 
-// *****************************************************************************************
+//  *****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License
@@ -74,6 +74,7 @@ public class Edge
 	 *  @param p2x x-coordinate of the second node in the edge.
 	 *  @param p2y y-coordinate of the second node in the edge.
 	 */
+	@SuppressWarnings("static-method")
 	public void draw(PApplet applet, float p1x, float p1y, float p2x, float p2y)
 	{
 		applet.line(p1x, p1y, p2x, p2y);

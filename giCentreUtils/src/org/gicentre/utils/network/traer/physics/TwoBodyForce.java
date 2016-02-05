@@ -8,6 +8,7 @@ package org.gicentre.utils.network.traer.physics;
  *  ends. If the forces are of the standard equal-and-opposite variety, only the force on one
  *  end needs to be provided.
  *  @author Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 
@@ -62,7 +63,6 @@ public abstract class TwoBodyForce extends TargetedForce
 	
 	/** Applies this Force to {@link #oneEnd} and {@link #theOtherEnd}, which modifies their 
 	 *  {@link Particle#force} values.
-	 *  <br />
 	 *  Users extending this class to create custom Forces need only implement {@link #forcePair()}, 
 	 *  taking advantage of the static packaging method {@link #equalAndOpposite(Vector3D)} or 
 	 *  {@link #specifyBoth(Vector3D, Vector3D)} to create the {@link ForcePair}.
@@ -237,7 +237,7 @@ public abstract class TwoBodyForce extends TargetedForce
 	// -------------------------------- Nested classes -----------------------------------
 	
 	/** Class that wraps Vector3D forces to apply to the two ends of this TwoBodyForce.
-	 *  <br />
+	 *  <br>
 	 *  For the especially memory conscious, the ForcePair fields can be manipulated directly;
 	 *  use the {@link #updateBoth(Vector3D, Vector3D)} or {@link #updateEqualAndOpposite(Vector3D)}
 	 *  or use the getters and manipulate the Vector3Ds directly.
@@ -296,7 +296,6 @@ public abstract class TwoBodyForce extends TargetedForce
 		 *  @return this ForcePair, modified
 		 *  @throws NullPointerException if forceOnOneEnd is null
 		 */
-		@SuppressWarnings("hiding")
 		protected ForcePair updateEqualAndOpposite(Vector3D forceOnOneEnd) throws NullPointerException, IllegalStateException 
 		{
 			if (!equalAndOpposite)
@@ -318,7 +317,6 @@ public abstract class TwoBodyForce extends TargetedForce
 		 * @return this ForcePair, modified
 		 * @throws NullPointerException if either argument is null
 		 */
-		@SuppressWarnings("hiding")
 		protected ForcePair updateBoth(Vector3D forceOnOneEnd, Vector3D forceOnTheOtherEnd) throws NullPointerException 
 		{
 			thrower(forceOnOneEnd, forceOnTheOtherEnd);

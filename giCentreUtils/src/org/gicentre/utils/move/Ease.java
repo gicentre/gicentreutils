@@ -2,7 +2,7 @@ package org.gicentre.utils.move;
 
 import processing.core.PConstants;
 
-//********************************************************************************************
+//  ********************************************************************************************
 /** Utility class containing a set of static easing methods. Each takes a value between 0 and
  *  1 and returns a new value also between 0 and 1 representing the 'eased' position. This can
  *  be used with <code>lerp()</code> type functions to give a non-linear scaling between the 
@@ -12,9 +12,9 @@ import processing.core.PConstants;
  *          by Robert Penner, 2003, 
  *          <a href="http://www.robertpenner.com/easing/penner_chapter7_tweening.pdf" 
  *          target="_blank">Programming Macromedia Flash MX</a>.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
-// *****************************************************************************************
+//  *****************************************************************************************
 
 /* This file is part of giCentre utilities library. gicentre.utils is free software: you can 
  * redistribute it and/or modify it under the terms of the GNU Lesser General Public License

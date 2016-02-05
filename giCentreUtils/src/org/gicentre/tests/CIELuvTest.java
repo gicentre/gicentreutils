@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Tests the conversion to and from CIELuv colour space.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -30,7 +30,6 @@ import processing.core.PVector;
 
 public class CIELuvTest
 {
-
     /** Starts the CIELuv test as an application.
      *  @param args Command line arguments (ignored).
      */
@@ -42,15 +41,15 @@ public class CIELuvTest
         double hue2 = 90;
         //Color col = converter.getColourFromLCh(80, 200, hue,true);
         
-        double[] msc = converter.getMostSaturatedColour(280);
-        System.err.println("Most saturated colour for h=280 is "+msc[0]+","+msc[1]+","+msc[2]);
+        double[] msc = CIELuv.getMostSaturatedColour(280);
+        System.out.println("Most saturated colour for h=280 is "+msc[0]+","+msc[1]+","+msc[2]);
         //if (true) return;
 
-        //System.err.println("Hue of "+hue+" goes to "+col);
+        //System.out.println("Hue of "+hue+" goes to "+col);
         
         //ColourTable cTable = converter.getSequential(hue, 9);
         
-        System.err.println("Initial hue is "+hue);
+        System.out.println("Initial hue is "+hue);
         ColourTable cTable = converter.getSequential(hue, hue2,0.6,0.75, 0);
         //ColourTable cTable = converter.getSequential(60, 340,0.6,0.75, 0);
         ColourTable.writeFile(cTable,"temp.ctb");
@@ -65,7 +64,7 @@ public class CIELuvTest
         
             if (colour1.equals(colour2))
             {
-                System.err.println(colour1.getRed()+","+colour1.getGreen()+","+colour1.getBlue()+" converted to and from "+colour1Luv.z+","+colour1Luv.x+","+colour1Luv.y+" without problems");
+                System.out.println(colour1.getRed()+","+colour1.getGreen()+","+colour1.getBlue()+" converted to and from "+colour1Luv.z+","+colour1Luv.x+","+colour1Luv.y+" without problems");
             }
             else
             {

@@ -11,7 +11,7 @@ import processing.core.PVector;
  *  behaviour, but by inheriting it and overriding its draw() method, visual appearance of
  *  the node can be customised.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ * @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -59,6 +59,7 @@ public class Node
 	 *  @param px x-coordinate of this node's graphical position.
 	 *  @param py y-coordinate of this node's graphical position.
 	 */
+	@SuppressWarnings("static-method")
 	public void draw(PApplet applet, float px, float py)
 	{
 		applet.ellipse(px, py, 12,12);
@@ -72,9 +73,10 @@ public class Node
 		return location;
 	}
 	
-	/** Reports a list of all incoming edges attached to this node.
+	/** Reports a set of all incoming edges attached to this node.
 	 *  If this node is part of an undirected graph, this will contain the same 
-	 *  set as the outgoing edges.
+	 *  set as the outgoing edges. Note the order of edges is not guaranteed and may differ from the outgoing edge set even if undirected.
+	 *  @return Set of all incoming edges attached to the node. 
 	 */
 	public HashSet<Edge>getInEdges()
 	{
@@ -83,7 +85,8 @@ public class Node
 	
 	/** Reports a list of all outgoing edges attached to this node.
 	 *  If this node is part of an undirected graph, this will contain the same 
-	 *  set as the incoming edges.
+	 *  set as the incoming edges. Note the order of edges is not guaranteed and may differ from the outgoing edge set even if undirected.
+	 *  @return Set of all outgoing edges attached to the node. 
 	 */
 	public HashSet<Edge>getOutEdges()
 	{

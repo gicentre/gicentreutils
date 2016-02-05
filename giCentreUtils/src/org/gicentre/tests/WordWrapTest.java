@@ -11,7 +11,7 @@ import processing.core.PApplet;
 //  *****************************************************************************************
 /** Tests the text wrap class by displaying wrapped text with individual highlighting of wards.
  *  @author Aidan Slingsby with minor modifications by Jo Wood, giCentre, City University London.
- *  @version 3.3 31st July, 2012. 
+ *  @version 3.4 5th February 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -29,7 +29,6 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class WordWrapTest extends PApplet
 {
 	 // ------------------------------ Starter method ------------------------------- 
@@ -49,11 +48,18 @@ public class WordWrapTest extends PApplet
 	
 	// ---------------------------- Processing methods -----------------------------
 	
-	public void setup()
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
 	{
 		size(450,250);
-		smooth();
-		
+		pixelDensity(displayDensity());
+	}
+	
+	/** Initialises the word wrap test sketch.
+	 */
+	public void setup()
+	{
 		// The current font metrics are used by the text wrapper. 
 		textSize(32);
 		textAlign(LEFT,TOP);

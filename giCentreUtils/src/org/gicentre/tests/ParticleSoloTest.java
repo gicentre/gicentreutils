@@ -9,7 +9,7 @@ import processing.core.PApplet;
 //  *****************************************************************************************
 /** Tests particle viewer works with single particle.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th August 2012 
+ *  @version 3.4, 5th February 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -27,7 +27,6 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ParticleSoloTest extends PApplet
 {
 	// ----------------------------- Object variables ------------------------------
@@ -46,13 +45,18 @@ public class ParticleSoloTest extends PApplet
 
 	// ------------------------- Processing initialisation -------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+      */
+	public void settings()
+	{
+		size(800,600);
+		pixelDensity(displayDensity());
+	}
+	
 	/** Sets up the sketch ready to display.
 	 */
 	public void setup()
 	{
-		size(800,600);
-		smooth();
-		
 		viewer = new ParticleViewer<Node,Edge>(this, width, height);
 		viewer.addNode(new Node(10,0));
 	}

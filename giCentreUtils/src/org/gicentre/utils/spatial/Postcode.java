@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
  *  identified individually. Will parse partial postcodes as well as those containing
  *  arbitrary whitespace.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.  
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -523,7 +523,7 @@ public class Postcode
      *  @param character Character to test.
      *  @return True if character is a letter.
      */
-    private boolean isLetter(char character)
+    private static boolean isLetter(char character)
     {
         if ((character >= 'A') && (character <='Z'))
         {
@@ -536,7 +536,7 @@ public class Postcode
      *  @param character Character to test.
      *  @return True if character is a number.
      */
-    private boolean isNumber(char character)
+    private static boolean isNumber(char character)
     {
         if ((character >= '0') && (character <='9'))
         {

@@ -6,7 +6,7 @@ import processing.core.PVector;
 /** Class for representing the Swiss coordinate system. This is an oblique Mercator projection
  *  with a 90 degree azimuth, centre at the the old observatory at Bern and scale factor of 1.0. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th June, 2012. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 

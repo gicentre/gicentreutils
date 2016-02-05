@@ -1,6 +1,5 @@
 package org.gicentre.utils.move;
 
-import org.gicentre.utils.move.ZoomPan.ZoomPanBehaviour;
 import org.gicentre.utils.move.ZoomPan.ZoomPanDirection;
 
 import processing.core.PGraphics;
@@ -9,7 +8,7 @@ import processing.core.PVector;
 //  *****************************************************************************************
 /** Interface for describing the behaviour of a zoomable component.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 1st August 2012. 
+ *  @version 3.4, 5th February 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -38,6 +37,7 @@ interface ZoomPanable
 	 *  should be used for transforming off-screen buffers that were not provided to the constructor. Can
 	 *  be useful when a sketch temporarily creates an off-screen buffer that needs to be zoomed and panned
 	 *  in the same way as the main PApplet.
+	 *  @param offScreenBuffer Graphics context in which to apply the zoom/pan transformation.
 	 */
 	abstract void transform(PGraphics offScreenBuffer);
 	
@@ -117,23 +117,9 @@ interface ZoomPanable
 	 *         display. Values less than or equal to 0 will be ignored. 
 	 */
 	abstract void setZoomScaleY(double zoomScaleY);
-
-	
-	/** Should set the zoom/pan behaviour type
-	 *  @param zoomPanType  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 */
-	@Deprecated
-	abstract void setZoomPanBehaviour(ZoomPanBehaviour zoomPanType);
-
-	/** Should report the zoom/pan behaviour type.
-	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 */
-	@Deprecated
-	abstract ZoomPanBehaviour getZoomPanBehaviour();
-
 	
 	/** Should set the zooming/panning direction
-	 *  @param zoomPanDirection
+	 *  @param zoomPanDirection Zoom pan direction constraint type.
 	 */
 	abstract void setZoomPanDirection(ZoomPanDirection zoomPanDirection);
 
@@ -198,7 +184,7 @@ interface ZoomPanable
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScale Minimum permitted zoom scale.
 	 */
 	abstract void setMinZoomScale(double minZoomScale);
 	
@@ -206,7 +192,7 @@ interface ZoomPanable
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param maxZoomScale
+	 *  @param maxZoomScale Maximum permitted zoom scale.
 	 */
 	abstract void setMaxZoomScale(double maxZoomScale);
 	

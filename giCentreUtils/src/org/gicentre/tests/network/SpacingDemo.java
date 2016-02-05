@@ -17,7 +17,7 @@ import processing.core.PApplet;
 // ****************************************************************************************
 /** Demonstrates the use of a custom force for efficient spacing of particles in space.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 1.0, 27th July, 2012.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -35,13 +35,12 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class SpacingDemo extends PApplet 
 {
 
 	// ------------------------------ Starter method ------------------------------- 
 
-	/** Creates a simple application to test the chart drawing utilities.
+	/** Creates a simple application to test hashgrid optimisation of force-directed layout.
 	 *  @param args Command line arguments (ignored). 
 	 */
 	public static void main(String[] args)
@@ -66,10 +65,16 @@ public class SpacingDemo extends PApplet
 
 	// ----------------------------- Processing Methods -----------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(1400,900);
+		pixelDensity(displayDensity());
+	}
+	
 	public void setup()
 	{
-		size(1400, 900);
-		smooth();
 		fill(0,100);
 		ellipseMode(CENTER);
 		frameTimer = new FrameTimer(0, 1);

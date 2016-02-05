@@ -7,7 +7,7 @@ package org.gicentre.utils.network.traer.physics;
  *  method only. Examples of this kind of Force are the {@link TwoBodyForce}s {@link Attraction}
  *  and {@link Spring} forces 
  *  @author Carl Pearson and minor modifications by Jo Wood.
- *  @since 4.0
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 

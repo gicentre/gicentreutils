@@ -10,7 +10,7 @@ import processing.core.PApplet;
 //****************************************************************************************
 /** Tests the standard colour picker class for selecting Brewer colour palettes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -28,7 +28,6 @@ import processing.core.PApplet;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ColourPickerTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -49,13 +48,19 @@ public class ColourPickerTest extends PApplet
 
 	// ------------------------------ Initialisation -------------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+      */
+    public void settings()
+    {
+    	 size(800,600);
+    	 pixelDensity(displayDensity());
+    }
+    
 	/** Sets up the sketch by initialising the colour picker.
 	 */
 	public void setup()
 	{
-		size(800,600);
-		smooth();
-		frame.setResizable(true);
+		surface.setResizable(true);
 		strokeWeight(2);
 		lineColour = color(180,0,0);
 

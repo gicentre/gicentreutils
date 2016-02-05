@@ -12,7 +12,7 @@ import java.util.*;             // For vector structure.
  *  not suitable for very large structures. For reading very large structures represented as
  *  XML, use SAX processing instead.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -182,7 +182,7 @@ public class DOMProcessor
       * @param value Attribute value.
       * @param node Element to attach attribute.
       */
-    public void addAttribute(String name, String value, Node node)
+    public static void addAttribute(String name, String value, Node node)
     {
         if (node.getNodeType() == Node.ELEMENT_NODE)
         {
@@ -272,7 +272,7 @@ public class DOMProcessor
       * @param node Node to search.
       * @return Text associated with the node, or null if none found.
       */
-    public String getNodeText(Node node)
+    public static String getNodeText(Node node)
     {
         // Look for text in child (text stored in its own node).
         NodeList children = node.getChildNodes();
@@ -333,7 +333,7 @@ public class DOMProcessor
       * @param node Node from which to start search.
       * @return Value associated with the attribute, or null if not found.  
       */
-    public String getNodeAttribute(String attributeName, Node node)
+    public static String getNodeAttribute(String attributeName, Node node)
     {
         // Only consider document or element nodes.
         if ((node.getNodeType() != Node.DOCUMENT_NODE) &&
@@ -398,7 +398,7 @@ public class DOMProcessor
       * @param node Node from which to examine children.
       * @return Child node or null if none found.
       */
-    public Node getNodeElement(String name, Node node)
+    public static Node getNodeElement(String name, Node node)
     {
        // Only consider document or element nodes.
         if ((node.getNodeType() != Node.DOCUMENT_NODE) &&
@@ -434,7 +434,7 @@ public class DOMProcessor
       * @param node Node from which to examine children.
       * @return Child nodes or empty Node array if none found.
       */
-    public Node[] getNodeElements(String name, Node node)
+    public static Node[] getNodeElements(String name, Node node)
     {
         // Only consider document or element nodes.
         if ((node.getNodeType() != Node.DOCUMENT_NODE) &&
@@ -908,6 +908,10 @@ public class DOMProcessor
                 indent--;
                 break;
             }
+            
+            default:
+            	// Silently ignore any other Node types.
+            	break;
         }
            
         // Finally output closing tags for each element.

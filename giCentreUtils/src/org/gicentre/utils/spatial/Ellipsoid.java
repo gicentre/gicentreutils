@@ -7,7 +7,7 @@ import processing.core.PVector;
 //  ****************************************************************************************
 /** Stores an ellipsoid representation for global map projections.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.2, 1st August, 2011.  
+ *  @version 3.4, 5th February, 2016.  
  */ 
 // *****************************************************************************************
 

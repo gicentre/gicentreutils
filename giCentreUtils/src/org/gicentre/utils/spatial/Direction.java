@@ -4,7 +4,7 @@ package org.gicentre.utils.spatial;
 /** Enumerated list of direction constants. Useful for specifying rook's-case and
  *  queen's-case neighbour relations.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -61,6 +61,9 @@ public enum Direction
                 return "north-west";
             case CENTRE:
                 return "centre";
+            default:
+            	System.err.println("Unexpected direction : "+this.toString());
+            	break;
         }
         // We shouldn't ever get to this line.
         return super.toString();

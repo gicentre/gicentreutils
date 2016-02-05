@@ -12,7 +12,7 @@ import processing.core.PFont;
  *  information and help screens. See also <code>HelpScreen</code> for keyboard shortcut
  *  type help screens.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

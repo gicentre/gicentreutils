@@ -8,9 +8,9 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 //  ****************************************************************************************
-/** Tests chart drawing in a simple Processing sketch. 
+/** Tests chart drawing and reconfiguration. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 6th April, 2013 
+ *  @version 3.4, 5th February, 2016 
  */ 
 // *****************************************************************************************
 
@@ -28,7 +28,6 @@ import processing.core.PConstants;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class ChartTest extends PApplet
 {
     // ------------------------------ Starter method ------------------------------- 
@@ -54,13 +53,19 @@ public class ChartTest extends PApplet
     private int barPad = 0;
     
     // ---------------------------- Processing methods -----------------------------
-
+    
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(1200,600);
+		pixelDensity(displayDensity());
+	}
+	
     /** Sets up the chart and fonts.
      */
     public void setup()
     {   
-        size(640,350);
-        smooth(); 
         textFont(createFont("Helvetica",10));
         textSize(10);
         

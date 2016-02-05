@@ -7,7 +7,7 @@ import java.util.Vector;
  *  this class's <code>tick()</code> method inside a sketch's <code>draw()</code> to advance 
  *  the time for all smoothers.
  *  @author Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @version 31st July 2012.
+ *  @version 3.4, 5th February, 2016.
  */
 //  *****************************************************************************************
 

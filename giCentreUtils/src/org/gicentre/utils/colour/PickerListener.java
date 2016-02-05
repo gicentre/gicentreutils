@@ -4,7 +4,7 @@ package org.gicentre.utils.colour;
 /** Interface for any class that wishes to be informed when a colour has been chosen from 
  *  the colour picker.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

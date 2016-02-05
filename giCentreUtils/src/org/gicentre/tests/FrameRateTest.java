@@ -8,7 +8,7 @@ import processing.core.PConstants;
 //*****************************************************************************************
 /** Simple class to test frame rate reporting.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 31st July, 2012. 
+ *  @version 3.4, 5th February 2014. 
  */ 
 //  *****************************************************************************************
 
@@ -25,7 +25,6 @@ import processing.core.PConstants;
  * source code (see COPYING.LESSER included with this source code). If not, see 
  * http://www.gnu.org/licenses/.
  */
-@SuppressWarnings("serial")
 public class FrameRateTest extends PApplet
 {
 	// ------------------------------ Starter method ------------------------------- 
@@ -45,12 +44,18 @@ public class FrameRateTest extends PApplet
 
 	// ------------------------------ Initialisation -------------------------------
 
+	/** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(500,200);
+		pixelDensity(displayDensity());
+	}
+	
 	/** Sets up the sketch by initialising the colour picker.
 	 */
 	public void setup()
 	{
-		size(500,200);
-		smooth();
 		timer = new FrameTimer(30);  	// Initialise the timer to report once every 30 frames.
 		//timer = new FrameTimer(2,5);  // Initialise the timer to report once every 5 seconds after a 2 second delay.
 		numEllipses = 1024;

@@ -4,10 +4,10 @@ package org.gicentre.utils.network.traer.physics;
 /** Class for representing a physical spring by extending {@link TwoBodyForce} to calculate
  *  the force  with a spring constant ({@link #ks}), damping factor ({@link #d}), and an 
  *  ideal length ({@link #l}). Thus, the positions of the {@link Particle}s on either end 
- *  obey the equation:<br />
+ *  obey the equation:<br>
  *  <code>ddot(r) = -k/m * (r-l) - d/m * dot(r)</code>
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
- *  @since 4.0
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 

@@ -4,13 +4,13 @@ package org.gicentre.utils.network.traer.physics;
 /** This class implements TwoBodyForce to represent an inverse-square law force with a force 
  *  constant and minimal distance. The minimal distance is necessary to avoid numerical 
  *  instability associated with division by very small values. Providing a positive k creates
- *  an attractive force, a negative k creates a repulsive force
- *  <p> </p>
+ *  an attractive force, a negative k creates a repulsive force.
  *  A typical use of attraction would be to implement planetary gravitation. The gravitational
  *  force G*m_1*m_2 / r^2 could be implemented as simply as supplying G (scaled appropriately
  *  to mass and distance units used elsewhere in the system), and an appropriate minimal 
  *  separation to the scale of the problem.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -35,7 +35,7 @@ public class Attraction extends TwoBodyForce
 	 *  @param k the force scale between the two particles.
 	 *  @param distanceMin the minimum distance between particles above which the force acts.
 	 *  @throws NullPointerException if either particle is null.
-	 *  @throws IllegalArgumentException if distanceMin is <=0.
+	 *  @throws IllegalArgumentException if distanceMin is &lt;=0.
 	 */
 	public Attraction(final Particle oneEnd, final Particle theOtherEnd, final float k, final float distanceMin)
 														throws NullPointerException, IllegalArgumentException
@@ -58,7 +58,7 @@ public class Attraction extends TwoBodyForce
 	/** Sets the minimum separation distance above which the attraction is applied.
 	 *  @param d the new minimum distance
 	 *  @return this Attraction with the new minimum distance setting.
-	 *  @throws IllegalArgumentException if d<=0
+	 *  @throws IllegalArgumentException if d&lt;=0
 	 */
 	public final Attraction	setMinimumDistance(float d)	throws IllegalArgumentException 
 	{

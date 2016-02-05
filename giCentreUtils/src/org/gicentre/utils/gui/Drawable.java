@@ -3,7 +3,7 @@ package org.gicentre.utils.gui;
 //*****************************************************************************************
 /** Defines the minimum functionality for a renderer to draw graphic primitives. 
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 15th January, 2012.
+ *  @version 3.4, 5th February, 2016.
  */ 
 //*****************************************************************************************
 

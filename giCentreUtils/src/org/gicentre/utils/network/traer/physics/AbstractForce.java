@@ -7,7 +7,7 @@ package org.gicentre.utils.network.traer.physics;
  *  specifically: {@link TargetedForce}, {@link UniversalForce}, or {@link TwoBodyForce}) and
  *  deal only with defining the {@link Force#apply()} and {@link Force#apply(Particle)} methods. 
  *  @author Carl Pearson, Jeffrey Traer Bernstein with Minor Modifications by Jo Wood.
- *  @since 4.0
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -66,7 +66,7 @@ public abstract class AbstractForce implements Force
 	 *  @param isOn Determins if this force is on or off.
 	 *  @return This force in its newly set state.
 	 */
-	public AbstractForce turnOn(@SuppressWarnings("hiding") boolean isOn) 
+	public AbstractForce turnOn(boolean isOn) 
 	{
 		this.isOn = isOn;
 		return this; 

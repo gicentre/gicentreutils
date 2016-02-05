@@ -1,8 +1,7 @@
 package org.gicentre.utils.gui;
 
 import java.awt.Color;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import processing.event.MouseEvent;
 import java.util.ArrayList;
 
 import org.gicentre.utils.spatial.Direction;
@@ -13,7 +12,7 @@ import processing.core.*;
 /** Class to allow a simple 'tooltip' type pop-up panel to display text at a given location.
  *  Can be used for mouse-based tooltips or info-boxes.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -31,7 +30,7 @@ import processing.core.*;
  * http://www.gnu.org/licenses/.
  */
 
-public class Tooltip implements MouseListener
+public class Tooltip
 {
     // ----------------------------- Object variables ------------------------------
     
@@ -285,12 +284,18 @@ public class Tooltip implements MouseListener
      */
     public void showCloseIcon(boolean show)
     {
+    	if (this.showClose && isActive && !show)
+    	{
+    		// Removing a previously shown close icon.
+    		parent.unregisterMethod("mouseEvent", this);		// Processing 3.
+    	    //parent.removeMouseListener(this);					// Processing 2
+    	}
         this.showClose = show;
-        parent.removeMouseListener(this);
-        
+         
         if (showClose)
         {
-            parent.addMouseListener(this);
+        	parent.registerMethod("mouseEvent", this);		// Processing 3
+            //parent.addMouseListener(this);				// Processing 2
         }
         updateLayout();
     }
@@ -301,15 +306,19 @@ public class Tooltip implements MouseListener
      */
     public void setIsActive(boolean isActive)
     {
+    	if (this.showClose && this.isActive && !isActive)
+    	{
+    		// Removing a previously shown close icon.
+    		parent.unregisterMethod("mouseEvent", this);		// Processing 3.
+            //parent.removeMouseListener(this);					// Processing 2	
+    	}
+    	
         this.isActive = isActive;
-        parent.removeMouseListener(this);
         
-        if (isActive)
+        if (isActive && showClose)
         {
-            if (showClose)
-            {
-                parent.addMouseListener(this);
-            }
+        	parent.registerMethod("mouseEvent", this);		// Processing 3
+            //parent.addMouseListener(this);				// Processing 2
         }
     }
     
@@ -368,61 +377,29 @@ public class Tooltip implements MouseListener
         return maxHeight;
     }
     
-    /** Checks to see if the user has clicked on the close icon of this tooltip if present.
-     *  If clicked, the tooltip state is set to closed.
-     *  @param e Mouse event storing the mouse pressed action.
-     */
-    public void mousePressed(MouseEvent e)
-    {
-        if (showClose)
-        {
-            float cornerX = x+xOffset+displayWidth-closeSize-BORDER-textRightOffset;
-            float cornerY = y+yOffset+BORDER+textTopOffset-textBottomOffset;
-            
-            if ((e.getX() >= cornerX) && (e.getY() >= cornerY) && 
-                (e.getX() <= cornerX+closeSize) && (e.getY() <=cornerY+closeSize))
-            {
-                isActive = false;
-            }
-        }
-    }
     
-    /** Would respond to a mouse being clicked in this tooltip, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     *  @see  java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-     */
-    public void mouseClicked(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Would respond to a mouse entering this tooltip, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     *  @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-     */
-    public void mouseEntered(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Would respond to a mouse leaving this tooltip, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     *  @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-     */
-    public void mouseExited(MouseEvent e)
-    {
-        // Do nothing.
-    }
-
-    /** Would respond to a mouse being released over this tooltip, but does nothing in this case.
-     *  @param e Mouse event (ignored).
-     *  @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
-    public void mouseReleased(MouseEvent e)
-    {
-        // Do nothing
-    }
     
+    /** Responds to mouse presses in the corner of the tooltip.
+	 *  @param e Mouse event.
+	 */	
+	public void mouseEvent(MouseEvent e)
+	{   
+		if (e.getAction() == MouseEvent.PRESS)
+		{
+			if (showClose)
+	        {
+	            float cornerX = x+xOffset+displayWidth-closeSize-BORDER-textRightOffset;
+	            float cornerY = y+yOffset+BORDER+textTopOffset-textBottomOffset;
+	            
+	            if ((e.getX() >= cornerX) && (e.getY() >= cornerY) && 
+	                (e.getX() <= cornerX+closeSize) && (e.getY() <=cornerY+closeSize))
+	            {
+	                isActive = false;
+	            }
+	        }
+		}
+	}
+       
     // ------------------------------ Private methods ------------------------------
     
     /** Recalculates the boundary of the tooltip and the text layout within it. Should be called if 

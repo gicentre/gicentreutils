@@ -3,6 +3,7 @@ package org.gicentre.utils.network.traer.physics;
 // *****************************************************************************************
 /** Represents a gravity function which may be applied to particles.
  *  @author Carl Pearson with minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -17,6 +18,7 @@ public class Gravity extends Function<Particle,Particle>
 	// ---------------------------- Object and class variables -----------------------------
 	
 	private Vector3D gravity;
+								/** Default gravity value (0) */
 	public static final float DEFAULT_GRAVITY = 0f;
 	
 	// ----------------------------------- Constructors ------------------------------------

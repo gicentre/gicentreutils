@@ -9,7 +9,7 @@ import processing.core.PFont;
 //  ****************************************************************************************
 /** Tests the Processing Utilities Tooltip class.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 4th February, 2016. 
  */ 
 // *****************************************************************************************
 
@@ -27,7 +27,6 @@ import processing.core.PFont;
  * http://www.gnu.org/licenses/.
  */
 
-@SuppressWarnings("serial")
 public class TooltipTest extends PApplet
 {
 
@@ -57,13 +56,18 @@ public class TooltipTest extends PApplet
     
     // ---------------------------- Processing methods -----------------------------
 
+    /** Sets the size and of the sketch and its maximum pixel density.
+     */
+	public void settings()
+	{
+		size(800,700);
+		pixelDensity(displayDensity());
+	}
+    
     /** Initialise the sketch.
      */
     public void setup()
-    {   
-        size(800,700);
-        smooth(); 
-        
+    {                   
         font = createFont("sans-serif",10);
         
         tooltip1 = new Tooltip(this,font,14,250);

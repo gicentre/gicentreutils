@@ -1,17 +1,11 @@
 package org.gicentre.utils.move;
 
 import java.awt.Rectangle;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Vector;
 
 import org.gicentre.utils.move.ZoomPan.ZoomPanDirection;
 import org.gicentre.utils.move.ZoomPanListener;
-import org.gicentre.utils.move.ZoomPan.ZoomPanBehaviour;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -21,12 +15,12 @@ import processing.event.MouseEvent;
 
 // *****************************************************************************************
 /** Class to allow interactive zooming and panning of the Processing display. This is the 
- *  Processing 2.x implementation that uses Processing 2's event handling model. This should
+ *  Processing 3.x implementation that uses Processing 3's event handling model. This should
  *  not be created directly, but instead it will be created at runtime by the <code>ZoomPan</code>
- *  class if it detects Processing 2.x core libraries. Despite this, the class has to remain
+ *  class if it detects Processing 3.x core libraries. Despite this, the class has to remain
  *  public so that it can be registered by Processing's event handling model.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 13th March, 2013. 
+ *  @version 3.4, 5th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -43,7 +37,7 @@ import processing.event.MouseEvent;
  * source code (see COPYING.LESSER included with this source code). If not, see 
  * http://www.gnu.org/licenses/.
  */
-public class ZoomPan20 implements ZoomPanable
+public class ZoomPan30 implements ZoomPanable
 {
 	// ---------------------------- Object variables -----------------------------
 
@@ -58,16 +52,12 @@ public class ZoomPan20 implements ZoomPanable
 	private int zoomMouseButton=PConstants.LEFT; 	  // Implies pan is the other button
 	
 	private Rectangle mouseBoundsMask=null; 		  // Zoom/pan bounding box (in screen space) mask for mouse controlled zooming/panning.
-	private Long timeAtLastWheelZoom=null;			  // The time at which the mouse wheel was last used - null if it hasn't been used since the last zoom event
-	private Timer timer; 							  // Timer so that we have a delay before a zoom event is triggered with the timer
-	private int millisecondsBeforeWheelZoomEvent=700; // Milliseconds before a zoom event is triggered by the mouse wheel - set to 0.7 of a second by default
 	
 	double minZoomScaleX=Double.MIN_VALUE;
 	double maxZoomScaleX=Double.MAX_VALUE;
 	double minZoomScaleY=Double.MIN_VALUE;
 	double maxZoomScaleY=Double.MAX_VALUE;
 	
-	private ZoomPanBehaviour zoomPanBehaviour=ZoomPanBehaviour.BOTH_DIRECTIONS; //By default, zooming/panning is in x and y
 	private ZoomPanDirection zoomPanDirection=ZoomPanDirection.ZOOM_PAN_BOTH;
 	
 	/* TODO: Panning constraints not yet implemented.
@@ -82,7 +72,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  objects each with a different PApplet object.
 	 *  @param aContext Applet context in which zooming and panning are to take place. 
 	 */
-	ZoomPan20(PApplet aContext)
+	ZoomPan30(PApplet aContext)
 	{
 		zoomPanState=new ZoomPanState(aContext,null);
 		if (aContext == null)
@@ -94,23 +84,20 @@ public class ZoomPan20 implements ZoomPanable
 		allowPanButton = true;
 		listeners = new Vector<ZoomPanListener>();
 		reset();
-		timer=new Timer();
-		
 		aContext.registerMethod("mouseEvent", this);
-		aContext.addMouseWheelListener(new MouseWheelMonitor());
 	}
 
 	/** Initialises the zooming and panning transformations for the given applet and graphics contexts. 
 	 *  This version of the constructor allows a graphics context separate from the applet to be applied
 	 *  so that buffered off-screen drawing can be applied. 
-	 *  @param aContext Applet context in which zooming and panning are to take place. 
+	 *  @param sketchContext Sketch context in which zooming and panning are to take place. 
 	 *  @param graphics Graphics context in which to draw.
 	 */
-	ZoomPan20(PApplet aContext, PGraphics graphics)
+	ZoomPan30(PApplet sketchContext, PGraphics graphics)
 	{
-		zoomPanState=new ZoomPanState(aContext,graphics);
+		zoomPanState=new ZoomPanState(sketchContext,graphics);
 
-		if (aContext == null)
+		if (sketchContext == null)
 		{
 			System.err.println("Warning: No applet context provided for ZoomPan.");
 			return;
@@ -124,12 +111,8 @@ public class ZoomPan20 implements ZoomPanable
 		allowPanButton = true;
 		listeners = new Vector<ZoomPanListener>();
 		reset();
-		timer=new Timer();
 		
-		// Old PRE 2.0 code: aContext.registerMouseEvent(this);
-		aContext.registerMethod("mouseEvent", this);
-				
-		aContext.addMouseWheelListener(new MouseWheelMonitor());
+		sketchContext.registerMethod("mouseEvent", this);
 	}
 
 	// ------------------------------ Public methods -----------------------------
@@ -294,7 +277,10 @@ public class ZoomPan20 implements ZoomPanable
 	 *  eased interpolated zooming.
 	 *  @param zoomScaleX New horizontal zoom scale. A value of 1 indicates no zooming, values above
 	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
-	 *         display. Values less than or equal to 0 will be ignored. 
+	 *         display. Values less than or equal to 0 will be ignored.
+	 *  @param zoomScaleY New vertical zoom scale. A value of 1 indicates no zooming, values above
+	 *         0 and below 1 will shrink the display; values above 1 will enlarge the 
+	 *         display. Values less than or equal to 0 will be ignored.  
 	 */
 	public void setZoomScale(double zoomScaleX,double zoomScaleY)
 	{
@@ -328,27 +314,6 @@ public class ZoomPan20 implements ZoomPanable
 		calcTransformation();
 	}
 
-	
-	/**Sets the zoom/pan behaviour type.
-	 * @param zoomPanBehaviour  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 */
-	@Deprecated
-	public void setZoomPanBehaviour(ZoomPanBehaviour zoomPanBehaviour)
-	{
-		this.zoomPanBehaviour=zoomPanBehaviour;
-		calcTransformation();
-	}
-
-	/** Reports the zoom/zan behaviour type.
-	 *  @return  BOTH_DIRECTIONS=normal; VERTICAL_ONLY=only in y; HORIZONTAL_ONLY=only in x
-	 */
-	@Deprecated
-	public ZoomPanBehaviour getZoomPanBehaviour()
-	{
-		return zoomPanBehaviour;
-	}
-
-
 	/** Sets the zooming/panning direction
 	 *  @param zoomPanDirection Direction of available zoom-pan transformations. 
 	 */
@@ -363,7 +328,6 @@ public class ZoomPan20 implements ZoomPanable
 	{
 		return zoomPanDirection;
 	}
-
 	
 	/** Reports the current pan offset. Useful when wishing to use an interpolated panning
 	 *  between this current value and some new pan offset.
@@ -557,13 +521,43 @@ public class ZoomPan20 implements ZoomPanable
 
 			oldPosition = new PVector(e.getX(),e.getY());
 		}
+		else
+		{
+			// Mouse wheel event if getCount() is not zero.
+			if (e.getCount() != 0)
+			{
+				isZooming=true;
+				setZoomStartPosition(new PVector(e.getX(),e.getY()));
+
+				if (e.getCount() > 0)
+				{
+					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
+					doZoom();
+				}
+				else if (e.getCount() < 0)
+				{
+					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
+					else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
+						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
+					doZoom();
+				}  
+			}
+		}
 	}
 
 	/** Sets the minimum permitted zoom scale (i.e. how far zoomed out a view is allowed to be). If the
 	 *  current zoom level is smaller than the new minimum, the zoom scale will be set to the new 
 	 *  minimum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param minZoomScale
+	 *  @param minZoomScale Minimum permitted zoom scale.
 	 */
 	public void setMinZoomScale(double minZoomScale)
 	{
@@ -617,7 +611,7 @@ public class ZoomPan20 implements ZoomPanable
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
-	 *  @param maxZoomScale
+	 *  @param maxZoomScale Maximum permitted zoom scale.
 	 */
 	public void setMaxZoomScale(double maxZoomScale)
 	{
@@ -765,10 +759,12 @@ public class ZoomPan20 implements ZoomPanable
 	 *  characters in Java2D mode when a zoomed font is to be displayed. This method is not necessary when
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
+	 *  @deprecated Should no longer be required as Processing bug fixed in 3.0.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
-	 */  
+	 */ 
+	@Deprecated
 	public void text(String textToDisplay, float xPos, float yPos)
 	{
 		// Call the static version providing the applet context that was given to the constructor.
@@ -873,19 +869,22 @@ public class ZoomPan20 implements ZoomPanable
 		zoomPanState.iTrans = new AffineTransform();
 
 		//scale depending on the type
-		if (zoomPanBehaviour==ZoomPanBehaviour.BOTH_DIRECTIONS){
+		if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_BOTH)
+		{
 			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,centreY+zoomPanState.panOffset.y);
 			zoomPanState.trans.scale(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1/zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x, -centreY-zoomPanState.panOffset.y);
 		}
-		else if (zoomPanBehaviour==ZoomPanBehaviour.VERTICAL_ONLY){
+		else if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_VERTICAL)
+		{
 			zoomPanState.trans.translate(0,centreY+zoomPanState.panOffset.y);
 			zoomPanState.trans.scale(1,zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.scale(1,1/zoomPanState.zoomScaleY);
 			zoomPanState.iTrans.translate(0, -centreY-zoomPanState.panOffset.y);
 		}
-		else if (zoomPanBehaviour==ZoomPanBehaviour.HORIZONTAL_ONLY){
+		else if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
+		{
 			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,0);
 			zoomPanState.trans.scale(zoomPanState.zoomScaleX,1);
 			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1);
@@ -898,106 +897,7 @@ public class ZoomPan20 implements ZoomPanable
 
 	// ------------------------------ Nested classes -----------------------------
 
-	/** Class to handle mouse wheel events. 
-	 */
-	private class MouseWheelMonitor implements MouseWheelListener
-	{
-		protected MouseWheelMonitor()
-		{
-			// Empty constructor required so it can be instantiated by the containing 
-			// class without having to create a synthetic accessor method.
-		}
-
-		/** Responds to a mouse wheel change event by zooming in or out.
-		 *  @param e Mouse wheel event. 
-		 */
-		@SuppressWarnings("synthetic-access")
-		public void mouseWheelMoved(MouseWheelEvent e)
-		{     
-			// Test to see if mouse mask is specified and it is pressed.
-			if ((e.getModifiersEx() & getMouseMask()) != getMouseMask())
-			{
-				return;
-			}
-			
-			//Ignore if outside the  mouseBoundsMask
-			if ((mouseBoundsMask!=null) && (!mouseBoundsMask.contains(e.getX(),e.getY())))
-			{
-				return;
-			}
-			
-			isZooming=true;
-			
-			setZoomStartPosition(new PVector(e.getX(),e.getY()));
-
-			if (e.getWheelRotation() < 0)
-			{
-				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
-				else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
-				else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
-				doZoom();
-								
-				// Store the time at which this was done
-				timeAtLastWheelZoom = new Long(new Date().getTime());
-				
-				// Schedule triggering a zoom event
-				timer.schedule(new CheckTriggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
-			}
-			else if (e.getWheelRotation() > 0)
-			{
-				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
-				else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
-				else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
-					setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
-				doZoom();
-				
-				// Store the time at which this was done
-				timeAtLastWheelZoom = new Long(new Date().getTime());
-				
-				// Schedule triggering a zoom event
-				timer.schedule(new CheckTriggerWheelZoomEvent(), millisecondsBeforeWheelZoomEvent);
-			}   
-		}
-	}
 	
-	/** Scheduled by the timer. If the last mouse wheel was used at least millisecondsBeforeWheelZoomEvent ago,
-	 *  the event is triggered
-	 */
-	private class CheckTriggerWheelZoomEvent extends TimerTask
-	{
-		/** Creates a new event when the zoom wheel is triggered.
-		 */
-		public CheckTriggerWheelZoomEvent() 
-		{
-			// Empty constructor to stop synthetic accessor method from having to be created.
-		}
-
-		@SuppressWarnings("synthetic-access")
-		@Override
-		/**
-		 * Checks if the last wheel zoom was at least millisecondsBeforeWheelZoomEvent ago.
-		 * If so, zoom event is triggered on any ZoomPanListeners
-		 */
-		public void run() 
-		{
-			if (timeAtLastWheelZoom!=null)
-			{
-				if (timeAtLastWheelZoom.longValue()+millisecondsBeforeWheelZoomEvent-100<new Date().getTime())
-				{
-					for (ZoomPanListener listener:listeners)
-					{
-						timeAtLastWheelZoom=null;
-						isZooming=false;
-						listener.zoomEnded();
-					}
-				}
-			}
-		}
-		
-	}
+	
+	
 }

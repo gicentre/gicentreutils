@@ -10,7 +10,7 @@ import processing.core.PVector;
 //  *****************************************************************************************
 /** Tests the conversion to and from CIELab colour space.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.. 
+ *  @version 3.4, 5th February, 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -30,14 +30,13 @@ import processing.core.PVector;
 
 public class CIELabTest
 {
-
     /** Starts the test as an application.
      *  @param args Command line arguments (ignored).
      */
     public static void main(String[] args)
     {
         CIELab converter = new CIELab(WhitePoint.D50);
-        System.err.println(converter.getColour(50, -100, 0,true));
+        System.out.println(converter.getColour(50, -100, 0,true));
         
         // Try round trip conversion to check both forward and inverse conversions are consistent.
         
@@ -49,7 +48,7 @@ public class CIELabTest
         
             if (colour1.equals(colour2))
             {
-                System.err.println(colour1.getRed()+","+colour1.getGreen()+","+colour1.getBlue()+" converted without problems");
+                System.out.println(colour1.getRed()+","+colour1.getGreen()+","+colour1.getBlue()+" converted without problems");
             }
             else
             {

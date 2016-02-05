@@ -4,7 +4,10 @@ import java.util.Iterator;
 
 //*****************************************************************************************
 /** Abstraction of functions capable of performing iterated transformations.
+ *  @param <From> Source for transform function.
+ *  @param <To> Result of transform function.
  *  @author Carl Pearson with minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 
@@ -37,11 +40,11 @@ public abstract class Function<From,To>
 
 	
 	/** Transforms the given source using the given function.
-	 * @param <To> To type.
-	 * @param <From> From type.
-	 * @param source Source upon which to apply.
-	 * @param transform Function to perform the transformation
-	 * @return An iterable view of the the transformed data.
+	 *  @param <To> To type.
+	 *  @param <From> From type.
+	 *  @param source Source upon which to apply.
+	 *  @param transform Function to perform the transformation
+	 *  @return An iterable view of the the transformed data.
 	 */
 	public static <To,From> Iterable<To> transform(final Iterable<From> source, final Function<From,To> transform)
 	{
@@ -70,7 +73,12 @@ public abstract class Function<From,To>
 	}
 
 	
-	public <ToNew> Function<From, ToNew> combine(final Function<To,ToNew> other) 
+	/** Combines the given function with this one.
+	 *  @param <ToNew> The new type.
+	 *  @param otherFunction Other function to combine with this one.
+	 *  @return Combined function.
+	 */
+	public <ToNew> Function<From, ToNew> combine(final Function<To,ToNew> otherFunction) 
 	{
 		final Function<From,To> local = this;
 		
@@ -79,7 +87,7 @@ public abstract class Function<From,To>
 			@Override 
 			public ToNew apply(From arg0) 
 			{ 
-				return other.apply(local.apply(arg0));
+				return otherFunction.apply(local.apply(arg0));
 			}
 		};
 	}

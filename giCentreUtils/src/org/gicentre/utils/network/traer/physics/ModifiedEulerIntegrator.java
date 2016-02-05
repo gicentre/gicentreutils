@@ -4,6 +4,7 @@ package org.gicentre.utils.network.traer.physics;
 /** Modified Euler integrator that evolves the state of a particle system. Compared to the 
  *  Runge-Kutta integrator, this one is faster, but can be less stable.
  *  @author Jeffrey Traer Bernstein, Carl Pearson and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 

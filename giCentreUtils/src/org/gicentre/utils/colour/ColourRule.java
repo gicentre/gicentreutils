@@ -7,7 +7,7 @@ import java.io.*;       // To make class serializable.
  *  indices and associated ARGB colour values. Colours are interpolated for any values that
  *  fall between the lower and upper indices.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 1st August, 2011.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

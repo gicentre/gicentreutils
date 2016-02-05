@@ -3,6 +3,7 @@ package org.gicentre.utils.network.traer.physics;
 // *****************************************************************************************
 /** Represents a charged particle in the particle system, but currently not implemented.
  *  @author Carl Pearson, Jeffrey Traer Bernstein and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 

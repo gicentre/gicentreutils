@@ -4,6 +4,7 @@ package org.gicentre.utils.network.traer.physics;
 /** Class capable of performing backward Euler integration. Compared to the Runge-Kutta
  *  integrator, this one is faster, but can be less stable.
  *  @author Carl Pearson, Jeffrey Traer Bernstein and minor modifications by Jo Wood.
+ *  @version 3.4, 5th February, 2016.
  */
 // *****************************************************************************************
 

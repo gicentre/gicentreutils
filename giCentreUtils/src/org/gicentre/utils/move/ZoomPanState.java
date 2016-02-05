@@ -13,7 +13,7 @@ import processing.core.PVector;
  *  by ZoomPan.
  *  Used by ZoomPan internally to store its state. 
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.3, 1st August, 2011. 
+ *  @version 3.4, 5th February, 2016. 
  */
 // *****************************************************************************************
 
@@ -96,6 +96,15 @@ public class ZoomPanState implements Cloneable
 		return new PVector(pDisp.x,pDisp.y); 
 	}
 	
+	/** Transforms the given point from coordinate to display space. Display space is that which
+	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
+	 *  which objects have been placed before zooming and panning. For most drawing operations you
+	 *  should not need to use this method. It is available for those operations that do not draw
+	 *  directly, but need to know the transformation between coordinate and screen space.
+	 *  @param x x location of the original coordinate space.
+	 *  @param y y location of the original coordinate space.
+	 *  @return Location of point in zoomed display space. 
+	 */
 	public PVector getCoordToDisp(double x, double y)
 	{
 		Point2D.Double pDisp = new Point2D.Double();
@@ -117,6 +126,7 @@ public class ZoomPanState implements Cloneable
 	 *  can be used for transforming off-screen buffers that were not provided to the constructor. Can
 	 *  be useful when a sketch temporarily creates an off-screen buffer that needs to be zoomed and panned
 	 *  in the same way as the main PApplet.
+	 *  @param offScreenBuffer Graphics context in which to apply the zoom / pan transformation.
 	 */
 	public void transform(PGraphics offScreenBuffer)
 	{    

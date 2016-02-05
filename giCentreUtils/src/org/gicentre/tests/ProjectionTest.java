@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 //  ****************************************************************************************
 /** Set of unit tests for projection conversion.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3.1, 26th May, 2013.
+ *  @version 3.4, 5th February, 2016
  */ 
 // *****************************************************************************************
 
@@ -53,7 +53,7 @@ public class ProjectionTest extends TestCase
 	/** Checks that forward and inverse transformations for the various Albers projection
 	 *  round trips (start and end coordinates are equal).
 	 */
-	public void testAlbers()
+	public static void testAlbers()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(-165,65),		// Western Alaska.
 											 new PVector(-180,52),		// Bering Straits.
@@ -81,7 +81,7 @@ public class ProjectionTest extends TestCase
 	/** Checks that forward and inverse transformations for the various Lambert conformal conic projection
 	 *  round trips (start and end coordinates are equal).
 	 */
-	public void testLambertConformalConic()
+	public static void testLambertConformalConic()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(-75,35),		// See Snyder (1987) p.296
 											 new PVector(-124.73158f,49.383404f),	// Top-left of conterminious US
@@ -111,7 +111,7 @@ public class ProjectionTest extends TestCase
 	/** Checks that forward and inverse transformations for European projections
 	 *  complete a round trip (start and end coordinates are equal).
 	 */
-	public void testEuropean()
+	public static void testEuropean()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(2.5f,51), 			// Northern France
 											 new PVector(-4.8f,48.3f), 		// NW France
@@ -140,7 +140,7 @@ public class ProjectionTest extends TestCase
 	/** Checks that forward and inverse transformations for OSGB projections
 	 *  complete a round trip (start and end coordinates are equal).
 	 */
-	public void testOSGB()
+	public static void testOSGB()
 	{
 		PVector[] geoCoords = new PVector[] {new PVector(2.5f,51), 			// Northern France
 											 new PVector(-4.8f,48.3f), 		// NW France
@@ -171,7 +171,7 @@ public class ProjectionTest extends TestCase
 	/** Checks that forward and inverse transformations for the Web mercator projection
 	 *  complete a round trip (start and end coordinates are equal).
 	 */
-	public void testWebMercator()
+	public static void testWebMercator()
 	{
 		MapProjection proj = new WebMercator();
 		System.out.println("\n"+proj.getDescription());
@@ -201,7 +201,7 @@ public class ProjectionTest extends TestCase
 	 *  @param proj Projection to test.
 	 *  @param geo Lat/long coordinate to test.
 	 */
-	private void roundTrip(MapProjection proj, PVector geo)
+	private static void roundTrip(MapProjection proj, PVector geo)
 	{
 		PVector scr = proj.transformCoords(geo);
 		PVector end = proj.invTransformCoords(scr);

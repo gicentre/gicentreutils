@@ -21,11 +21,11 @@ import org.gicentre.utils.io.DOMProcessor;
  *  for any values that fall between the lower and upper indices. Also contains static 
  *  methods for creating preset colour tables such as ColorBrewer colour schemes and Imhof
  *  relief colour schemes.
- *  <br /><br />
+ *  <br><br>
  *  ColorBrewer specifications and designs developed by Cynthia Brewer 
  *  (<a href="http://colorbrewer.org/" target="_blank">colorbrewer.org</a>).
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 6th April, 2013.
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -2651,7 +2651,7 @@ public class ColourTable implements Serializable
         
         if (colourTable.cTableType == COLOUR_RAW)
         {
-            dom.addAttribute("raw","true",root); 
+            DOMProcessor.addAttribute("raw","true",root); 
         }
         else
         {
@@ -2663,11 +2663,11 @@ public class ColourTable implements Serializable
                 colRule = rules.get(i);
                 org.w3c.dom.Node rule = dom.addElement("rule",ColourRule.toString(colRule.getlColour()),root);
 
-                dom.addAttribute("value",Float.toString(colRule.getlIndex()),rule);
+                DOMProcessor.addAttribute("value",Float.toString(colRule.getlIndex()),rule);
             
                 if (colRule.getType() == ColourRule.DISCRETE)
                 {
-                    dom.addAttribute("type","discrete",rule); 
+                    DOMProcessor.addAttribute("type","discrete",rule); 
                 }
             }
         }
@@ -2700,7 +2700,7 @@ public class ColourTable implements Serializable
         
         if (colourTable.cTableType == COLOUR_RAW)
         {
-            dom.addAttribute("raw","true",root); 
+            DOMProcessor.addAttribute("raw","true",root); 
         }
         else
         {
@@ -2712,11 +2712,11 @@ public class ColourTable implements Serializable
                 colRule = rules.get(i);
                 org.w3c.dom.Node rule = dom.addElement("rule",ColourRule.toString(colRule.getlColour()),root);
 
-                dom.addAttribute("value",Float.toString(colRule.getlIndex()),rule);
+                DOMProcessor.addAttribute("value",Float.toString(colRule.getlIndex()),rule);
             
                 if (colRule.getType() == ColourRule.DISCRETE)
                 {
-                    dom.addAttribute("type","discrete",rule); 
+                    DOMProcessor.addAttribute("type","discrete",rule); 
                 }
             }
         }

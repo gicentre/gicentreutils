@@ -1,16 +1,16 @@
 package org.gicentre.utils.move;
 
-import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+
 import processing.core.PApplet;
-import processing.core.PGraphicsJava2D;
+import processing.core.PConstants;
 import processing.core.PVector;
 
 // ********************************************************************************
 /**
  * Class for limiting drawing to a fixed rectangular area.
  * 
- * Simple usage example:<br />
+ * Simple usage example:<br>
  * <pre>
  * import org.gicentre.utils.gui.Clipper;
  * Clipper clipper;
@@ -33,28 +33,22 @@ import processing.core.PVector;
  * }
  * </pre>
  * 
- * Limitations:
- * <ul>
- *  <li>only works with JAVA2D</li>
- *  <li>clipping is ignored when writing to PDF using startRecording()</li>
- *  <li>boundaries must be always given in absolute coordinate system (matrix transitions and scalings are ignored)</li>
- * </ul>
- * 
- * @author Alexander Kachkaev <alexander.kachkaev.1@city.ac.uk> with minor modifications by Jo Wood.
- * Inspired by Aidan Slingsby's <a.slingsby@city.ac.uk> GraphicBuffer
- * @version 3.3, 3rd June, 2012.
+ * @deprecated This class should no longer be needed. Use Processing's <code>clip()</code> and  
+ *             <code>noClip()</code> methods instead.
+ * @author Alexander Kachkaev with minor modifications by Jo Wood.
+ * @version 3.4, 5th February, 2016.
  *
  */
 // ********************************************************************************
 
+@Deprecated
 public class Clipper
 {
 	// ----------------------------- Object variables ------------------------------
 	
 	protected PApplet applet;
-	protected PGraphicsJava2D pGraphics2D;
-	protected Rectangle2D clippingRect;
-	protected boolean enabled = true;
+	private boolean isEnabled,isClipping;
+	private float x,y,width,height;			// Dimensions of clipping rectangle.
 	
 	// ------------------------------- Constructors --------------------------------
 	
@@ -79,14 +73,9 @@ public class Clipper
 	 */
 	public Clipper(PApplet applet, float x, float y, float width, float height) 
 	{
-		if (!(applet.g instanceof PGraphicsJava2D))
-		{
-			throw new IllegalArgumentException("Cannot clip with this renderer: "+applet.g.getClass().getName()+". Only processing.core.PGraphicsJava2D is supported.");
-		}
-
+		this.isEnabled = true;
+		this.isClipping = false;
 		this.applet = applet;
-		this.pGraphics2D = ((PGraphicsJava2D) applet.g);
-		clippingRect = new java.awt.geom.Rectangle2D.Float();
 		setClippingRect(x, y, width, height);
 	}
 
@@ -111,15 +100,13 @@ public class Clipper
 	 */
 	public void startClipping() 
 	{
-		Shape currentClip = pGraphics2D.g2.getClip();
-		if (currentClip != null && !clippingRect.equals(currentClip.getBounds2D()))
+		if (isEnabled)
 		{
-			throw new IllegalStateException("Before you start clipping, you need to call stopClipping() for all other clippers in the sketch.");
-		}
-
-		if (enabled)
-		{
-			pGraphics2D.g2.setClip(clippingRect);
+			applet.pushStyle();
+			applet.imageMode(PConstants.CORNER);
+			applet.clip(x, y, width, height);
+			applet.popStyle();
+			isClipping = true;
 		}
 	}
 
@@ -127,7 +114,8 @@ public class Clipper
 	 */
 	public void stopClipping() 
 	{
-		pGraphics2D.g2.setClip(null);
+		applet.noClip();
+		isClipping = false;
 	}
 
 	/** Sets the clipping rectangle and applies it if currently clipping
@@ -138,7 +126,11 @@ public class Clipper
 	 */
 	public void setClippingRect(float x, float y, float width, float height) 
 	{
-		clippingRect.setFrame(x, y, width, height);
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		
 		if (isClipping())
 		{
 			startClipping();
@@ -152,7 +144,7 @@ public class Clipper
 	{
 		if (clippingRect == null)
 		{
-			throw new IllegalArgumentException("clippingRect should not be null.");
+			throw new IllegalArgumentException("ClippingRect should not be null.");
 		}
 		setClippingRect((float)clippingRect.getX(), (float)clippingRect.getY(), (float)clippingRect.getWidth(), (float)clippingRect.getHeight());
 	}
@@ -162,18 +154,22 @@ public class Clipper
 	 */
 	public Rectangle2D getClippingRect() 
 	{
-		return clippingRect;
+		return new Rectangle2D.Float(x, y, width, height);
 	}
 
 	/** Reports whether or not the given point lies within the clipping rectangle. The result is independent of
 	 *  whether or not clipping is currently active.
-	 *  @param x x coordinate of the point to test.
-	 *  @param y y coordinate of the point to test.
+	 *  @param px x coordinate of the point to test.
+	 *  @param py y coordinate of the point to test.
 	 *  @return True if the given point is within the clipping rectangle, false otherwise.
 	 */
-	public boolean contains(float x, float y) 
+	public boolean contains(float px, float py) 
 	{
-		return clippingRect.contains(x, y);
+		if ((px < this.x) || (px > this.x+this.width) || (py<this.y) || (py > this.y+this.height))
+		{
+			return false;
+		}
+		return true;
 	}
 
 	/** Reports whether or not the given point lies within the clipping rectangle. The result is independent of
@@ -193,7 +189,7 @@ public class Clipper
 	 */
 	public boolean isClipping() 
 	{
-		return pGraphics2D.g2.getClip() == null;
+		return isClipping;
 	}
 
 	/** Reports whether or not clipping is enabled. Unlike <code>isClipping()</code>, this returns true even before 
@@ -204,17 +200,18 @@ public class Clipper
 	 */
 	public boolean isEnabled() 
 	{
-		return this.enabled;
+		return this.isEnabled;
 	}
 
 	/** Determines whether or not clipping is enabled.
 	 *  If enabled is false, no clipping happens between startClipping() and stopClipping() (startClipping is ignored).
 	 *  If called with enabled=false during clipping, clipping is stopped.
+	 *  @param isEnabled Clipping will be enabled if true.
 	 */
-	public void setEnabled(boolean enabled) 
+	public void setEnabled(boolean isEnabled) 
 	{
-		this.enabled = enabled;
-		if (!enabled)
+		this.isEnabled = isEnabled;
+		if (!isEnabled)
 		{
 			stopClipping();
 		}

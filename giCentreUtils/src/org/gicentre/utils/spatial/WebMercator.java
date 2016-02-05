@@ -7,7 +7,7 @@ import processing.core.PVector;
  *  assuming a spherical rather than ellipsoidal figure of the earth. Used for transforming
  *  to/from projected GoogleMaps, OpenStreetMaps and BingMaps.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 27th June, 2012. 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 

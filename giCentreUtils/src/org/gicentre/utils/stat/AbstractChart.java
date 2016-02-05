@@ -15,7 +15,7 @@ import processing.core.PGraphics;
  *  to a set of data. The way in which each axis/data set is displayed will depend on the 
  *  nature of the chart represented by the subclass.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.3, 6th April, 2013 
+ *  @version 3.4, 5th February, 2016.
  */ 
 // *****************************************************************************************
 
@@ -240,7 +240,7 @@ public abstract class AbstractChart
         this.data[dimension] = data;
         updateChart(dimension);
     }
-    
+        
     /** Reports the data to be displayed along the given axis of the chart. 
      *  @param dimension Dimension of the data to report.
      *  @return data Collection of data items represented in the chart or null if no data exist in the given dimension.
