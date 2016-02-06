@@ -4,7 +4,6 @@ org.gicentre.utils.geom
 org.gicentre.utils.gui
 org.gicentre.utils.io
 org.gicentre.utils.move
-org.gicentre.utils.multisketch
 org.gicentre.utils.network
 org.gicentre.utils.network.traer.animation
 org.gicentre.utils.network.traer.physics
