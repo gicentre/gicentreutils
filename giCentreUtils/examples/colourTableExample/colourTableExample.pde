@@ -1,12 +1,12 @@
 import org.gicentre.utils.colour.*;    // For colour tables.
 
-// Sketch to demonstrate the use of LandSerf style colour tables. A ColourTable 
+// Sketch to demonstrate the use of customised colour tables. A ColourTable 
 // object consists of a set of ColourRules. Each rule maps a numeric value to a
 // colour. The colour to be associated with any value can be found by calling the
 // findColour() method of a colour table. If the rules are continuous, the 
 // returned colour is interpolated between the two colour rules closest to the 
 // given value. If rules are discrete, only exact matches are mapped to a colour.
-// Version 1.2, 10th August, 2010.
+// Version 1.3, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -19,9 +19,7 @@ ColourTable cTable1, cTable2, cTable3;      // Colour tables to use.
 void setup()
 {
   size(500,250);
-  noLoop();
-  smooth();
-
+  
   // Create a continuous Brewer colour table (YlOrBr6).
   cTable1 = new ColourTable();
   cTable1.addContinuousColourRule(0.5/6, 255,255,212);
@@ -82,4 +80,6 @@ void draw()
     stroke(cTable3.findColour(i));
     rect(width*i,190,width*inc,50);
   }
+  
+  noLoop();
 }

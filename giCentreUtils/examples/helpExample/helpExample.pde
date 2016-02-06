@@ -1,9 +1,10 @@
 import org.gicentre.utils.gui.HelpScreen;
-import org.gicentre.utils.gui.Tooltip;
+import org.gicentre.utils.gui.Tooltip;          
+import org.gicentre.utils.spatial.Direction;    // For tooltip anchor direction.
 
 // Sketch to demonstrate the use of the HelpScreen and Tooltip classes
 // to provide interactive help in a sketch.
-// Version 2.2, 14th January, 2011
+// Version 2.3, 6th February, 2016
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -19,8 +20,7 @@ PFont largeFont, smallFont;
 void setup()
 {
   size(500,500);
-  smooth();
- 
+  
   largeFont = loadFont("Colaborate-Thin-24.vlw");
   smallFont = loadFont("Colaborate-Thin-12.vlw");
   
@@ -44,6 +44,9 @@ void setup()
   showTip = false;
   tip = new Tooltip(this,smallFont,12,tipWidth);
   tip.setText("This is an example of a tooltip that should fit the text inside its user-defined width");
+  tip.setAnchor(Direction.SOUTH_WEST);
+  tip.setIsCurved(true);
+  tip.showPointer(true);
 }
 
 // ------------------ Processing draw --------------------

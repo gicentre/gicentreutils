@@ -1,13 +1,12 @@
 import org.gicentre.utils.gui.TextInput; 
 
 // Sketch to demonstrate the use of the TextInput class for gathering typed text.
-// Version 1.2, 14th January, 2011.
+// Version 1.3, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // --------------------- Sketch-wide variables ----------------------
 
 TextInput textInput;
-
 boolean isFinished;
 
 // ------------------------ Initialisation --------------------------
@@ -16,9 +15,8 @@ boolean isFinished;
 void setup()
 {
   size(640,90);
-  smooth();
- 
-  PFont font = loadFont("Colaborate-Thin-24.vlw");
+  
+  PFont font = createFont("serif",24);
   textInput = new TextInput(this,font,24);
   isFinished = false;
 }
@@ -29,7 +27,6 @@ void setup()
 void draw()
 {
   background(255);
-  noLoop();
         
   fill(120,60,60);
   text("Type in some text and press return when finished.",30,30);
@@ -40,8 +37,9 @@ void draw()
   }
   else
   {
-    text("You just said '"+textInput.getText()+"'.", 30, 60);
+    text("You just said '"+textInput.getText()+"'. Press return to edit text.", 30, 60);
   }
+   noLoop();
 }
 
 
@@ -54,11 +52,11 @@ void keyPressed()
 {
   if ((key == RETURN) || (key == ENTER))
   {
-    isFinished = true;
+    isFinished = !isFinished;
   }
   else
   {
-    textInput.keyPressed();
+    if (!isFinished) textInput.keyPressed();
   }
   
   loop();

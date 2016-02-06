@@ -2,7 +2,7 @@ import org.gicentre.utils.gui.TextPopup;
 import java.util.Random;
 
 // Sketch to show how a text popup window can be added to a sketch
-// Version 1.2, 14th January, 2011.
+// Version 1.3, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -15,11 +15,11 @@ private TextPopup textPopup;
 void setup()
 {
   size(800,600);
-  smooth();
-  frame.setResizable(true);
+
+  surface.setResizable(true);
   strokeWeight(2);  
-  PFont font = loadFont("Colaborate-Thin-24.vlw");
-  
+  PFont font = createFont("serif",24);
+    
   // The text popup needs to know the sketch (this) in which to draw.
   // The optional font parameter allows you to specify the font for display.
   // The last two parameters define the width and height of the border around 
@@ -58,6 +58,7 @@ void draw()
   
   // Add this to display text popup.
   textPopup.draw();
+  noLoop();
 }
 
 // ------------------ Keyboard handlinng --------------------
@@ -98,5 +99,5 @@ void keyPressed()
       textPopup.setExternalMargin(border,border);  
     }
   }
+  loop();
 }
-

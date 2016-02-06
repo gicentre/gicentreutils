@@ -5,12 +5,12 @@ import org.gicentre.utils.FrameTimer;
 // Demonstrates the use of a HashGrid to improve the efficiency of collision 
 // detection. Also shows how a frame timer can be used to report frame rate
 // during drawing.
-// Version 1.3, 10th August, 2010.
+// Version 1.4, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
 
-HashGrid balls;                    // Stores collection of locatable balls.
+HashGrid<Ball> balls;              // Stores collection of locatable balls.
 FrameTimer timer;                  // Used to display frame rate.
 static final int RADIUS = 10;      // Size of each ball.
 static final int NUM_BALLS = 1000; // Number of balls to animate.
@@ -21,7 +21,6 @@ static final int NUM_BALLS = 1000; // Number of balls to animate.
 void setup()
 {
   size(800,500);
-  smooth(); 
   noStroke();
   timer = new FrameTimer(50);  // Frame rate to be displayed every 50 frames.
     
@@ -44,27 +43,22 @@ void draw()
   rect(0,0,width,height);
     
   // Draw the balls and check for imminent collisions.
-  for (Iterator i=balls.iterator(); i.hasNext();)
+  for (Ball ball : balls)
   {
-    Ball ball = (Ball)i.next();
     fill(ball.getColour());
     ellipse(ball.getLocation().x,ball.getLocation().y,RADIUS,RADIUS);
        
     // Get the hash grid to provide all the balls close to the current ball.
-    Collection neighbours = balls.get(ball.getLocation());
-    
-    for (Iterator j= neighbours.iterator(); j.hasNext();)
+    for (Ball otherBall : balls.get(ball.getLocation()))
     {
       // See if the neighbouring balls are about to bounce off each other.
-      Ball otherBall = (Ball)j.next();
       ball.checkBounce(otherBall);
     }
   }
   
   // Move all the balls to their new position.
-  for (Iterator i=balls.iterator(); i.hasNext();)
+  for (Ball ball : balls)
   {
-    Ball ball = (Ball)i.next();
     ball.move();
   }
    

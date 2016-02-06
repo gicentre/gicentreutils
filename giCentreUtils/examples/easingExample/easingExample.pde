@@ -7,7 +7,7 @@ import org.gicentre.utils.move.Ease;
 // Space bar pauses or unpauses the action.
 // Each static method in the Ease class takes a value between 0-1 and returns a new value also between
 // 0-1 that can be provided to the lerp() method for non-linear interpolation.
-// Version 1.4, 14th January, 2011.
+// Version 1.5, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -39,14 +39,12 @@ float t,tInc;      // t represents time scaled between 0-1. tInc is the change i
 int easeStyle;     // Stores which form of easing is currently highlighted.
 boolean isPaused;  // Pauses or unpauses the animation.
 
-
 // ------------------- Initialisation ---------------------
 
 // Initialises the window in which animated discs and graph are shown.
 void setup()
 {
   size(900,300);
-  smooth(); 
   noStroke();
   textFont(loadFont("Crimson-Italic-24.vlw"));
   textAlign(RIGHT,TOP);
@@ -399,4 +397,3 @@ void drawGraph()
   
   popStyle();    // Restores previously used drawing styles.
 }
-

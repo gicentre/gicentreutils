@@ -4,7 +4,7 @@ import java.awt.Color;                 // For Java's own Color class.
 // Sketch to demonstrate the use of CIELuv colour conversion. Use up and down
 // arrows to change the hue value of the CIELCh slice. 'r' resets the view to use a
 // hue value of 0 (red).
-// Version 1.3, 12th January, 2011.
+// Version 1.4, 6th February, 2016
 // Author Jo Wood, giCentre.
 
 // ---------------- Sketch-wide variables -----------------
@@ -30,19 +30,16 @@ void setup()
 
 // ------------------ Processing draw --------------------
 
-// Draws a slice through CIELuv space using the current L value.
+// Draws a slice through CIELuv space holding hue constant.
 void draw()
 {
   background(240);
   noStroke();
-  noLoop();
-     
-  // LC space, holding hue constant.
- 
+       
   // Transform from colour space to screen space
   pushMatrix();
-  translate(10,height-20);
-  scale(width/200.0,-height/105.0);
+  translate(20,height-20);
+  scale((width-20)/200.0,-(height-20)/105.0);
   
   float inc = 0.5;
   for (float L=0.01; L<=100; L+=inc)
@@ -53,7 +50,7 @@ void draw()
       if (colour != null)
       {
         fill(colour.getRGB());
-        rect(C,L,inc,inc);
+        rect(C,L,inc+0.5,inc+0.5);
       }
     }
   }
@@ -65,9 +62,11 @@ void draw()
   popMatrix();
   
   fill(120);
-  text("h="+(int)h,width-40,0);
-  text("L",8,0);
-  text("C",width-40,height-20);
+  text("h="+(int)h,width-40,20);
+  text("L",15,20);
+  text("C",width-40,height-16);
+  
+  noLoop();
 }
 
 // ------------------ Processing keyboard handling --------------------

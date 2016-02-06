@@ -1,8 +1,9 @@
 import org.gicentre.utils.colour.*;    // For colour tables.
 import java.util.Random;
 
-// Sketch to show how a colour picker can be used to select a colour from within a sketch.
-// Version 1.1, 10th August, 2010.
+// Sketch to show how a colour picker can be used to select a colour 
+// from within a sketch. Press C to toggle the colour picker.
+// Version 1.2, 6th February, 2016.
 // Author Jo Wood, giCentre
 
 // ------------------ Sketch-wide variables --------------------
@@ -17,8 +18,8 @@ private int lineColour;
 void setup()
 {
   size(800,600);
-  smooth();
-  frame.setResizable(true);
+  
+  surface.setResizable(true);
   strokeWeight(2);
   lineColour = color(180,0,0);
     
@@ -37,7 +38,14 @@ void setup()
 // Draws a simple sketch with the option of displaying the colour picker.
 void draw()
 {
-  background(255);
+  if (brightness(lineColour) < 220)
+  {
+    background(220);
+  }
+  else
+  {
+    background(40);
+  }
   
   // Draw some random stuff to represent a sketch.
   stroke(lineColour);
@@ -63,6 +71,8 @@ void keyPressed()
     colourPicker.setIsActive(!colourPicker.getIsActive());
   }
 }
+
+
 
 // -------------------- Nested classes ----------------------
 

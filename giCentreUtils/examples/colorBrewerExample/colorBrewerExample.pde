@@ -2,7 +2,7 @@ import org.gicentre.utils.colour.*;    // For colour tables.
 
 // Sketch to demonstrate the use of ColorBrewer colour schemes using the ColourTable
 // class to generate preset colour schemes. 
-// Version 1.3, 12th January, 2011.
+// Version 1.4, 6th February, 2016.
 // Author Jo Wood.
 
 // ------------------ Sketch-wide variables --------------------
@@ -16,8 +16,7 @@ PFont largeFont,smallFont;
 void setup()
 {
   size(900,500);
-  noLoop();
-  smooth();
+  
   largeFont = loadFont("BonvenoCF-Light-18.vlw"); 
   smallFont = loadFont("BonvenoCF-Light-10.vlw"); 
   textAlign(CENTER,TOP);
@@ -176,4 +175,6 @@ void draw()
     fill(80);
     text(coloursCat[bar].getName(),colOffset-border, rowOffset +bar*25 + 5);
   } 
+  
+  noLoop();
 }

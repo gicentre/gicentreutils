@@ -1,7 +1,7 @@
 import org.gicentre.utils.spatial.*;    // For map projections.
 
 // Displays a GPS track and map using the WebMercator projection.
-// Version 1.0, 2nd August, 2011.
+// Version 1.1, 6th February, 2016.
 // Author Jo Wood, giCentre, City University London.
 
 // --------------------- Sketch-wide variables ----------------------
@@ -13,10 +13,8 @@ PVector tlCorner,brCorner;   // Corners of map in WebMercator coordinates.
 // ------------------------ Initialisation --------------------------
 
 void setup()
-{
-  size(781,548);
-  smooth();
-  noLoop();
+{ 
+  size(800,600);
   readData();
 }
 
@@ -39,6 +37,8 @@ void draw()
     vertex(scrCoord.x,scrCoord.y);  
   }
   endShape();
+  
+  noLoop();
 }
 
 // ---------------------------- Methods -----------------------------

@@ -1,5 +1,5 @@
 // Represents a single ball. A ball has a location, a velocity vector and a colour.
-// Version 1.2, 18th July, 2009.
+// Version 1.4, 6th February, 2016.
 // Author Jo Wood.
 
 class Ball implements Locatable

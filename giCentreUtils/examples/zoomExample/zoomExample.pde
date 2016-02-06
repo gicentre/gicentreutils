@@ -1,8 +1,9 @@
-import org.gicentre.utils.move.*;
+import org.gicentre.utils.move.*;    // For the zoomer.
+import java.text.*;                  // For number formatting.
 
 // Simple sketch to demonstrate the ZoomPan class for interactively zooming and
 // panning a sketch's display.
-// Version 1.5, 18th February, 2011.
+// Version 1.6, 6th February, 2016.
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -17,12 +18,11 @@ NumberFormat formatter = new DecimalFormat("#.0");
 void setup()
 {
   size(600,300);
-  smooth();
-  textFont(loadFont("Colaborate-Thin-16.vlw"));
-  
+  textFont(createFont("serif",12))
+  ;  
   zoomer = new ZoomPan(this);  // Initialise the zoomer.
   zoomer.setMouseMask(SHIFT);  // Only zoom if the shift key is down.
-                            
+                           
                                // Monitor end of zoom/pan events.
   zoomer.addZoomPanListener(new MyListener());
 }
@@ -45,7 +45,6 @@ void draw()
   fill(255);
   textAlign(CENTER,CENTER);
   
-  // This version of the text() method provides improved positioning when zooming.
   text("Zoom",width/2,height/2);
   
   //  Get the mouse position taking into account any zooming and panning.
@@ -76,6 +75,8 @@ void keyPressed()
 // -------------------------- Nested classes --------------------------
 
 // Simple class to show how the end of a zoom or pan event can be monitored.
+// This probably isn't necessary for most sketches but is illustrated here
+// for those who need it.
 class MyListener implements ZoomPanListener
 {
   void panEnded()

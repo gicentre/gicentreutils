@@ -4,7 +4,7 @@ import java.awt.Color;                 // For Java's own Color class.
 // Sketch to demonstrate the use of CIELab colour conversion. Use up and down
 // arrows to change the 'L' value of the CIELab slice. 'r' resets the view to use an
 // L value of 50. 'n' toggles nearest neighbour extrapolation of out-of-gamut colours.
-// Version 1.2, 12th January, 2011.
+// Version 1.3, 6th February, 2016
 // Author Jo Wood, giCentre.
 
 // ------------------ Sketch-wide variables --------------------
@@ -18,7 +18,7 @@ boolean showNearest;    // Determines if out-of-gamut colours are shown.
 // Initialises the display and sets up the CIELab converter.
 void setup()
 {
-  size(500,500);
+  size(600,600);
   converter = new CIELab();
   L = 50;
   showNearest = false;
@@ -33,8 +33,7 @@ void draw()
 {
   background(255);
   noStroke();
-  noLoop();
-     
+      
   // Transform from colour space to screen space
   pushMatrix();
   scale(width/200.0,-height/200.0);
@@ -73,6 +72,8 @@ void draw()
   text("L="+(int)L,40,0);
   text("a",width,height/2);
   text("b",width/2,0);
+  
+  noLoop();
 }
 
 // ------------------ Processing keyboard handling --------------------

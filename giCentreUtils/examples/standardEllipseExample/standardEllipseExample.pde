@@ -1,13 +1,13 @@
 import org.gicentre.utils.stat.StandardEllipse;
 
-// Sketch to demonstrate the use of the StandardEllipse class. Draws some random 
-// points then their weighted and unweighted standard ellipse.
-// Version 1.4, 11th August, 2010.
+// Sketch to demonstrate the use of the StandardEllipse class. Draws some 
+// randomly jittering points then their weighted and unweighted standard ellipse.
+// Version 1.5, 6th February 2016.
 // Author Jo Wood, giCentre.
 
 // ---------------------- Sketch-wide variables ---------------------
 
-ArrayList points;
+ArrayList<PVector> points;
 static final int NUM_POINTS = 150;
 static final int HIGH_WEIGHT = 10;
 
@@ -17,8 +17,7 @@ static final int HIGH_WEIGHT = 10;
 void setup()
 {
   size(700,300);
-  smooth();
-
+ 
   points = new ArrayList();
   
   for (int i=0; i<NUM_POINTS; i++)
@@ -48,10 +47,8 @@ void draw()
   strokeWeight(3);
     
   // Plot the original points and make them move about a bit.
-  Iterator i = points.iterator();
-  while (i.hasNext())
+  for (PVector p : points)
   {
-    PVector p = (PVector)i.next();
     p.x += random(-2,2);
     p.y += random(-2,2);
     
