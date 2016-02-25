@@ -8,7 +8,7 @@ import processing.core.PVector;
 //  *****************************************************************************************
 /** Interface for describing the behaviour of a zoomable component.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.4, 5th February 2016. 
+ *  @version 3.4.1, 25th February 2016. 
  */ 
 //  *****************************************************************************************
 
@@ -195,6 +195,15 @@ interface ZoomPanable
 	 *  @param maxZoomScale Maximum permitted zoom scale.
 	 */
 	abstract void setMaxZoomScale(double maxZoomScale);
+	
+	/** Should set the maximum permitted panning offsets. The coordinates provided should be the unzoomed ones.
+	 *  So to prevent panning past the 'edge' of the unzoomed display, values would be set to 0. Setting
+	 *  values of (10,40) would allow the display to be panned 10 unzoomed pixels to the left or right
+	 *  of the unzoomed display area and 40 pixels up or down.
+	 *  @param maxX Maximum number of unzoomed pixels by which the display can be panned in the x-direction.
+	 *  @param maxY Maximum number of unzoomed pixels by which the display can be panned in the y-direction.
+	 */
+	abstract void setMaxPanOffset(float maxX, float maxY);
 	
 	/** Should transform the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 

@@ -20,7 +20,7 @@ import processing.event.MouseEvent;
  *  class if it detects Processing 3.x core libraries. Despite this, the class has to remain
  *  public so that it can be registered by Processing's event handling model.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.4, 5th February 2016. 
+ *  @version 3.4.1, 25th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -60,10 +60,6 @@ public class ZoomPan30 implements ZoomPanable
 	
 	private ZoomPanDirection zoomPanDirection=ZoomPanDirection.ZOOM_PAN_BOTH;
 	
-	/* TODO: Panning constraints not yet implemented.
-	private float maxPanXOffset = -1;				// Absolute maximum permitted panning offset in x direction, or negative if no maximum.
-	private float maxPanYOffset = -1;				// Absolute maximum permitted panning offset in y direction, or negative if no maximum.
-	*/
 	
 	// ------------------------------- Constructors ------------------------------- 
 
@@ -139,11 +135,11 @@ public class ZoomPan30 implements ZoomPanable
 	 */
 	public void reset()
 	{
-		zoomPanState.trans		= new AffineTransform();
-		zoomPanState.iTrans		= new AffineTransform();
-		zoomPanState.zoomScaleX	= 1;
-		zoomPanState.zoomScaleY	= 1;
-		zoomPanState.panOffset	= new PVector(0,0);
+		zoomPanState.setTransform(new AffineTransform());
+		zoomPanState.setInvTransform(new AffineTransform());
+		zoomPanState.setZoomScaleX(1);
+		zoomPanState.setZoomScaleY(1);
+		zoomPanState.setPanOffset(0,0);
 		zoomStep    	    	= 1.05;
 		isZooming       		= false;
 		isPanning       		= false;
@@ -228,7 +224,7 @@ public class ZoomPan30 implements ZoomPanable
 	 */
 	public PVector getMouseCoord()
 	{
-		return getDispToCoord(new PVector(zoomPanState.aContext.mouseX,zoomPanState.aContext.mouseY));
+		return getDispToCoord(new PVector(zoomPanState.getContext().mouseX,zoomPanState.getContext().mouseY));
 	}
 
 	/** Reports the current zoom scale. Can be used for drawing objects that maintain their
@@ -352,8 +348,7 @@ public class ZoomPan30 implements ZoomPanable
 	 */
 	public void setPanOffset(float panX, float panY)
 	{
-		zoomPanState.panOffset.x = panX;
-		zoomPanState.panOffset.y = panY;
+		zoomPanState.setPanOffset(panX, panY);
 		calcTransformation();
 	}
 
@@ -414,7 +409,7 @@ public class ZoomPan30 implements ZoomPanable
 			// If mouse has been disabled with a negative mouse mask, don't do anything.
 			return;
 		}
-
+				
 		if (e.getAction() == MouseEvent.RELEASE)
 		{
 			// Regardless of mouse mask, if the mouse is released, 
@@ -463,7 +458,7 @@ public class ZoomPan30 implements ZoomPanable
 
 		// Only interpret the mousepressed event if the mouse is within mouseBoundsMask (or there's no mouseBoundsMask)
 		if ((e.getAction() == MouseEvent.PRESS)	&& 
-			((mouseBoundsMask==null) || (mouseBoundsMask.contains(zoomPanState.aContext.mouseX,zoomPanState.aContext.mouseY))))
+			((mouseBoundsMask==null) || (mouseBoundsMask.contains(zoomPanState.getContext().mouseX,zoomPanState.getContext().mouseY))))
 		{
 			isMouseCaptured   = true;
 			zoomStartPosition = new PVector(e.getX(),e.getY());
@@ -471,34 +466,34 @@ public class ZoomPan30 implements ZoomPanable
 		}
 		// Dragging is allowed outside the mouseBoundsMask
 		else if (e.getAction() == MouseEvent.DRAG)
-		{
+		{			
 			// Check in case applet has been destroyed.
-			if ((zoomPanState.aContext == null) || (oldPosition == null))
+			if ((zoomPanState.getContext() == null) || (oldPosition == null))
 			{
 				return;
 			}
 
-			if ((zoomPanState.aContext.mouseButton==zoomMouseButton) && (allowZoomButton) && isMouseCaptured)
+			if ((zoomPanState.getContext().mouseButton==zoomMouseButton) && (allowZoomButton) && isMouseCaptured)
 			{
 				isZooming = true;
 
-				if (zoomPanState.aContext.mouseY < oldPosition.y)
+				if (zoomPanState.getContext().mouseY < oldPosition.y)
 				{
 					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()*zoomStep,zoomPanState.getZoomScaleY()*zoomStep);
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL||zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()*zoomStep,zoomPanState.getZoomScaleY());
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL||zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX(),zoomPanState.getZoomScaleY()*zoomStep);
 				}
-				else if (zoomPanState.aContext.mouseY > oldPosition.y)
+				else if (zoomPanState.getContext().mouseY > oldPosition.y)
 				{
 					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()/zoomStep,zoomPanState.getZoomScaleY()/zoomStep);
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL||zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()/zoomStep,zoomPanState.getZoomScaleY());
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL||zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX(),zoomPanState.getZoomScaleY()/zoomStep);
 				}
 				doZoom();
 				zoomStep += 0.005;    // Accelerate zooming with prolonged drag.
@@ -509,11 +504,14 @@ public class ZoomPan30 implements ZoomPanable
 				isPanning = true;
 				
 				if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH  || zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH)				
-					zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
+					//zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,e.getY()-oldPosition.y));
+					zoomPanState.addPanOffset(e.getX()-oldPosition.x,e.getY()-oldPosition.y);
 				else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)				
-					zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,0));
+					//zoomPanState.panOffset.add(new PVector(e.getX()-oldPosition.x,0));
+					zoomPanState.addPanOffset(e.getX()-oldPosition.x,0);
 				else if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)				
-					zoomPanState.panOffset.add(new PVector(0,e.getY()-oldPosition.y));
+					//zoomPanState.panOffset.add(new PVector(0,e.getY()-oldPosition.y));
+					zoomPanState.addPanOffset(0,e.getY()-oldPosition.y);
 				
 				calcTransformation(); 
 
@@ -524,7 +522,7 @@ public class ZoomPan30 implements ZoomPanable
 		else
 		{
 			// Mouse wheel event if getCount() is not zero.
-			if (e.getCount() != 0)
+			if ((e.getAction() == MouseEvent.WHEEL) && (e.getCount() != 0))
 			{
 				isZooming=true;
 				setZoomStartPosition(new PVector(e.getX(),e.getY()));
@@ -532,21 +530,21 @@ public class ZoomPan30 implements ZoomPanable
 				if (e.getCount() > 0)
 				{
 					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY*zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()*zoomStep,zoomPanState.getZoomScaleY()*zoomStep);
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX*zoomStep,zoomPanState.zoomScaleY);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()*zoomStep,zoomPanState.getZoomScaleY());
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY*zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX(),zoomPanState.getZoomScaleY()*zoomStep);
 					doZoom();
 				}
 				else if (e.getCount() < 0)
 				{
 					if (zoomPanDirection==ZoomPanDirection.ZOOM_PAN_BOTH)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY/zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()/zoomStep,zoomPanState.getZoomScaleY()/zoomStep);
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_HORIZONTAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX/zoomStep,zoomPanState.zoomScaleY);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX()/zoomStep,zoomPanState.getZoomScaleY());
 					else if (zoomPanDirection==ZoomPanDirection.ZOOM_VERTICAL_PAN_BOTH || zoomPanDirection==ZoomPanDirection.ZOOM_PAN_VERTICAL)
-						setZoomScaleWithoutRecalculation(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY/zoomStep);
+						setZoomScaleWithoutRecalculation(zoomPanState.getZoomScaleX(),zoomPanState.getZoomScaleY()/zoomStep);
 					doZoom();
 				}  
 			}
@@ -564,11 +562,11 @@ public class ZoomPan30 implements ZoomPanable
 		this.minZoomScaleX=minZoomScale;
 		this.minZoomScaleY=minZoomScale;
 		
-		if (zoomPanState.zoomScaleX < minZoomScale)
+		if (zoomPanState.getZoomScaleX() < minZoomScale)
 		{
 			setZoomScaleX(minZoomScale);
 		}
-		if (zoomPanState.zoomScaleY < minZoomScale)
+		if (zoomPanState.getZoomScaleY() < minZoomScale)
 		{
 			setZoomScaleY(minZoomScale);
 		}
@@ -584,7 +582,7 @@ public class ZoomPan30 implements ZoomPanable
 	{
 		this.minZoomScaleX=minZoomScaleX;
 		
-		if (zoomPanState.zoomScaleX < minZoomScaleX)
+		if (zoomPanState.getZoomScaleX() < minZoomScaleX)
 		{
 			setZoomScaleX(minZoomScaleX);
 		}
@@ -600,13 +598,12 @@ public class ZoomPan30 implements ZoomPanable
 	{
 		this.minZoomScaleY=minZoomScaleY;
 		
-		if (zoomPanState.zoomScaleY < minZoomScaleY)
+		if (zoomPanState.getZoomScaleY() < minZoomScaleY)
 		{
 			setZoomScaleY(minZoomScaleY);
 		}
 	}
 
-	
 	/** Sets the maximum permitted zoom scale (i.e. how far zoomed in a view is allowed to be). If the
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
@@ -618,18 +615,17 @@ public class ZoomPan30 implements ZoomPanable
 		this.maxZoomScaleX=maxZoomScale;
 		this.maxZoomScaleY=maxZoomScale;
 		
-		if (zoomPanState.zoomScaleX > maxZoomScale)
+		if (zoomPanState.getZoomScaleX() > maxZoomScale)
 		{
 			setZoomScaleX(maxZoomScale);
 		}
-		if (zoomPanState.zoomScaleY > maxZoomScale)
+		if (zoomPanState.getZoomScaleY() > maxZoomScale)
 		{
 			setZoomScaleY(maxZoomScale);
 		}
 	}
 
-	
-	/** Sets the maximum permitted zoom scale in X(i.e. how far zoomed in a view is allowed to be). If the
+	/** Sets the maximum permitted zoom scale in X (i.e. how far zoomed in a view is allowed to be). If the
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
@@ -639,14 +635,13 @@ public class ZoomPan30 implements ZoomPanable
 	{
 		this.maxZoomScaleX=maxZoomScaleX;
 		
-		if (zoomPanState.zoomScaleX > maxZoomScaleX)
+		if (zoomPanState.getZoomScaleX() > maxZoomScaleX)
 		{
 			setZoomScaleX(maxZoomScaleX);
 		}
 	}
-
 	
-	/** Sets the maximum permitted zoom scale in Y(i.e. how far zoomed in a view is allowed to be). If the
+	/** Sets the maximum permitted zoom scale in Y (i.e. how far zoomed in a view is allowed to be). If the
 	 *  current zoom level is larger than the new maximum, the zoom scale will be set to the new 
 	 *  maximum value. A value above zero but less than one means that the view will be smaller than
 	 *  its natural size. A value greater than one means the view will be larger than its natural size.
@@ -656,62 +651,25 @@ public class ZoomPan30 implements ZoomPanable
 	{
 		this.maxZoomScaleY=maxZoomScaleY;
 		
-		if (zoomPanState.zoomScaleY > maxZoomScaleY)
+		if (zoomPanState.getZoomScaleY() > maxZoomScaleY)
 		{
 			setZoomScale(maxZoomScaleY);
 		}
 	}
 
-	// TODO: Panning constraints not yet implemented.
-	/* Sets the maximum permitted panning offsets. The coordinates provided should be the unzoomed ones.
+	/** Sets the maximum permitted panning offsets. The coordinates provided should be the unzoomed ones.
 	 *  So to prevent panning past the 'edge' of the unzoomed display, values would be set to 0. Setting
 	 *  values of (10,40) would allow the display to be panned 10 unzoomed pixels to the left or right
 	 *  of the unzoomed display area and 40 pixels up or down.
 	 *  @param maxX Maximum number of unzoomed pixels by which the display can be panned in the x-direction.
 	 *  @param maxY Maximum number of unzoomed pixels by which the display can be panned in the y-direction.
-	 *
+	 */
 	public void setMaxPanOffset(float maxX, float maxY)
 	{
-		this.maxPanXOffset = maxX;
-		this.maxPanYOffset = maxY;
-		
-		boolean panChanged = false;
-
-		if (panOffset.x >=0)
-		{
-			if (panOffset.x > maxPanXOffset)
-			{
-				panOffset.x = maxPanXOffset;
-				panChanged = true;
-			}
-			if (panOffset.x < -maxPanXOffset)
-			{
-				panOffset.x = -maxPanXOffset;
-				panChanged = true;
-			}
-		}
-
-		if (panOffset.y >=0)
-		{
-			if (panOffset.y > maxPanYOffset)
-			{
-				panOffset.y = maxPanYOffset;
-				panChanged = true;
-			}
-			if (panOffset.y < -maxPanYOffset)
-			{
-				panOffset.y = -maxPanYOffset;
-				panChanged = true;
-			}
-		}
-		
-		if (panChanged)
-		{
-			calcTransformation();
-		}
+		zoomPanState.setMaxPanOffset(maxX,maxY);
+		calcTransformation();
 	}
-	*/
-	
+		
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
 	 *  which objects have been placed before zooming and panning. For most drawing operations you
@@ -725,7 +683,6 @@ public class ZoomPan30 implements ZoomPanable
 		return zoomPanState.getDispToCoord(p);
 	}
 
-	
 	/** Transforms the given point from coordinate to display space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
 	 *  which objects have been placed before zooming and panning. For most drawing operations you
@@ -759,16 +716,14 @@ public class ZoomPan30 implements ZoomPanable
 	 *  characters in Java2D mode when a zoomed font is to be displayed. This method is not necessary when
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
-	 *  @deprecated Should no longer be required as Processing bug fixed in 3.0.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
 	 */ 
-	@Deprecated
 	public void text(String textToDisplay, float xPos, float yPos)
 	{
 		// Call the static version providing the applet context that was given to the constructor.
-		ZoomPan.text(zoomPanState.aContext,textToDisplay, xPos,yPos);
+		ZoomPan.text(zoomPanState.getContext(),textToDisplay, xPos,yPos);
 	}
 
 	/** Provides a copy (cloned snapshot) of the current ZoomPanState.
@@ -799,7 +754,8 @@ public class ZoomPan30 implements ZoomPanable
 		// Translate by change in click position.
 		//panOffset.setLocation(panOffset.x + zoomStartPosition.x - newZoomStartPosition.x,
 		//                    panOffset.y + zoomStartPosition.y - newZoomStartPosition.y);
-		zoomPanState.panOffset.add(new PVector(zoomStartPosition.x-newZoomStartPosition.x,zoomStartPosition.y-newZoomStartPosition.y));
+		//zoomPanState.panOffset.add(new PVector(zoomStartPosition.x-newZoomStartPosition.x,zoomStartPosition.y-newZoomStartPosition.y));
+		zoomPanState.addPanOffset(zoomStartPosition.x-newZoomStartPosition.x,zoomStartPosition.y-newZoomStartPosition.y);
 
 		// Finish off transformation by incorporating shifted click position.
 		calcTransformation();
@@ -831,16 +787,16 @@ public class ZoomPan30 implements ZoomPanable
 	 */
 	void setZoomScaleWithoutRecalculation(double zoomScaleX,double zoomScaleY)
 	{
-		// This method is of package-wide scope to allow inner classes to have access to it.*
-		//limit zoom to min/max
+		// This method is of package-wide scope to allow inner classes to have access to it.
+		// Limit zoom to min/max constraints.
 		synchronized (this) 
 		{
-			zoomPanState.zoomScaleX = zoomScaleX;
-			zoomPanState.zoomScaleY = zoomScaleY;
-			zoomPanState.zoomScaleX=Math.min(zoomPanState.zoomScaleX,maxZoomScaleX);
-			zoomPanState.zoomScaleX=Math.max(zoomPanState.zoomScaleX,minZoomScaleX);
-			zoomPanState.zoomScaleY=Math.min(zoomPanState.zoomScaleY,maxZoomScaleY);
-			zoomPanState.zoomScaleY=Math.max(zoomPanState.zoomScaleY,minZoomScaleY);
+			zoomPanState.setZoomScaleX(zoomScaleX);
+			zoomPanState.setZoomScaleY(zoomScaleY);
+			zoomPanState.setZoomScaleX(Math.min(zoomPanState.getZoomScaleX(),maxZoomScaleX));
+			zoomPanState.setZoomScaleX(Math.max(zoomPanState.getZoomScaleX(),minZoomScaleX));
+			zoomPanState.setZoomScaleY(Math.min(zoomPanState.getZoomScaleY(),maxZoomScaleY));
+			zoomPanState.setZoomScaleY(Math.max(zoomPanState.getZoomScaleY(),minZoomScaleY));
 		}
 	}
 
@@ -855,49 +811,72 @@ public class ZoomPan30 implements ZoomPanable
 		this.zoomStartPosition = zoomStartPosition;
 	}
 
-	/** Finds the affine transformations that convert between original and display coordinates. 
+	/** Finds the affine transformations that converts between original and display coordinates. 
 	 *  Updates both the forward transformation (for display) and inverse transformation (for 
 	 *  decoding of mouse locations. 
 	 */
 	private void calcTransformation()
 	{    
+		double centreX = (zoomPanState.getGraphics().width*(1-zoomPanState.getZoomScaleX()))/2;
+		double centreY = (zoomPanState.getGraphics().height*(1-zoomPanState.getZoomScaleY()))/2;
 
-		double centreX = (zoomPanState.getGraphics().width*(1-zoomPanState.zoomScaleX))/2;
-		double centreY = (zoomPanState.getGraphics().height*(1-zoomPanState.zoomScaleY))/2;
-
-		zoomPanState.trans = new AffineTransform();
-		zoomPanState.iTrans = new AffineTransform();
+		zoomPanState.setTransform(new AffineTransform());
+		zoomPanState.setInvTransform(new AffineTransform());
 
 		//scale depending on the type
 		if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_BOTH)
 		{
-			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,centreY+zoomPanState.panOffset.y);
-			zoomPanState.trans.scale(zoomPanState.zoomScaleX,zoomPanState.zoomScaleY);
-			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1/zoomPanState.zoomScaleY);
-			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x, -centreY-zoomPanState.panOffset.y);
+			PVector panOffset = zoomPanState.getPanOffset();
+			
+			zoomPanState.getTransform().translate(centreX+panOffset.x,centreY+panOffset.y);
+			zoomPanState.getTransform().scale(zoomPanState.getZoomScaleX(),zoomPanState.getZoomScaleY());
+			zoomPanState.getInvTransform().scale(1/zoomPanState.getZoomScaleX(),1/zoomPanState.getZoomScaleY());
+			zoomPanState.getInvTransform().translate(-centreX-panOffset.x, -centreY-panOffset.y);
 		}
 		else if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_VERTICAL)
 		{
-			zoomPanState.trans.translate(0,centreY+zoomPanState.panOffset.y);
-			zoomPanState.trans.scale(1,zoomPanState.zoomScaleY);
-			zoomPanState.iTrans.scale(1,1/zoomPanState.zoomScaleY);
-			zoomPanState.iTrans.translate(0, -centreY-zoomPanState.panOffset.y);
+			PVector panOffset = zoomPanState.getPanOffset();
+			
+			zoomPanState.getTransform().translate(0,centreY+panOffset.y);
+			zoomPanState.getTransform().scale(1,zoomPanState.getZoomScaleY());
+			zoomPanState.getInvTransform().scale(1,1/zoomPanState.getZoomScaleY());
+			zoomPanState.getInvTransform().translate(0, -centreY-panOffset.y);
 		}
 		else if (zoomPanDirection == ZoomPanDirection.ZOOM_PAN_HORIZONTAL)
 		{
-			zoomPanState.trans.translate(centreX+zoomPanState.panOffset.x,0);
-			zoomPanState.trans.scale(zoomPanState.zoomScaleX,1);
-			zoomPanState.iTrans.scale(1/zoomPanState.zoomScaleX,1);
-			zoomPanState.iTrans.translate(-centreX-zoomPanState.panOffset.x,0);
+			PVector panOffset = zoomPanState.getPanOffset();
+			
+			zoomPanState.getTransform().translate(centreX+panOffset.x,0);
+			zoomPanState.getTransform().scale(zoomPanState.getZoomScaleX(),1);
+			zoomPanState.getInvTransform().scale(1/zoomPanState.getZoomScaleX(),1);
+			zoomPanState.getInvTransform().translate(-centreX-panOffset.x,0);
 		}
-
-
 	}
 	
-
-	// ------------------------------ Nested classes -----------------------------
-
-	
-	
-	
+	/** Reports the name of the given mouse action. Used for debugging only.
+	 *  @param mouseAction Action to describe.
+	 *  @return Text describing the given mouse action.
+	 */
+	static String getActionName(int mouseAction)
+	{
+		switch(mouseAction)
+		{
+			case MouseEvent.PRESS:
+				return "PRESS ("+mouseAction+")";
+			case MouseEvent.RELEASE:
+				return "RELEASE ("+mouseAction+")";
+			case MouseEvent.CLICK:
+				return "CLICK ("+mouseAction+")";
+			case MouseEvent.DRAG:
+				return "DRAG ("+mouseAction+")";
+			case MouseEvent.MOVE:
+				return "MOVE ("+mouseAction+")";
+			case MouseEvent.ENTER:
+				return "ENTER ("+mouseAction+")";
+			case MouseEvent.EXIT:
+				return "WHEEL ("+mouseAction+")";
+			default:
+				return "Unknown mouse action: "+mouseAction;
+		}
+	}
 }

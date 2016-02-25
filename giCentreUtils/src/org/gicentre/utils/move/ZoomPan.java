@@ -15,7 +15,7 @@ import processing.core.PVector;
  *  so that they only work if a modifier key is pressed (ALT, SHIFT or CONTROL) by calling
  *  the setMouseMask() method.
  *  @author Jo Wood and Aidan Slingsby, giCentre, City University London.
- *  @version 3.4, 5th February 2016. 
+ *  @version 3.4.1, 25th February 2016. 
  */ 
 // *****************************************************************************************
 
@@ -348,6 +348,18 @@ public class ZoomPan
 		zoomer.setMaxZoomScale(maxZoomScale);
 	}
 	
+	/** Sets the maximum permitted panning offsets. The coordinates provided should be the unzoomed ones.
+	 *  So to prevent panning past the 'edge' of the unzoomed display, values would be set to 0. Setting
+	 *  values of (10,40) would allow the display to be panned 10 unzoomed pixels to the left or right
+	 *  of the unzoomed display area and 40 pixels up or down.
+	 *  @param maxX Maximum number of unzoomed pixels by which the display can be panned in the x-direction.
+	 *  @param maxY Maximum number of unzoomed pixels by which the display can be panned in the y-direction.
+	 */
+	public void setMaxPanOffset(float maxX, float maxY)
+	{
+		zoomer.setMaxPanOffset(maxX, maxY);
+	}
+	
 	/** Transforms the given point from display to coordinate space. Display space is that which
 	 *  has been subjected to zooming and panning. Coordinate space is the original space into 
 	 *  which objects have been placed before zooming and panning. For most drawing operations you
@@ -387,12 +399,10 @@ public class ZoomPan
 	 *  characters in Java2D mode when a zoomed font is to be displayed. This method is not necessary when
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
-	 *  @deprecated Bug in Processing is now fixed in 3.x, so this method is no longer needed.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
 	 */ 
-	@Deprecated
 	public void text(String textToDisplay, float xPos, float yPos)
 	{
 		zoomer.text(textToDisplay, xPos, yPos);
@@ -404,19 +414,17 @@ public class ZoomPan
 	 *  As with the other <code>text()</code> method it is not necessary to call this method if the
 	 *  text is not subject to scaling via zooming, nor is is necessary in <code>P2D</code>, <code>P3D</code>
 	 *  or <code>OpenGL</code> modes.
-	 *  @deprecated Bug in Processing is now fixed in 3.x, so this method is no longer needed.
 	 *  @param applet Sketch in which text is to be drawn.
 	 *  @param textToDisplay Text to be displayed.
 	 *  @param xPos x-position of the the text to display in original unzoomed screen coordinates.
 	 *  @param yPos y-position of the the text to display in original unzoomed screen coordinates.
 	 */  
-	@Deprecated
-	public static void text(PApplet applet, String textToDisplay, float xPos, float yPos)
+	public static void text(PApplet applet, String textToDisplay, double xPos, double yPos)
 	{
 		// If we are not using the default renderer, use text() as normal.
 		if (!(applet.g.getClass().getName().equals(PConstants.JAVA2D)))
 		{
-			applet.text(textToDisplay, xPos, yPos);
+			applet.text(textToDisplay, (float)xPos, (float)yPos);
 			return;
 		}
 
@@ -429,7 +437,7 @@ public class ZoomPan
 
 		// Find the location of the text position subject to the current transformation.
 		PVector newTextPos = new PVector(0,0);
-		applet.g.getMatrix().mult(new PVector(xPos,yPos),newTextPos);
+		applet.g.getMatrix().mult(new PVector((float)xPos,(float)yPos),newTextPos);
 
 		// Temporarily reset the transformation matrix while we place the text.
 		applet.resetMatrix();

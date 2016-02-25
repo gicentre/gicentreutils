@@ -12,7 +12,7 @@ import processing.core.PVector;
 /** Tests zooming and panning in a simple Processing sketch. Includes tests for high quality
  *  zoomed text, for constraining zooming and panning, and for zoom-independent display.
  *  @author Jo Wood, giCentre, City University London.
- *  @version 3.4, 4th February 2016.
+ *  @version 3.4.1, 25th February 2016.
  */ 
 //  *****************************************************************************************
 
@@ -79,7 +79,6 @@ public class ZoomTest extends PApplet
 
     /** Draws a simple object that can be zoomed and panned.
      */
-    @SuppressWarnings("deprecation")
 	public void draw()
     {   
         background(255);
@@ -115,7 +114,6 @@ public class ZoomTest extends PApplet
             zoomer.setZoomScale(lerp((float)zoomScale,1,Ease.bounceOut(morphT)));
             morphT += 0.02f;
         }
-        
         zoomer.transform();     // Do the zooming and panning.
         
         // Display a simple background
@@ -131,6 +129,31 @@ public class ZoomTest extends PApplet
             line(0,y,width,y);
         }
         
+        // Display some off screen content that only appears when zooming or panning
+        strokeWeight(2);
+        textSize(8);
+        fill(20);
+        
+        line(-40,-20,-40,-1);
+        line(-40,-20,-21,-20);
+        textAlign(PConstants.LEFT, PConstants.TOP);
+        text("Extent of constrained panning",-40,-20);
+        
+        line(width+40,-20,width+40,-1);
+        line(width+40,-20,width+21,-20);
+        textAlign(PConstants.RIGHT, PConstants.TOP);
+        text("Extent of constrained panning",width+40,-20);
+        
+        line(-40,height+20,-40,height+1);
+        line(-40,height+20,-21,height+20);
+        textAlign(PConstants.LEFT, PConstants.BOTTOM);
+        text("Extent of constrained panning",-40,height+20);
+        
+        textAlign(PConstants.RIGHT, PConstants.BOTTOM);
+        text("Extent of constrained panning",width+40,height+20);
+        line(width+40,height+20,width+40,height+1);
+        line(width+40,height+20,width+21,height+20);
+               
         // Display a simple object.
         stroke(80);
         strokeWeight(2);
@@ -138,7 +161,6 @@ public class ZoomTest extends PApplet
         ellipse(width/2, height/2, 60,60);
         
         fill(20);
-        textSize(8);
         textAlign(PConstants.CENTER, PConstants.CENTER);
         
         // It looks like we no longer need to use Zoomer's improved text method as the Processing bug that 
@@ -150,6 +172,13 @@ public class ZoomTest extends PApplet
         float fixedSize = (float)Math.sqrt(64/zoomer.getZoomScale());
         textSize(fixedSize);
         text("Text above should be offset by one space",width/2,height/2+8);
+        
+        
+        textAlign(PConstants.LEFT, PConstants.BOTTOM);
+        text("Text should be in corner of a grid",8f*width/20,11f*height/20);
+        zoomer.text("Text should be in corner of a grid [this version with zoomer.text()]",8f*width/20,11f*height/20);
+        textAlign(PConstants.LEFT, PConstants.TOP);
+        zoomer.text("If Processing text scaling correct there should be no ghosting or moving of text in the line above",8f*width/20,11f*height/20);
         
         popMatrix();        // Retrieve the non zoomed display
         
@@ -197,11 +226,13 @@ public class ZoomTest extends PApplet
             {
             	zoomer.setMaxZoomScale(10);
             	zoomer.setMinZoomScale(1);
+            	zoomer.setMaxPanOffset(40, 20);
             }
             else
             {
             	zoomer.setMaxZoomScale(Double.MAX_VALUE);
             	zoomer.setMinZoomScale(Double.MIN_VALUE);
+            	zoomer.setMaxPanOffset(-1, -1);
             }
         }
         else  if ((key == 'm') || (key == 'M'))
